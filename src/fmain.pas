@@ -876,6 +876,7 @@ type
     procedure driveButtonPaint(Sender: TObject);
     procedure NewAppInstance;
     procedure Restart;
+    procedure UpdateTitle;
 
     property Commands: TMainCommands read FCommands implements IFormCommands;
     property SelectedPanel: TFilePanelSelect read PanelSelected write SetPanelSelected;
@@ -974,15 +975,6 @@ procedure TfrmMain.FormCreate(Sender: TObject);
     Result.OnDblClick := @pnlLeftRightDblClick;
     Result.OnChanging := @nbPageChanging;
   end;
-  function GenerateTitle():String;
-  var 
-    ServernameString: String;
-  begin
-    ServernameString := '';
-    if Length(UniqueInstance.ServernameByUser) > 0 then
-      ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
-    Result := Format('%s%s %s build %s; %s', ['Double Commander', ServernameString, dcVersion, dcRevision, dcBuildDate]);
-  end;
 
 var
   HMMainForm: THMForm;
@@ -1017,7 +1009,7 @@ begin
   CreateDefaultToolbar;
 
   //Caption of main window
-  Self.Caption := GenerateTitle();
+  Self.Caption := 'Double Commander';
   // Remove the initial caption of the button, which is just a text of the associated action.
   // The text would otherwise be briefly shown before the drive button was updated.
   btnLeftDrive.Caption := '';
@@ -4106,6 +4098,8 @@ begin
             Cons.Terminal.SetCurrentDir(FileView.CurrentPath);
         end;}
     end;
+    
+  UpdateTitle;
 end;
 
 procedure TfrmMain.FileViewActivate(FileView: TFileView);
@@ -4119,9 +4113,7 @@ begin
       SelectedPanel := Page.Notebook.Side;
       UpdateSelectedDrive(Page.Notebook);
       UpdateFreeSpace(Page.Notebook.Side);
-      
-      ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
-      Self.Caption := Format('%s - %s%s %s %s', [FileView.CurrentPath, 'Double Commander', ServernameString, dcVersion, dcRevision]);
+      UpdateTitle;
     end;
 end;
 
@@ -6258,6 +6250,15 @@ begin
   aProcess.Free;
 
   Application.Terminate;
+end;
+
+procedure TfrmMain.UpdateTitle;
+  var ServernameString: String;
+begin
+  ServernameString := '';
+  if Length(UniqueInstance.ServernameByUser) > 0 then
+    ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
+  Self.Caption := Format('%s - %s%s %s %s %s', [ActiveFrame.CurrentPath, 'Double Commander', ServernameString, dcVersion, dcRevision, TargetOS]);
 end;
 
 initialization

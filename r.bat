@@ -1,20 +1,33 @@
 
 @echo off
 
-rem add 'Silent' project profile with Lazarus to disable hints and warnings
-set lazpath=e:\tools\lazarus-1.8.0
+rem add 'Silent' project profile with Lazarus to disable hints and warnings, activate 'silent' build in the :build method
 
+rem set OS_TARGET=win64
+set OS_TARGET=win32
+
+if "%OS_TARGET%" == "win64" (
+  set CPU_TARGET=x86_64
+  set lazpath=e:\tools\lazarus-1.8.0
+)
+if "%OS_TARGET%" == "win32" (
+  set CPU_TARGET=i386
+  set lazpath=e:\tools\lazarus-1.8.0_32
+)
 set PATH=%lazpath%;%PATH%
 
-set OS_TARGET=win64
-set CPU_TARGET=x86_64
-rem set OS_TARGET=win32
-rem set CPU_TARGET=i386
+echo Build params: %OS_TARGET%, %CPU_TARGET%, %lazpath%
+if "%1"=="a" (
+  pause
+)
 
 rem ---------------------------------
 
 del /Q doublecmd.exe
 
+if "%1"=="a" (
+  call :all
+)
 if "%1"=="r" (
   call :rebuild
 )
@@ -29,6 +42,14 @@ call :run
 goto:eof
 
 rem ----------------------------------
+
+:all
+  echo all method
+  call clean
+  call components\build.bat
+  call plugins\build.bat
+  call :build
+goto:eof
 
 :rebuild
   echo rebuild method
