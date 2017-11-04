@@ -46,7 +46,7 @@ uses
   uFileView, uFileSource, uFileViewNotebook, uFile, LCLVersion,
   uOperationsManager, uFileSourceOperation, uDrivesList, uTerminal, DCClassesUtf8,
   DCXmlConfig, uDrive, uDriveWatcher, uDCVersion, uMainCommands, uFormCommands,
-  uOperationsPanel, KASToolItems, uKASToolItemsExtended, uCmdLineParams, uOSForms
+  uOperationsPanel, KASToolItems, uKASToolItemsExtended, uCmdLineParams, uOSForms, Process
   {$IF DEFINED(LCLQT)}
   , Qt4, QtWidgets
   {$ELSEIF DEFINED(LCLGTK2)}
@@ -530,6 +530,38 @@ type
     miSetAllTabsOptionDirsInNewTab: TMenuItem;
     miOpenDirInNewTab: TMenuItem;
     actResaveFavoriteTabs: TAction;
+    
+    actNewInstance: TAction;
+    actRestart: TAction;
+    actToggleFreeSorting: TAction;
+    actRestoreTabs: TAction;
+    actOpenDriveByIndex: TAction;
+    actActivateTabByIndex: TAction;
+    actChangeColumnWidth: TAction;
+    actMaximizePanel: TAction;
+    actMarkNFiles: TAction;
+    actShellExecuteParent: TAction;
+    actGoToPastTab: TAction;
+    actChangeDirToNextParentSibling: TAction;
+    actChangeDirToPrevParentSibling: TAction;
+    actTest: TAction;
+    actLoadAdbList: TAction;
+    actLoadUninstallerList: TAction;
+    actToggleMultilineTabs: TAction;
+    actToggleAliasMode: TAction;
+    
+    mnuMarkNFiles: TMenuItem;
+    mnuToggleMultilineTabs: TMenuItem;
+    mnuToggleAliasMode: TMenuItem;
+    mnuRestoreTabs: TMenuItem;
+    mnuRestart: TMenuItem;
+    mnuLoadUninstallerList: TMenuItem;
+    mnuNewInstance: TMenuItem;
+    mnuFilesToggleFreeSorting: TMenuItem;
+    miLineA1: TMenuItem;
+    miLineA2: TMenuItem;
+    miLineA3: TMenuItem;
+    
     procedure actExecute(Sender: TObject);
     procedure btnF3MouseWheelDown(Sender: TObject; Shift: TShiftState;
       {%H-}MousePos: TPoint; var {%H-}Handled: Boolean);
@@ -609,7 +641,9 @@ type
     procedure nbPageAfterMouseDown(Data: PtrInt);
     procedure nbPageMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure nbOnMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure nbPageChanged(Sender: TObject);
+    procedure nbPageChanging(Sender: TObject; var AllowChange: Boolean);
     procedure nbPageMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure NotebookCloseTabClicked(Sender: TObject);
@@ -632,7 +666,7 @@ type
     procedure pnlRightResize(Sender: TObject);
     procedure sboxDrivePaint(Sender: TObject);
     procedure PaintDriveFreeBar(Sender: TObject; bIndUseGradient:boolean; pIndForeColor,pIndBackColor:TColor);
-    procedure seLogWindowSpecialLineColors(Sender: TObject; Line: integer;
+    procedure seLogWindowSpecialLineColors(Sender: TObject; Line: Integer;
       var Special: boolean; var FG, BG: TColor);
 
     function FileViewBeforeChangePath(FileView: TFileView; NewFileSource: IFileSource; const NewPath : String): Boolean;
@@ -685,7 +719,7 @@ type
     lastWindowState:TWindowState;
     // frost_asm end
     // for dragging buttons and etc
-    NumberOfMoveButton, NumberOfNewMoveButton: integer;
+    NumberOfMoveButton, NumberOfNewMoveButton: Integer;
     Draging : boolean;
     FUpdateDiskCount: Boolean;
 
@@ -720,7 +754,7 @@ type
     procedure AppEndSession(Sender: TObject);
     procedure AppQueryEndSession(var Cancel: Boolean);
     procedure AppException(Sender: TObject; E: Exception);
-    procedure AppShowHint(var HintStr: string; var CanShow: Boolean; var HintInfo: THintInfo);
+    procedure AppShowHint(var HintStr: String; var CanShow: Boolean; var HintInfo: THintInfo);
     {en
        Convert toolbar configuration from .bar file to global config.
     }
@@ -760,8 +794,8 @@ type
     procedure ViewHistoryPrevSelected(Sender:TObject);
     procedure ViewHistoryNextSelected(Sender:TObject);
     procedure CreatePopUpDirHistory;
-    procedure ShowFileViewHistory(const Params: array of string);
-    procedure ShowFileViewHistory(const Params: array of string; FromFileSourceIndex, FromPathIndex, ToFileSourceIndex, ToPathIndex: Integer);
+    procedure ShowFileViewHistory(const Params: array of String);
+    procedure ShowFileViewHistory(const Params: array of String; FromFileSourceIndex, FromPathIndex, ToFileSourceIndex, ToPathIndex: Integer);
     procedure miHotAddOrConfigClick(Sender: TObject);
 
     {en
@@ -802,10 +836,10 @@ type
     procedure CreateDiskPanel(dskPanel : TKASToolBar);
     function CreateFileView(sType: String; Page: TFileViewPage; AConfig: TXmlConfig; ANode: TXmlNode): TFileView;
     procedure AssignEvents(AFileView: TFileView);
-    function RemovePage(ANoteBook: TFileViewNotebook; iPageIndex:Integer; CloseLocked: Boolean = True; ConfirmCloseLocked: integer = 0; ShowButtonAll: Boolean = False): LongInt;
-    procedure LoadTabsXml(AConfig: TXmlConfig; ABranch:string; ANoteBook: TFileViewNotebook);
-    procedure SaveTabsXml(AConfig: TXmlConfig; ABranch:string; ANoteBook: TFileViewNotebook; ASaveHistory: boolean);
-    procedure LoadTheseTabsWithThisConfig(Config: TXmlConfig; ABranch:string; Source, Destination:TTabsConfigLocation; DestinationToKeep : TTabsConfigLocation; var TabsAlreadyDestroyedFlags:TTabsFlagsAlreadyDestroyed);
+    function RemovePage(ANoteBook: TFileViewNotebook; iPageIndex:Integer; CloseLocked: Boolean = True; ConfirmCloseLocked: Integer = 0; ShowButtonAll: Boolean = False): LongInt;
+    procedure LoadTabsXml(AConfig: TXmlConfig; ABranch:String; ANoteBook: TFileViewNotebook);
+    procedure SaveTabsXml(AConfig: TXmlConfig; ABranch:String; ANoteBook: TFileViewNotebook; ASaveHistory: boolean);
+    procedure LoadTheseTabsWithThisConfig(Config: TXmlConfig; ABranch:String; Source, Destination:TTabsConfigLocation; DestinationToKeep : TTabsConfigLocation; var TabsAlreadyDestroyedFlags:TTabsFlagsAlreadyDestroyed);
     procedure ToggleConsole;
     procedure UpdateWindowView;
     procedure MinimizeWindow;
@@ -838,7 +872,10 @@ type
     }
     procedure DoDragDropOperation(Operation: TDragDropOperation;
                                   var DropParams: TDropParams);
-
+    
+    procedure driveButtonPaint(Sender: TObject);
+    procedure NewAppInstance;
+    procedure Restart;
 
     property Commands: TMainCommands read FCommands implements IFormCommands;
     property SelectedPanel: TFilePanelSelect read PanelSelected write SetPanelSelected;
@@ -935,6 +972,7 @@ procedure TfrmMain.FormCreate(Sender: TObject);
     Result.OnMouseUp := @nbPageMouseUp;
     Result.OnChange := @nbPageChanged;
     Result.OnDblClick := @pnlLeftRightDblClick;
+    Result.OnChanging := @nbPageChanging;
   end;
   function GenerateTitle():String;
   var 
@@ -943,20 +981,16 @@ procedure TfrmMain.FormCreate(Sender: TObject);
     ServernameString := '';
     if Length(UniqueInstance.ServernameByUser) > 0 then
       ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
-
-    Result := Format('%s%s %s build %s; %s',
-        ['Double Commander',
-        ServernameString,
-        dcVersion,
-        dcRevision,
-        dcBuildDate]
-    );
+    Result := Format('%s%s %s build %s; %s', ['Double Commander', ServernameString, dcVersion, dcRevision, dcBuildDate]);
   end;
 
 var
   HMMainForm: THMForm;
   I: Integer;
 begin
+  pnlLeft.OnMouseWheel := @nbOnMouseWheel;
+  pnlRight.OnMouseWheel := @nbOnMouseWheel;
+  
   Application.OnException := @AppException;
   Application.OnActivate := @AppActivate;
   Application.OnDeActivate := @AppDeActivate;
@@ -1028,7 +1062,7 @@ begin
   //      so, we should always listen for the messages
   if Assigned(UniqueInstance) then
     UniqueInstance.OnMessage:= @OnUniqueInstanceMessage;
-
+    
   MainFormCreate(Self);
 
   // Load command line history
@@ -1036,6 +1070,8 @@ begin
 
   // Initialize actions.
   actShowSysFiles.Checked := uGlobs.gShowSystemFiles;
+  actToggleFreeSorting.Checked := uGlobs.gFreeSorting;
+  actToggleAliasMode.Checked := uGlobs.gUseAliasCommands;
   actHorizontalFilePanels.Checked := gHorizontalFilePanels;
 
   AllowDropFiles := not uDragDropEx.IsExternalDraggingSupported;
@@ -1085,6 +1121,12 @@ begin
   UpdateSelectedDrives;
   UpdateFreeSpace(fpLeft);
   UpdateFreeSpace(fpRight);
+  
+  if gLoadTabsFromFile and (gTabsFilePath <> '') then
+  begin
+    gLoadTabsFromFile := False;
+    Commands.cm_LoadTabs('filename=' + gTabsFilePath);
+  end;
 end;
 
 procedure TfrmMain.btnLeftClick(Sender: TObject);
@@ -1094,7 +1136,7 @@ end;
 
 procedure TfrmMain.actExecute(Sender: TObject);
 var
-  cmd: string;
+  cmd: String;
 begin
   cmd := (Sender as TAction).Name;
   cmd := 'cm_' + Copy(cmd, 4, Length(cmd) - 3);
@@ -1317,7 +1359,7 @@ procedure TfrmMain.MainToolBarToolButtonDragDrop(Sender, Source: TObject; X, Y: 
 var
   I: LongWord;
   SelectedFiles: TFiles = nil;
-  Param: string;
+  Param: String;
   ToolItem: TKASToolItem;
 begin
   if (ssShift in GetKeyShiftState) then
@@ -1684,7 +1726,7 @@ end;
 procedure TfrmMain.DoDragDropOperation(Operation: TDragDropOperation;
                                        var DropParams: TDropParams);
 var
-  SourceFileName, TargetFileName: string;
+  SourceFileName, TargetFileName: String;
 begin
   try
     with DropParams do
@@ -2316,10 +2358,27 @@ begin
   Application.QueueAsyncCall(@nbPageAfterMouseDown, PtrInt(Sender));
 end;
 
+procedure TfrmMain.nbOnMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+var 
+  nb: TFileViewNotebook;
+begin
+  nb := ActiveNotebook;
+  if Sender = pnlLeft then
+    nb := nbLeft
+  else if Sender = pnlRight then
+    nb := nbRight;
+    
+  if WheelDelta > 0 then
+    nb.ActivatePrevTab
+  else
+    nb.ActivateNextTab;
+end;
+
 procedure TfrmMain.nbPageChanged(Sender: TObject);
 var
   Notebook: TFileViewNotebook;
   Page: TFileViewPage;
+  ServernameString: String;
 begin
   Notebook := Sender as TFileViewNotebook;
   Page := Notebook.ActivePage;
@@ -2343,6 +2402,14 @@ begin
 
   UpdatePrompt;
   UpdateTreeViewPath;
+end;
+
+procedure TfrmMain.nbPageChanging(Sender: TObject; var AllowChange: Boolean);
+var
+  Notebook: TFileViewNotebook;
+begin
+  Notebook := Sender as TFileViewNotebook;
+  gPrevPageIndex := Notebook.PageIndex;
 end;
 
 procedure TfrmMain.nbPageMouseUp(Sender: TObject; Button: TMouseButton;
@@ -2590,7 +2657,7 @@ begin
   ShowExceptionDialog;
 end;
 
-procedure TfrmMain.AppShowHint(var HintStr: string; var CanShow: Boolean;
+procedure TfrmMain.AppShowHint(var HintStr: String; var CanShow: Boolean;
   var HintInfo: THintInfo);
 begin
   // Refresh monitor list
@@ -2796,12 +2863,12 @@ begin
   end;
 end;
 
-procedure TfrmMain.ShowFileViewHistory(const Params: array of string);
+procedure TfrmMain.ShowFileViewHistory(const Params: array of String);
 begin
   ShowFileViewHistory(Params, -1, -1, -1, -1);
 end;
 
-procedure TfrmMain.ShowFileViewHistory(const Params: array of string; FromFileSourceIndex, FromPathIndex, ToFileSourceIndex, ToPathIndex: Integer);
+procedure TfrmMain.ShowFileViewHistory(const Params: array of String; FromFileSourceIndex, FromPathIndex, ToFileSourceIndex, ToPathIndex: Integer);
 const
   MaxItemsShown = 20;
 var
@@ -2924,8 +2991,8 @@ var
   bUseTreeViewMenu: boolean = false;
   bUsePanel: boolean = false; // As opposed as the other popup, for that one, by legacy, the position of the popup is the cursor position instead of top left corner of active panel.
   p: TPoint;
-  iWantedWidth: integer = 0;
-  iWantedHeight: integer = 0;
+  iWantedWidth: Integer = 0;
+  iWantedHeight: Integer = 0;
   sMaybeMenuItem: TMenuItem = nil;
   I: Integer;
   mi: TMenuItem;
@@ -3018,8 +3085,8 @@ procedure TfrmMain.HotDirActualSwitchToDir(Index:longint);
 var
   aPath: String;
   isSHIFTDown, isCTRLDown: boolean;
-  PossibleCommande,PossibleParam: string;
-  PosFirstSpace: integer;
+  PossibleCommande,PossibleParam: String;
+  PosFirstSpace: Integer;
   Editor: TOptionsEditor;
   Options: IOptionsDialog;
 begin
@@ -3079,7 +3146,7 @@ begin
 
           hd_COMMAND:
             begin
-              PosFirstSpace:=pos(' ',gDirectoryHotlist.HotDir[Index].HotDirPath);
+              PosFirstSpace:=Pos(' ',gDirectoryHotlist.HotDir[Index].HotDirPath);
 
               if PosFirstSpace=0 then
                 begin
@@ -3921,7 +3988,7 @@ begin
   end;
 end;
 
-procedure TfrmMain.seLogWindowSpecialLineColors(Sender: TObject; Line: integer;
+procedure TfrmMain.seLogWindowSpecialLineColors(Sender: TObject; Line: Integer;
   var Special: boolean; var FG, BG: TColor);
 var
   LogMsgTypeObject: TObject;
@@ -4044,6 +4111,7 @@ end;
 procedure TfrmMain.FileViewActivate(FileView: TFileView);
 var
   Page: TFileViewPage;
+  ServernameString: String;
 begin
   if FileView.NotebookPage is TFileViewPage then
     begin
@@ -4051,6 +4119,9 @@ begin
       SelectedPanel := Page.Notebook.Side;
       UpdateSelectedDrive(Page.Notebook);
       UpdateFreeSpace(Page.Notebook.Side);
+      
+      ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
+      Self.Caption := Format('%s - %s%s %s %s', [FileView.CurrentPath, 'Double Commander', ServernameString, dcVersion, dcRevision]);
     end;
 end;
 
@@ -4117,6 +4188,8 @@ begin
       OnMouseUp := @ShellTreeViewMouseUp;
       OnDblClick := @ShellTreeViewDblClick;
       OnAdvancedCustomDrawItem := @ShellTreeViewAdvancedCustomDrawItem;
+      OnClick := @ShellTreeViewDblClick;
+      OnSelectionChanged := @ShellTreeViewDblClick;
 
       Options := Options - [tvoThemedDraw];
       Options := Options + [tvoReadOnly, tvoRightClickSelect];
@@ -4273,6 +4346,8 @@ begin
       Button.Transparent := True;
       {/Set Buttons Transparent}
       Button.Layout := blGlyphLeft;
+      
+      Button.OnPaint := @driveButtonPaint;
     end; // for
 
     // Add virtual drive button
@@ -4284,6 +4359,14 @@ begin
 
   finally
     dskPanel.EndUpdate;
+  end;
+  
+  if Count > 8 then Count := 8;
+  for i := 0 to Count do
+  begin
+    Button := dskPanel.Buttons[i];
+    Button.Width := 50;
+    Button.Margin := 15;
   end;
 end;
 
@@ -4320,7 +4403,7 @@ end;
 // ConfirmCloseLocked = 0  ...option "tb_confirm_close_locked_tab".
 // ConfirmCloseLocked = 1  ...no matter the option, we ask confirmation
 // ConfirmCloseLocked = 2  ...no matter the option, we do not ask confirmation
-function TfrmMain.RemovePage(ANoteBook: TFileViewNotebook; iPageIndex:Integer; CloseLocked: Boolean = True; ConfirmCloseLocked: integer = 0; ShowButtonAll: Boolean = False): LongInt;
+function TfrmMain.RemovePage(ANoteBook: TFileViewNotebook; iPageIndex:Integer; CloseLocked: Boolean = True; ConfirmCloseLocked: Integer = 0; ShowButtonAll: Boolean = False): LongInt;
 var
   UserAnswer: TMyMsgResult;
 begin
@@ -4365,7 +4448,7 @@ begin
   end;
 end;
 
-procedure TfrmMain.LoadTabsXml(AConfig: TXmlConfig; ABranch:string; ANoteBook: TFileViewNotebook);
+procedure TfrmMain.LoadTabsXml(AConfig: TXmlConfig; ABranch:String; ANoteBook: TFileViewNotebook);
 // default was ABranch: 'Tabs/OpenedTabs/'
 var
   sPath, sViewType: String;
@@ -4463,7 +4546,7 @@ begin
 end;
 
 
-procedure TfrmMain.SaveTabsXml(AConfig: TXmlConfig;ABranch:string; ANoteBook: TFileViewNotebook; ASaveHistory:boolean);
+procedure TfrmMain.SaveTabsXml(AConfig: TXmlConfig;ABranch:String; ANoteBook: TFileViewNotebook; ASaveHistory:boolean);
 // default was: 'Tabs/OpenedTabs'
 var
   I: Integer;
@@ -4495,9 +4578,9 @@ end;
 { TfrmMain.LoadTheseTabsWithThisConfig }
 // Will have tabs section from Xml from either left or right and store it back on actual form on left, right, active, inactive, both or none, with setting keep or not etc.
 // The "ABranch" *must* include the trailing slash when calling here.
-procedure TfrmMain.LoadTheseTabsWithThisConfig(Config: TXmlConfig; ABranch:string; Source, Destination:TTabsConfigLocation; DestinationToKeep : TTabsConfigLocation; var TabsAlreadyDestroyedFlags:TTabsFlagsAlreadyDestroyed);
+procedure TfrmMain.LoadTheseTabsWithThisConfig(Config: TXmlConfig; ABranch:String; Source, Destination:TTabsConfigLocation; DestinationToKeep : TTabsConfigLocation; var TabsAlreadyDestroyedFlags:TTabsFlagsAlreadyDestroyed);
 var
-  sSourceSectionName: string;
+  sSourceSectionName: String;
   CheckNode: TXmlNode;
 begin
   if Destination<>tclNone then
@@ -4938,6 +5021,10 @@ end;
 
 procedure TfrmMain.edtCommandKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var commandText, sFileName, aliasItem: String;
+aliasKey, aliasValue: String;
+aliasList: TStringListEx;
+i, separatorPos: Integer;
 begin
   if not edtCommand.DroppedDown and ((Key=VK_UP) or (Key=VK_DOWN)) then
     begin
@@ -4964,6 +5051,34 @@ begin
         begin
           if (Shift * [ssCtrl, ssAlt, ssMeta, ssAltGr] = []) then
           begin
+            if gUseAliasCommands then
+            begin
+              commandText := edtCommand.Text;
+              aliasList:= TStringListEx.Create;
+              try
+                sFileName := gpCfgDir + 'aliases.txt';
+                aliasList.LoadFromFile(sFileName);
+                
+                for I:= 0 to aliasList.Count - 1 do
+                begin
+                  aliasItem := aliasList.Strings[I];
+                  separatorPos := Pos(' ', aliasItem);
+                  aliasKey := copy(aliasItem, 1, separatorPos-1);
+                  aliasValue := copy(aliasItem, separatorPos+1, length(aliasItem)-separatorPos);
+                  
+                  if(commandText = aliasKey) then
+                  begin
+                    commandText := aliasValue;
+                    break;
+                  end;
+                end;
+              except
+                dcdebug('Error reading file');
+              end;
+              aliasList.Free;
+              edtCommand.Text := commandText;
+            end;
+            
             ExecuteCommandLine(ssShift in Shift);
             Key := 0;
           end;
@@ -5220,7 +5335,7 @@ begin
         begin
           {$IFDEF MSWINDOWS}
           //Let's see if user typed something like "c:", "X:", etc. and if so, switch active panel to that drive (like TC)
-          if (length(sCmd)=2) AND (pos(':',sCmd)=2) then
+          if (length(sCmd)=2) AND (Pos(':',sCmd)=2) then
           begin
             iIndex:=0;
 
@@ -5620,7 +5735,7 @@ end;
 
 procedure TfrmMain.UpdateGUIFunctionKeys;
 var
-  i,c1,c2:integer;
+  i,c1,c2:Integer;
 begin
   i:=0;
   c1:=pnlKeys.ControlCount;
@@ -5639,6 +5754,9 @@ procedure TfrmMain.ShowDrivesList(APanel: TFilePanelSelect);
 var
   p: TPoint;
   ADriveIndex: Integer;
+  
+  CurrentPath: String;
+  CurrentDrive: String;
 begin
   if tb_activate_panel_on_click in gDirTabOptions then
     SetActiveFrame(APanel);
@@ -5657,8 +5775,12 @@ begin
         ADriveIndex := btnRightDrive.Tag;
       end;
   end;
+
+  CurrentPath := ActiveNotebook.ActiveView.CurrentPath;
+  CurrentDrive := ExtractFileDrive(CurrentPath);
+
   p := ScreenToClient(p);
-  FDrivesListPopup.Show(p, APanel, ADriveIndex);
+  FDrivesListPopup.Show(p, APanel, CurrentDrive);
 end;
 
 procedure TfrmMain.HideToTray;
@@ -5875,9 +5997,9 @@ begin
     end
   else
     begin
-      lblDriveInfo.Caption := '';
-      lblDriveInfo.Hint := '';
-      sboxDrive.Hint := '';
+      lblDriveInfo.Caption := '0';
+      lblDriveInfo.Hint := '0';
+      sboxDrive.Hint := '0';
       sboxDrive.Tag := -1;
       sboxDrive.Invalidate;
     end;
@@ -6093,6 +6215,50 @@ begin
   end;
 end;
 {$ENDIF}
+
+procedure TfrmMain.driveButtonPaint(Sender: TObject);
+var
+  button: TKASToolButton;
+  bCanvas: TCanvas;
+  id: PtrInt;
+begin
+  button := Sender as TKASToolButton;
+  bCanvas := button.Canvas;
+
+  id := button.Tag + 1;
+
+  if id <= 9 then
+  begin
+    bCanvas.Brush.Style := bsClear;
+    bCanvas.Font.Size := 8;
+    bCanvas.Font.Bold := True;
+    bCanvas.TextOut(4, 2, IntToStr(id));
+
+    bCanvas.Font.Size := 0;
+    bCanvas.Font.Bold := False;
+  end;
+end;
+
+procedure TfrmMain.NewAppInstance;
+begin
+  ShellExecute(Application.ExeName);
+end;
+
+procedure TfrmMain.Restart;
+var aProcess : TProcess;
+    cmd, sTabsFile: String;
+begin
+  sTabsFile := gpCfgDir + 'temp_tabs.tab';
+  Commands.cm_SaveTabs('filename=' + sTabsFile);
+  
+  cmd := Application.ExeName + ' --tabs_file=' + sTabsFile;
+  aProcess := TProcess.Create(nil);
+  aProcess.CommandLine := cmd;
+  aProcess.Execute;
+  aProcess.Free;
+
+  Application.Terminate;
+end;
 
 initialization
   {$I DragCursors.lrs}

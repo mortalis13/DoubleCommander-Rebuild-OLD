@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils,
   uFileSourceOperation,
+  uFileSystemDeleteOperation,
   uFileSourceOperationTypes,
   uLocalFileSource,
   uFileSource,
@@ -16,7 +17,8 @@ uses
   uDescr,
   DCBasicTypes,
   DCStrUtils,
-  uFindEx
+  uFindEx,
+  uDebug
   ;
 
 type
@@ -96,6 +98,7 @@ type
     function CreateMoveOperation(var SourceFiles: TFiles;
                                  TargetPath: String): TFileSourceOperation; override;
     function CreateDeleteOperation(var FilesToDelete: TFiles): TFileSourceOperation; override;
+    function CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation; override;
     function CreateWipeOperation(var FilesToWipe: TFiles): TFileSourceOperation; override;
     function CreateSplitOperation(var aSourceFile: TFile;
                                   aTargetPath: String): TFileSourceOperation; override;
@@ -139,7 +142,6 @@ uses
   uFileSystemListOperation,
   uFileSystemCopyOperation,
   uFileSystemMoveOperation,
-  uFileSystemDeleteOperation,
   uFileSystemWipeOperation,
   uFileSystemSplitOperation,
   uFileSystemCombineOperation,
@@ -862,6 +864,14 @@ var
 begin
   TargetFileSource := Self;
   Result := TFileSystemDeleteOperation.Create(TargetFileSource, FilesToDelete);
+end;
+
+function TFileSystemFileSource.CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation;
+var
+  TargetFileSource: IFileSource;
+begin
+  TargetFileSource := Self;
+  Result := TFileSystemDeleteOperation.Create(TargetFileSource, FilesToDelete, AfterDeleteProc);
 end;
 
 function TFileSystemFileSource.CreateWipeOperation(var FilesToWipe: TFiles): TFileSourceOperation;

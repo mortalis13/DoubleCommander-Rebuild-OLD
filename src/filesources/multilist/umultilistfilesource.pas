@@ -92,6 +92,7 @@ type
     function CreateMoveOperation(var SourceFiles: TFiles;
                                  TargetPath: String): TFileSourceOperation; override;
     function CreateDeleteOperation(var FilesToDelete: TFiles): TFileSourceOperation; override;
+    function CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation; override;
     function CreateWipeOperation(var FilesToWipe: TFiles): TFileSourceOperation; override;
     function CreateExecuteOperation(var ExecutableFile: TFile; BasePath, Verb: String): TFileSourceOperation; override;
     function CreateTestArchiveOperation(var theSourceFiles: TFiles): TFileSourceOperation; override;
@@ -211,6 +212,11 @@ begin
 end;
 
 function TMultiListFileSource.CreateDeleteOperation(var FilesToDelete: TFiles): TFileSourceOperation;
+begin
+  Result := FFileSource.CreateDeleteOperation(FilesToDelete);
+end;
+
+function TMultiListFileSource.CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation;
 begin
   Result := FFileSource.CreateDeleteOperation(FilesToDelete);
 end;

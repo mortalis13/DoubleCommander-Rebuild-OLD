@@ -32,7 +32,7 @@ uses
   fQuickSearch,
   uFileView,
   uFileViewWithPanels,
-  uDisplayFile;
+  uDisplayFile, uDebug;
 
 const
   InvalidFileIndex = PtrInt(-1);
@@ -64,6 +64,7 @@ type
     procedure AfterChangePath; override;
     procedure CreateDefault(AOwner: TWinControl); override;
     procedure DoFileIndexChanged(NewFileIndex: PtrInt);
+    procedure DoFileIndexChanged(NewFileIndex: PtrInt; tvr: Integer);
     procedure DoHandleKeyDown(var Key: Word; Shift: TShiftState); override;
     procedure DoHandleKeyDownWhenLoading(var Key: Word; Shift: TShiftState); override;
     procedure DoSelectionChanged; override; overload;
@@ -99,12 +100,13 @@ type
     procedure CloneTo(AFileView: TFileView); override;
     procedure SetActiveFile(aFilePath: String); override; overload;
     procedure ChangePathAndSetActiveFile(aFilePath: String); override; overload;
+    procedure MarkNFiles(Count: PtrInt; bSelect: Boolean); override;
 
   published  // commands
-    procedure cm_QuickSearch(const Params: array of string);
-    procedure cm_QuickFilter(const Params: array of string);
-    procedure cm_GoToFirstFile(const Params: array of string);
-    procedure cm_GoToLastFile(const Params: array of string);
+    procedure cm_QuickSearch(const Params: array of String);
+    procedure cm_QuickFilter(const Params: array of String);
+    procedure cm_GoToFirstFile(const Params: array of String);
+    procedure cm_GoToLastFile(const Params: array of String);
   end;
 
 implementation
@@ -211,6 +213,11 @@ begin
 end;
 
 procedure TOrderedFileView.DoFileIndexChanged(NewFileIndex: PtrInt);
+begin
+  DoFileIndexChanged(NewFileIndex, -1);
+end;
+
+procedure TOrderedFileView.DoFileIndexChanged(NewFileIndex: PtrInt; tvr: Integer);
 begin
   if IsFileIndexInRange(NewFileIndex) and (FLastActiveFileIndex <> NewFileIndex) then
   begin
@@ -458,6 +465,11 @@ begin
     MarkFiles(FromIndex, ToIndex, bSelect);
 end;
 
+procedure TOrderedFileView.MarkNFiles(Count: PtrInt; bSelect: Boolean);
+begin
+  MarkFiles(GetActiveFileIndex, GetActiveFileIndex + Count - 1, bSelect);
+end;
+
 procedure TOrderedFileView.pmOperationsCancelClick(Sender: TObject);
 begin
   if (Sender is TMenuItem) then
@@ -521,7 +533,7 @@ end;
 procedure TOrderedFileView.SearchFile(SearchTerm,SeparatorCharset: String; SearchOptions: TQuickSearchOptions);
 var
   i, StartIndex, Index: PtrInt;
-  s :string;
+  s :String;
   Result: Boolean;
   sFileName,
   sSearchName,

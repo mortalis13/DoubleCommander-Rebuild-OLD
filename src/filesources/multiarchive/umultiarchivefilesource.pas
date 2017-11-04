@@ -268,7 +268,7 @@ begin
   }
     SizeProperty := TFileSizeProperty.Create(ArchiveItem.UnpSize);
     CompressedSizeProperty := TFileCompressedSizeProperty.Create(ArchiveItem.PackSize);
-
+    FilesCountProperty := TFileFilesCountProperty.Create;
     if (FormMode and MAF_UNIX_ATTR) <> 0 then
       AttributesProperty := TUnixFileAttributesProperty.Create(ArchiveItem.Attributes)
     else if (FormMode and MAF_WIN_ATTR) <> 0 then

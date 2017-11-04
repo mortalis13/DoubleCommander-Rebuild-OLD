@@ -1,0 +1,24 @@
+inherited frmOptionsExtended: TfrmOptionsExtended
+  Height = 228
+  Width = 501
+  ClientHeight = 228
+  ClientWidth = 501
+  DesignLeft = 516
+  DesignTop = 266
+  object cbFreeSorting: TCheckBox[0]
+    Left = 8
+    Height = 19
+    Top = 8
+    Width = 83
+    Caption = 'Free Sorting'
+    TabOrder = 0
+  end
+  object cbAliasCommands: TCheckBox[1]
+    Left = 8
+    Height = 19
+    Top = 32
+    Width = 110
+    Caption = 'Alias Commands'
+    TabOrder = 1
+  end
+end

@@ -6,6 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
+  uDebug,
   uFileProperty,
   DCBasicTypes;
 
@@ -50,6 +51,8 @@ type
     procedure SetSize(NewSize: Int64);
     function GetCompressedSize: Int64;
     procedure SetCompressedSize(NewCompressedSize: Int64);
+    function GetFilesCount: String;
+    procedure SetFilesCount(NewFilesCount: String);
     function GetModificationTime: TDateTime;
     procedure SetModificationTime(NewTime: TDateTime);
     function GetCreationTime: TDateTime;
@@ -70,6 +73,8 @@ type
     procedure SetSizeProperty(NewValue: TFileSizeProperty);
     function GetCompressedSizeProperty: TFileCompressedSizeProperty;
     procedure SetCompressedSizeProperty(NewValue: TFileCompressedSizeProperty);
+    function GetFilesCountProperty: TFileFilesCountProperty;
+    procedure SetFilesCountProperty(NewValue: TFileFilesCountProperty);
     function GetAttributesProperty: TFileAttributesProperty;
     procedure SetAttributesProperty(NewValue: TFileAttributesProperty);
     function GetModificationTimeProperty: TFileModificationDateTimeProperty;
@@ -148,6 +153,7 @@ type
     property NameProperty: TFileNameProperty read GetNameProperty write SetNameProperty;
     property SizeProperty: TFileSizeProperty read GetSizeProperty write SetSizeProperty;
     property CompressedSizeProperty: TFileCompressedSizeProperty read GetCompressedSizeProperty write SetCompressedSizeProperty;
+    property FilesCountProperty: TFileFilesCountProperty read GetFilesCountProperty write SetFilesCountProperty;
     property AttributesProperty: TFileAttributesProperty read GetAttributesProperty write SetAttributesProperty;
     property ModificationTimeProperty: TFileModificationDateTimeProperty read GetModificationTimeProperty write SetModificationTimeProperty;
     property CreationTimeProperty: TFileCreationDateTimeProperty read GetCreationTimeProperty write SetCreationTimeProperty;
@@ -172,6 +178,7 @@ type
     property Extension: String read GetExtension;
     property Size: Int64 read GetSize write SetSize;
     property CompressedSize: Int64 read GetCompressedSize write SetCompressedSize;
+    property FilesCount: String read GetFilesCount write SetFilesCount;
     property Attributes: TFileAttrs read GetAttributes write SetAttributes;
     property ModificationTime: TDateTime read GetModificationTime write SetModificationTime;
     property CreationTime: TDateTime read GetCreationTime write SetCreationTime;
@@ -293,6 +300,7 @@ begin
 
   // Name property always present.
   NameProperty := TFileNameProperty.Create;
+  FilesCountProperty := TFileFilesCountProperty.Create;
 
   Path := APath;
 end;
@@ -456,6 +464,17 @@ begin
   TFileCompressedSizeProperty(FProperties[fpCompressedSize]).Value := NewCompressedSize;
 end;
 
+function TFile.GetFilesCount: String;
+begin
+  Result := TFileFilesCountProperty(FProperties[fpFilesCount]).Value;
+end;
+
+procedure TFile.SetFilesCount(NewFilesCount: String);
+var fp1: TFileProperty; fp2:TFileFilesCountProperty; s1:String;
+begin
+  TFileFilesCountProperty(FProperties[fpFilesCount]).Value := NewFilesCount;
+end;
+
 function TFile.GetModificationTime: TDateTime;
 begin
   Result := TFileModificationDateTimeProperty(FProperties[fpModificationTime]).Value;
@@ -566,6 +585,20 @@ begin
     Include(FSupportedProperties, fpCompressedSize)
   else
     Exclude(FSupportedProperties, fpCompressedSize);
+end;
+
+function TFile.GetFilesCountProperty: TFileFilesCountProperty;
+begin
+  Result := TFileFilesCountProperty(FProperties[fpFilesCount]);
+end;
+
+procedure TFile.SetFilesCountProperty(NewValue: TFileFilesCountProperty);
+begin
+  FProperties[fpFilesCount] := NewValue;
+  if Assigned(NewValue) then
+    Include(FSupportedProperties, fpFilesCount)
+  else
+    Exclude(FSupportedProperties, fpFilesCount);
 end;
 
 function TFile.GetModificationTimeProperty: TFileModificationDateTimeProperty;

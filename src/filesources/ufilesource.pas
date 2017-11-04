@@ -18,11 +18,14 @@ type
   TFileSourceConnection = class;
   IFileSource = interface;
 
-  TPathsArray = array of string;
+  TPathsArray = array of String;
   TFileSourceOperationsClasses = array[TFileSourceOperationType] of TFileSourceOperationClass;
 
   TFileSourceReloadEventNotify = procedure(const aFileSource: IFileSource;
                                            const ReloadedPaths: TPathsArray) of object;
+
+  TAfterDeleteProc = procedure of object;
+  
 
   { IFileSource }
 
@@ -65,6 +68,7 @@ type
     function CreateMoveOperation(var SourceFiles: TFiles;
                                  TargetPath: String): TFileSourceOperation;
     function CreateDeleteOperation(var FilesToDelete: TFiles): TFileSourceOperation;
+    function CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation;
     function CreateWipeOperation(var FilesToWipe: TFiles): TFileSourceOperation;
     function CreateSplitOperation(var aSourceFile: TFile;
                                     aTargetPath: String): TFileSourceOperation;
@@ -228,6 +232,7 @@ type
     function CreateMoveOperation(var SourceFiles: TFiles;
                                  TargetPath: String): TFileSourceOperation; virtual;
     function CreateDeleteOperation(var FilesToDelete: TFiles): TFileSourceOperation; virtual;
+    function CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation; virtual;
     function CreateWipeOperation(var FilesToWipe: TFiles): TFileSourceOperation; virtual;
     function CreateSplitOperation(var aSourceFile: TFile;
                                     aTargetPath: String): TFileSourceOperation; virtual;
@@ -352,7 +357,7 @@ type
   private
     FFilePath: String;
   public
-    constructor Create(const AFilePath: string); reintroduce;
+    constructor Create(const AFilePath: String); reintroduce;
     property FilePath: String read FFilePath;
   end;
 
@@ -561,7 +566,9 @@ end;
 
 function TFileSource.GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean;
 begin
-  Result := False; // not supported by default
+  FreeSize := 0;
+  TotalSize := 0;
+  Result := True;
 end;
 
 function TFileSource.GetLocalName(var aFile: TFile): Boolean;
@@ -645,6 +652,11 @@ begin
 end;
 
 function TFileSource.CreateDeleteOperation(var FilesToDelete: TFiles): TFileSourceOperation;
+begin
+  Result := nil;
+end;
+
+function TFileSource.CreateDeleteOperation(var FilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc): TFileSourceOperation;
 begin
   Result := nil;
 end;
@@ -944,7 +956,7 @@ begin
   Result := nil;
 end;
 
-constructor EFileNotFound.Create(const AFilePath: string);
+constructor EFileNotFound.Create(const AFilePath: String);
 begin
   FFilePath := AFilePath;
   inherited Create(Format(rsMsgFileNotFound, [aFilePath]));

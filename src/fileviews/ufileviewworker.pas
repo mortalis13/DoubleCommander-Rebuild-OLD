@@ -9,7 +9,7 @@ uses
   uDisplayFile, uFile, uFileSource, uFileSorting, uFileProperty,
   uFileSourceOperation,
   uFileSourceListOperation,
-  fQuickSearch,uMasks;
+  fQuickSearch, uMasks, uUninstallerFileSource;
 
 type
   TFileViewWorkType = (fvwtNone,
@@ -134,7 +134,7 @@ type
     procedure Abort; override;
 
     {en
-       Prepare filter string based on options.
+       Prepare filter String based on options.
     }
     class function PrepareFilter(const aFileFilter: String;
                                  const aFilterOptions: TQuickSearchOptions): String;
@@ -239,7 +239,8 @@ uses
   uFileSourceOperationTypes, uOSUtils, DCStrUtils, uDCUtils, uExceptions,
   uGlobs, uPixMapManager, uFileSourceProperty,
   uFileSourceCalcStatisticsOperation,
-  uFileSourceOperationOptions;
+  uFileSourceOperationOptions,
+  uDrivesListFileSource, uDrive, uDrivesList, uDriveWatcher, uDebug;
 
 { TFVWorkerFileList }
 
@@ -466,10 +467,9 @@ begin
         end;
       end;
 
-      if (not HaveUpDir) and
-         ((not FFileSource.IsPathAtRoot(FCurrentPath)) or
-          // Add '..' to go to higher level file source, if there is more than one.
-          ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties))) then
+      // Add '..' to go to higher level file source, if there is more than one.
+      if (not HaveUpDir) and ( (not FFileSource.IsPathAtRoot(FCurrentPath)) or ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties)) ) then
+      // if FileSourceFiles.Count = 0 then
       begin
         AFile := FFileSource.CreateFileObject(FCurrentPath);
         AFile.Name := '..';
@@ -500,8 +500,7 @@ begin
     if Assigned(FAllDisplayFiles) and Assigned(FExistingDisplayFilesHashed) then
     begin
       // Updating existing list.
-      MakeAllDisplayFileList(
-        FFileSource, FileSourceFiles, FAllDisplayFiles, FSortings, FExistingDisplayFilesHashed);
+      MakeAllDisplayFileList(FFileSource, FileSourceFiles, FAllDisplayFiles, FSortings, FExistingDisplayFilesHashed);
     end
     else
     begin
@@ -696,7 +695,7 @@ end;
 
 var
   i: Integer;
-  s :string;
+  s :String;
   AFile: TFile;
   filter: Boolean;
   CaseSence:boolean;
@@ -753,6 +752,12 @@ var
   AFile: TDisplayFile;
   HaveIcons: Boolean;
   DirectAccess: Boolean;
+  
+  j: Integer;
+  drivesList: TDrivesList;
+  Drive: PDrive;
+  iconName: String;
+  IconID: PtrInt;
 begin
   aDisplayFiles.Clear;
 
@@ -768,19 +773,63 @@ begin
     begin
       AFile := TDisplayFile.Create(aFileSourceFiles[i]);
 
+      if (AFile.FSFile.Name = '..') and (aFileSourceFiles.Count > 1) then continue;
+
       AFile.TextColor:= gColorExt.GetColorBy(AFile.FSFile);
 
       if HaveIcons then
       begin
-        AFile.IconID := PixMapManager.GetIconByFile(AFile.FSFile,
-                                                    DirectAccess,
-                                                    not gLoadIconsSeparately,
-                                                    gShowIcons,
-                                                    not gIconOverlays);
+        AFile.IconID := PixMapManager.GetIconByFile(AFile.FSFile, DirectAccess, not gLoadIconsSeparately, gShowIcons, not gIconOverlays);
+      end;
+      
+      if aFileSource is TDrivesListFileSource then
+      begin
+        drivesList := TDriveWatcher.GetDrivesList;
+        iconID:=-1;
+        
+        for j:= 0 to drivesList.Count - 1 do
+        begin
+          Drive := drivesList[j];
+          
+          if Drive^.DisplayName = aFileSourceFiles[i].Name then
+          begin
+            case Drive^.DriveType of
+              dtFloppy:
+                iconName := 'media-floppy';
+              dtHardDisk:
+                iconName := 'drive-harddisk';
+              dtFlash:
+                iconName := 'media-flash';
+              dtOptical:
+                iconName := 'media-optical';
+              dtNetwork:
+                iconName := 'network-wired';
+              dtRemovable:
+                iconName := 'drive-removable-media';
+              dtRemovableUsb:
+                iconName := 'drive-removable-media-usb';
+              else
+                iconName := 'drive-harddisk';
+            end;
+
+            // IconID := PixMapManager.GetIconByName(iconName);
+            IconID := PixMapManager.GetDriveIconIndex(Drive, gIconsSizeNew, clBtnFace);
+            break;
+          end;
+        end; // for
+        
+        AFile.IconID:=IconID;
+      end;
+      
+      if aFileSource is TUninstallerFileSource then
+      begin
+        IconID := PixMapManager.GetUninstallerIcon(AFile.FSFile);
+        AFile.IconID:=IconID;
       end;
 
       aDisplayFiles.Add(AFile);
     end;
+
     TDisplayFileSorter.Sort(aDisplayFiles, aSortings);
   end;
 end;
@@ -1010,6 +1059,7 @@ var
   TargetFiles: TFiles = nil;
   AFile: TFile;
   i: Integer;
+  FilesCount: String;
 begin
   if fsoCalcStatistics in FFileSource.GetOperationsTypes then
   begin
@@ -1048,7 +1098,11 @@ begin
           if FOperation.Result = fsorFinished then
           begin
             CalcStatisticsOperationStatistics := CalcStatisticsOperation.RetrieveStatistics;
+
             AFile.Size := CalcStatisticsOperationStatistics.Size;
+            FilesCount := IntToStr(CalcStatisticsOperationStatistics.Files) + 'F ' + IntToStr(CalcStatisticsOperationStatistics.Directories) + 'D';
+            AFile.FilesCount := FilesCount;
+
             Inc(FCompletedCalculations);
 
             if Aborted then

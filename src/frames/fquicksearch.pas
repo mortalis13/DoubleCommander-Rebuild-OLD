@@ -99,7 +99,8 @@ uses
   LazUTF8,
   uKeyboard,
   uGlobs,
-  uFormCommands;
+  uFormCommands,
+  uDebug;
 
 const
 {
@@ -113,7 +114,7 @@ const
   "files"            - set filtering files (on/off/toggle)
   "directories"      - set filtering directories (on/off/toggle)
   "filesdirectories" - toggle between files, directories and both (no value)
-  "text"="<...>"     - set <...> as new text to search/filter (string)
+  "text"="<...>"     - set <...> as new text to search/filter (String)
 
   'toggle' switches between on and off
   'cycle' goto to next, next, next and so one
@@ -243,6 +244,8 @@ var
   Value: String;
   bWeGotMainParam: boolean = False;
   bLegacyBehavior: boolean = False;
+  cpos: tpoint;
+  stest:String;
 begin
   BeginUpdate;
   try
@@ -352,7 +355,14 @@ begin
     //If search or filter was called with no parameter...
     case SearchMode of
       qsSearch: if not bWeGotMainParam then tglFilter.Checked:=False;
-      qsFilter: if not bWeGotMainParam then tglFilter.Checked:=True;
+      qsFilter:
+        begin
+          if not bWeGotMainParam then tglFilter.Checked:=True;
+          edtSearch.Text := '*';
+          cpos.x:=1;
+          cpos.y:=0;
+          edtSearch.CaretPos := cpos;
+        end;
     end;
 
     if not bLegacyBehavior then
@@ -375,6 +385,8 @@ var
   SearchMode: TQuickSearchMode;
   UTF8Char: TUTF8Char;
   KeyTypingModifier: TKeyTypingModifier;
+  Params: array [1..1] of String;
+  i: Integer;
 begin
   Result := False;
 
@@ -397,9 +409,8 @@ begin
         if (Key <> VK_SPACE) or (edtSearch.Text <> '') then
         begin
           UTF8Char := VirtualKeyToUTF8Char(Key, ModifierKeys - SearchOrFilterModifiers);
-          Result := (UTF8Char <> '') and
-                    (not ((Length(UTF8Char) = 1) and (UTF8Char[1] in [#0..#31])));
-
+          Result := (UTF8Char <> '') and (not ((Length(UTF8Char) = 1) and (UTF8Char[1] in [#0..#31])));
+          
           if Result then
           begin
             Key := 0;
@@ -409,7 +420,7 @@ begin
               ktaQuickFilter:
                 SearchMode := qsFilter;
             end;
-            Self.Execute(SearchMode, [], UTF8Char);
+            Self.Execute(SearchMode, Params, UTF8Char);
           end;
         end;
 

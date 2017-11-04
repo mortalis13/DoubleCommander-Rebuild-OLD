@@ -5,7 +5,7 @@ unit uFileSorting;
 interface
 
 uses
-  Classes, SysUtils, uFileFunctions, uFile, uFileProperty, uDisplayFile;
+  Classes, SysUtils, uFileFunctions, uFile, uFileProperty, uDisplayFile, uDebug;
 
 type
 
@@ -820,6 +820,8 @@ class procedure TDisplayFileSorter.ResortSingle(IndexToResort: Integer; SortedFi
 var
   FileListSorter: TDisplayFileSorter;
 begin
+  if gFreeSorting then Exit;
+  
   FileListSorter := TDisplayFileSorter.Create(IndexToResort, SortedFiles, ASortings);
   try
     FileListSorter.Sort;

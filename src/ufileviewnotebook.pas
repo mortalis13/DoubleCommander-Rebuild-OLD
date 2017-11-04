@@ -29,7 +29,7 @@ interface
 uses
   Classes, SysUtils, Controls, ComCtrls, LMessages,
   LCLType, LCLVersion, Forms,
-  uFileView, uFilePanelSelect, uDCVersion, DCXmlConfig;
+  uFileView, uFilePanelSelect, uDCVersion, DCXmlConfig, Graphics;
 
 type
 
@@ -90,7 +90,7 @@ type
     function IsActive: Boolean;
     procedure MakeActive;
     procedure UpdateTitle;
-
+    
     procedure LoadConfiguration(AConfig: TXmlConfig; ANode: TXmlNode);
     procedure SaveConfiguration(AConfig: TXmlConfig; ANode: TXmlNode);
 
@@ -155,6 +155,8 @@ type
     procedure DestroyAllPages;
     procedure ActivatePrevTab;
     procedure ActivateNextTab;
+    
+    procedure ActivateTabByIndex(Index: Integer);
 
     property ActivePage: TFileViewPage read GetActivePage;
     property ActiveView: TFileView read GetActiveView;
@@ -188,6 +190,7 @@ uses
   {$IF DEFINED(MSWINDOWS)}
   , win32proc, Windows, Messages
   {$ENDIF}
+  , uDebug
   ;
 
 // -- TFileViewPage -----------------------------------------------------------
@@ -296,7 +299,7 @@ end;
 
 procedure TFileViewPage.UpdateTitle;
   {$IFDEF MSWINDOWS}
-  function LocalGetDriveName(A:string):string;
+  function LocalGetDriveName(A:String):String;
   begin
     result:=LowerCase(ExtractFileDrive(A));
     if length(result)>2 then // Server path name are shown simply like \: in TC so let's do the same for those who get used to that.
@@ -356,6 +359,8 @@ begin
 {$ELSE}
     Caption := StringReplace(NewCaption, '&', '&&', [rfReplaceAll]);
 {$ENDIF}
+
+    // Caption := '[' + IntToStr(PageIndex+1) + '] ' + Caption;
   end;
 end;
 
@@ -432,7 +437,7 @@ constructor TFileViewNotebook.Create(ParentControl: TWinControl;
 begin
   PageClass := TFileViewPage;
   inherited Create(ParentControl);
-  ControlStyle := ControlStyle + [csNoFocus];
+  // ControlStyle := ControlStyle + [csNoFocus];
 
   Parent := ParentControl;
   TabStop := False;
@@ -453,6 +458,8 @@ begin
 
   OnDragOver := @DragOverEvent;
   OnDragDrop := @DragDropEvent;
+
+  TabHeight := 27;
 end;
 
 function TFileViewNotebook.GetActivePage: TFileViewPage;
@@ -765,6 +772,17 @@ procedure TFileViewNotebook.DoChange;
 begin
   inherited DoChange;
   ActivePage.DoActivate;
+end;
+
+procedure TFileViewNotebook.ActivateTabByIndex(Index: Integer);
+begin
+  if Index < -1 then
+    exit;
+    
+  if Index = -1 then
+    Page[PageCount - 1].MakeActive
+  else if PageCount >= Index+1 then
+    Page[Index].MakeActive;
 end;
 
 end.

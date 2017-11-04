@@ -618,7 +618,7 @@ begin
             begin
               Result:= fsoofeOverwrite;
               FFileExistsOption:= fsoofeAutoRenameSource;
-              AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName);
+              AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName, False);
             end;
           fsourRenameSource:
             begin
@@ -650,7 +650,7 @@ begin
     fsoofeAutoRenameSource:
       begin
         Result:= fsoofeOverwrite;
-        AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName);
+        AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName, False);
       end;
     else begin
       Result := FFileExistsOption;

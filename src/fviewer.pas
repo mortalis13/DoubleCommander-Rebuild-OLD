@@ -305,10 +305,10 @@ type
     procedure UndoTmp;
     procedure CreateTmp;
     procedure CutToImage;
-    procedure Res(W, H: integer);
+    procedure Res(W, H: Integer);
     procedure RedEyes;
-    procedure SaveImageAs (Var sExt: String; senderSave: boolean; Quality: integer);
-    procedure CreatePreview(FullPathToFile:string; index:integer; delete: boolean = false);
+    procedure SaveImageAs (Var sExt: String; senderSave: boolean; Quality: Integer);
+    procedure CreatePreview(FullPathToFile:String; index:Integer; delete: boolean = false);
 
     property Commands: TFormCommands read FCommands implements IFormCommands;
 
@@ -327,57 +327,57 @@ type
 
     procedure SetNormalViewerFont;
     procedure CopyMoveFile(AViewerAction:TViewerCopyMoveAction);
-    procedure RotateImage(AGradus:integer);
+    procedure RotateImage(AGradus:Integer);
     procedure MirrorImage(AVertically:boolean=False);
 
   published
     // Commands for hotkey manager
-    procedure cm_About(const Params: array of string);
-    procedure cm_Reload(const Params: array of string);
-    procedure cm_LoadNextFile(const Params: array of string);
-    procedure cm_LoadPrevFile(const Params: array of string);
-    procedure cm_MoveFile(const Params: array of string);
-    procedure cm_CopyFile(const Params: array of string);
-    procedure cm_DeleteFile(const Params: array of string);
-    procedure cm_StretchImage(const Params: array of string);
-    procedure cm_StretchOnlyLarge(const Params: array of string);
-    procedure cm_Save(const Params:array of string);
-    procedure cm_SaveAs(const Params: array of string);
-    procedure cm_Rotate90(const Params: array of string);
-    procedure cm_Rotate180(const Params: array of string);
-    procedure cm_Rotate270(const Params: array of string);
-    procedure cm_MirrorHorz(const Params: array of string);
-    procedure cm_MirrorVert(const Params: array of string);
-    procedure cm_ImageCenter(const Params: array of string);
-    procedure cm_Zoom(const Params: array of string);
-    procedure cm_ZoomIn(const Params: array of string);
-    procedure cm_ZoomOut(const Params: array of string);
-    procedure cm_Fullscreen(const Params: array of string);
-    procedure cm_Screenshot(const Params: array of string);
-    procedure cm_ScreenshotWithDelay(const Params: array of string);
-    procedure cm_ScreenshotDelay3sec(const Params: array of string);
-    procedure cm_ScreenshotDelay5sec(const Params: array of string);
+    procedure cm_About(const Params: array of String);
+    procedure cm_Reload(const Params: array of String);
+    procedure cm_LoadNextFile(const Params: array of String);
+    procedure cm_LoadPrevFile(const Params: array of String);
+    procedure cm_MoveFile(const Params: array of String);
+    procedure cm_CopyFile(const Params: array of String);
+    procedure cm_DeleteFile(const Params: array of String);
+    procedure cm_StretchImage(const Params: array of String);
+    procedure cm_StretchOnlyLarge(const Params: array of String);
+    procedure cm_Save(const Params:array of String);
+    procedure cm_SaveAs(const Params: array of String);
+    procedure cm_Rotate90(const Params: array of String);
+    procedure cm_Rotate180(const Params: array of String);
+    procedure cm_Rotate270(const Params: array of String);
+    procedure cm_MirrorHorz(const Params: array of String);
+    procedure cm_MirrorVert(const Params: array of String);
+    procedure cm_ImageCenter(const Params: array of String);
+    procedure cm_Zoom(const Params: array of String);
+    procedure cm_ZoomIn(const Params: array of String);
+    procedure cm_ZoomOut(const Params: array of String);
+    procedure cm_Fullscreen(const Params: array of String);
+    procedure cm_Screenshot(const Params: array of String);
+    procedure cm_ScreenshotWithDelay(const Params: array of String);
+    procedure cm_ScreenshotDelay3sec(const Params: array of String);
+    procedure cm_ScreenshotDelay5sec(const Params: array of String);
 
-    procedure cm_ChangeEncoding(const Params: array of string);
-    procedure cm_CopyToClipboard (const Params: array of string);
-    procedure cm_CopyToClipboardFormatted (const Params: array of string);
-    procedure cm_SelectAll       (const Params: array of string);
-    procedure cm_Find          (const Params: array of string);
-    procedure cm_FindNext      (const Params: array of string);
-    procedure cm_FindPrev      (const Params: array of string);
+    procedure cm_ChangeEncoding(const Params: array of String);
+    procedure cm_CopyToClipboard (const Params: array of String);
+    procedure cm_CopyToClipboardFormatted (const Params: array of String);
+    procedure cm_SelectAll       (const Params: array of String);
+    procedure cm_Find          (const Params: array of String);
+    procedure cm_FindNext      (const Params: array of String);
+    procedure cm_FindPrev      (const Params: array of String);
 
-    procedure cm_Preview         (const Params: array of string);
-    procedure cm_ShowAsText      (const Params: array of string);
-    procedure cm_ShowAsBin       (const Params: array of string);
-    procedure cm_ShowAsHex       (const Params: array of string);
-    procedure cm_ShowAsDec       (const Params: array of string);
-    procedure cm_ShowAsWrapText  (const Params: array of string);
-    procedure cm_ShowAsBook      (const Params: array of string);
+    procedure cm_Preview         (const Params: array of String);
+    procedure cm_ShowAsText      (const Params: array of String);
+    procedure cm_ShowAsBin       (const Params: array of String);
+    procedure cm_ShowAsHex       (const Params: array of String);
+    procedure cm_ShowAsDec       (const Params: array of String);
+    procedure cm_ShowAsWrapText  (const Params: array of String);
+    procedure cm_ShowAsBook      (const Params: array of String);
 
-    procedure cm_ShowGraphics    (const Params: array of string);
-    procedure cm_ShowPlugins     (const Params: array of string);
+    procedure cm_ShowGraphics    (const Params: array of String);
+    procedure cm_ShowPlugins     (const Params: array of String);
 
-    procedure cm_ExitViewer      (const Params: array of string);
+    procedure cm_ExitViewer      (const Params: array of String);
 
   end;
 
@@ -709,7 +709,7 @@ end;
 procedure TfrmViewer.ImageMouseMove(Sender: TObject; Shift: TShiftState; X,
   Y: Integer);
 var
-  tmp: integer;
+  tmp: Integer;
 begin
   if gboxHightlight.Visible then Image.Cursor:=crCross;
   if miFullScreen.Checked then
@@ -867,7 +867,7 @@ begin
 //  miLookBook.Checked:=not miLookBook.Checked;
 end;
 
-procedure TfrmViewer.CreatePreview(FullPathToFile: string; index: integer;
+procedure TfrmViewer.CreatePreview(FullPathToFile: String; index: Integer;
   delete: boolean);
 var
   bmpThumb : TBitmap = nil;
@@ -908,7 +908,7 @@ end;
 procedure TfrmViewer.RedEyes;
 var
   tmp:TBitMap;
-  x,y,r,g,b: integer;
+  x,y,r,g,b: Integer;
   col: TColor;
 begin
   if (EndX=StartX) or (EndY=StartY) then Exit;
@@ -973,7 +973,7 @@ end;
 
 procedure TfrmViewer.CutToImage;
 var
-  w,h:integer;
+  w,h:Integer;
 begin
   UndoTmp;
 
@@ -1006,7 +1006,7 @@ end;
 
 procedure TfrmViewer.CheckXY;
 var
-  tmp: integer;
+  tmp: Integer;
 begin
   if EndX<StartX then
     begin
@@ -1022,7 +1022,7 @@ begin
     end;
 end;
 
-procedure TfrmViewer.Res (W, H: integer);
+procedure TfrmViewer.Res (W, H: Integer);
 var
   tmp: TCustomBitmap;
   r: TRect;
@@ -1156,7 +1156,7 @@ begin
   end;
 end;
 
-procedure TfrmViewer.RotateImage(AGradus: integer);
+procedure TfrmViewer.RotateImage(AGradus: Integer);
 // AGradus now supported only 90,180,270 values
 var
   x, y: Integer;
@@ -1261,9 +1261,9 @@ begin
 end;
 
 
-procedure TfrmViewer.SaveImageAs(var sExt: String; senderSave: boolean; Quality: integer);
+procedure TfrmViewer.SaveImageAs(var sExt: String; senderSave: boolean; Quality: Integer);
 var
-  sFileName: string;
+  sFileName: String;
   ico : TIcon = nil;
   jpg : TJpegImage = nil;
   pnm : TPortableAnyMapGraphic = nil;
@@ -1624,7 +1624,7 @@ end;
 
 procedure TfrmViewer.actExecute(Sender: TObject);
 var
-  cmd: string;
+  cmd: String;
 begin
   cmd := (Sender as TAction).Name;
   cmd := 'cm_' + Copy(cmd, 4, Length(cmd) - 3);
@@ -2197,7 +2197,7 @@ begin
 
 
 
-  WindowState:=wsNormal;
+  // WindowState:=wsNormal;
   Top   :=gViewerTop;
   Left  :=gViewerLeft;
   Width :=gViewerWidth;
@@ -2205,17 +2205,17 @@ begin
 
 end;
 
-procedure TfrmViewer.cm_About(const Params: array of string);
+procedure TfrmViewer.cm_About(const Params: array of String);
 begin
   MsgOK(rsViewAboutText);
 end;
 
-procedure TfrmViewer.cm_Reload(const Params: array of string);
+procedure TfrmViewer.cm_Reload(const Params: array of String);
 begin
   LoadFile(iActiveFile);
 end;
 
-procedure TfrmViewer.cm_LoadNextFile(const Params: array of string);
+procedure TfrmViewer.cm_LoadNextFile(const Params: array of String);
 var
   I : Integer;
 begin
@@ -2242,7 +2242,7 @@ begin
   else LoadFile(I);
 end;
 
-procedure TfrmViewer.cm_LoadPrevFile(const Params: array of string);
+procedure TfrmViewer.cm_LoadPrevFile(const Params: array of String);
 var
   I: Integer;
 begin
@@ -2269,22 +2269,22 @@ begin
   else LoadFile(I);
 end;
 
-procedure TfrmViewer.cm_MoveFile(const Params: array of string);
+procedure TfrmViewer.cm_MoveFile(const Params: array of String);
 begin
   CopyMoveFile(vcmaMove);
 end;
 
-procedure TfrmViewer.cm_CopyFile(const Params: array of string);
+procedure TfrmViewer.cm_CopyFile(const Params: array of String);
 begin
   CopyMoveFile(vcmaCopy);
 end;
 
-procedure TfrmViewer.cm_DeleteFile(const Params: array of string);
+procedure TfrmViewer.cm_DeleteFile(const Params: array of String);
 begin
   btnDeleteFileClick(Self);
 end;
 
-procedure TfrmViewer.cm_StretchImage(const Params: array of string);
+procedure TfrmViewer.cm_StretchImage(const Params: array of String);
 begin
   miStretch.Checked:=not miStretch.Checked;
   if bImage then
@@ -2300,13 +2300,13 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_StretchOnlyLarge(const Params: array of string);
+procedure TfrmViewer.cm_StretchOnlyLarge(const Params: array of String);
 begin
   miStretchOnlyLarge.Checked:= not miStretchOnlyLarge.Checked;
   UpdateImagePlacement;
 end;
 
-procedure TfrmViewer.cm_Save(const Params: array of string);
+procedure TfrmViewer.cm_Save(const Params: array of String);
 var
   sExt: String;
 begin
@@ -2321,7 +2321,7 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_SaveAs(const Params: array of string);
+procedure TfrmViewer.cm_SaveAs(const Params: array of String);
 begin
   if bAnimation or bImage then
   begin
@@ -2344,38 +2344,38 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_Rotate90(const Params: array of string);
+procedure TfrmViewer.cm_Rotate90(const Params: array of String);
 begin
   if bImage then RotateImage(90);
 end;
 
-procedure TfrmViewer.cm_Rotate180(const Params: array of string);
+procedure TfrmViewer.cm_Rotate180(const Params: array of String);
 begin
   if bImage then RotateImage(180);
 end;
 
-procedure TfrmViewer.cm_Rotate270(const Params: array of string);
+procedure TfrmViewer.cm_Rotate270(const Params: array of String);
 begin
   if bImage then RotateImage(270);
 end;
 
-procedure TfrmViewer.cm_MirrorHorz(const Params: array of string);
+procedure TfrmViewer.cm_MirrorHorz(const Params: array of String);
 begin
   if bImage then MirrorImage;
 end;
 
-procedure TfrmViewer.cm_MirrorVert(const Params: array of string);
+procedure TfrmViewer.cm_MirrorVert(const Params: array of String);
 begin
   if bImage then MirrorImage(True);
 end;
 
-procedure TfrmViewer.cm_ImageCenter(const Params: array of string);
+procedure TfrmViewer.cm_ImageCenter(const Params: array of String);
 begin
    miCenter.Checked:= not miCenter.Checked;
    UpdateImagePlacement;
 end;
 
-procedure TfrmViewer.cm_Zoom(const Params: array of string);
+procedure TfrmViewer.cm_Zoom(const Params: array of String);
 var
   k:double;
 begin
@@ -2390,7 +2390,7 @@ begin
   AdjustImageSize;
 end;
 
-procedure TfrmViewer.cm_ZoomIn(const Params: array of string);
+procedure TfrmViewer.cm_ZoomIn(const Params: array of String);
 begin
   if miGraphics.Checked then
      cm_Zoom(['1.1'])
@@ -2403,7 +2403,7 @@ begin
 
 end;
 
-procedure TfrmViewer.cm_ZoomOut(const Params: array of string);
+procedure TfrmViewer.cm_ZoomOut(const Params: array of String);
 begin
   if miGraphics.Checked then
      cm_Zoom(['0.9'])
@@ -2415,7 +2415,7 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_Fullscreen(const Params: array of string);
+procedure TfrmViewer.cm_Fullscreen(const Params: array of String);
 begin
   miFullScreen.Checked:= not (miFullScreen.Checked);
   if miFullScreen.Checked then
@@ -2470,7 +2470,7 @@ begin
   ShowOnTop;
 end;
 
-procedure TfrmViewer.cm_Screenshot(const Params: array of string);
+procedure TfrmViewer.cm_Screenshot(const Params: array of String);
 var
   ScreenDC: HDC;
   bmp: TCustomBitmap;
@@ -2490,9 +2490,9 @@ begin
   ImgEdit:= True;
 end;
 
-procedure TfrmViewer.cm_ScreenshotWithDelay(const Params: array of string);
+procedure TfrmViewer.cm_ScreenshotWithDelay(const Params: array of String);
 var
-  i:integer;
+  i:Integer;
 begin
   i:=StrToInt(Params[0]);
   i:=i*1000;
@@ -2500,17 +2500,17 @@ begin
   TimerScreenshot.Enabled:=True;
 end;
 
-procedure TfrmViewer.cm_ScreenshotDelay3sec(const Params: array of string);
+procedure TfrmViewer.cm_ScreenshotDelay3sec(const Params: array of String);
 begin
   cm_ScreenshotWithDelay(['3']);
 end;
 
-procedure TfrmViewer.cm_ScreenshotDelay5sec(const Params: array of string);
+procedure TfrmViewer.cm_ScreenshotDelay5sec(const Params: array of String);
 begin
   cm_ScreenshotWithDelay(['5']);
 end;
 
-procedure TfrmViewer.cm_ChangeEncoding(const Params: array of string);
+procedure TfrmViewer.cm_ChangeEncoding(const Params: array of String);
 var
   MenuItem: TMenuItem;
 begin
@@ -2526,7 +2526,7 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_CopyToClipboard(const Params: array of string);
+procedure TfrmViewer.cm_CopyToClipboard(const Params: array of String);
 begin
   if bPlugin then
    WlxPlugins.GetWLxModule(ActivePlugin).CallListSendCommand(lc_copy, 0)
@@ -2542,12 +2542,12 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_CopyToClipboardFormatted(const Params: array of string);
+procedure TfrmViewer.cm_CopyToClipboardFormatted(const Params: array of String);
 begin
   ViewerControl.CopyToClipboardF;
 end;
 
-procedure TfrmViewer.cm_SelectAll(const Params: array of string);
+procedure TfrmViewer.cm_SelectAll(const Params: array of String);
 begin
   if bPlugin then
      WlxPlugins.GetWLxModule(ActivePlugin).CallListSendCommand(lc_selectall, 0)
@@ -2555,7 +2555,7 @@ begin
       ViewerControl.SelectAll;
 end;
 
-procedure TfrmViewer.cm_Find(const Params: array of string);
+procedure TfrmViewer.cm_Find(const Params: array of String);
 begin
   //if (not (bImage or bAnimation)) then
   if not miGraphics.Checked then
@@ -2565,19 +2565,19 @@ begin
   end;
 end;
 
-procedure TfrmViewer.cm_FindNext(const Params: array of string);
+procedure TfrmViewer.cm_FindNext(const Params: array of String);
 begin
   DoSearch(True, False);
 end;
 
-procedure TfrmViewer.cm_FindPrev(const Params: array of string);
+procedure TfrmViewer.cm_FindPrev(const Params: array of String);
 begin
   DoSearch(True, True);
 end;
 
-procedure TfrmViewer.cm_Preview(const Params: array of string);
+procedure TfrmViewer.cm_Preview(const Params: array of String);
 var
-  i: integer;
+  i: Integer;
 begin
   miPreview.Checked:= not (miPreview.Checked);
   pnlPreview.Visible := miPreview.Checked;
@@ -2596,7 +2596,7 @@ begin
   if bPlugin then WlxPlugins.GetWlxModule(ActivePlugin).ResizeWindow(GetListerRect);
 end;
 
-procedure TfrmViewer.cm_ShowAsText(const Params: array of string);
+procedure TfrmViewer.cm_ShowAsText(const Params: array of String);
 begin
   ViewerControl.Mode := vcmText;
   SetNormalViewerFont;
@@ -2605,7 +2605,7 @@ begin
   ActivatePanel(pnlText);
 end;
 
-procedure TfrmViewer.cm_ShowAsBin(const Params: array of string);
+procedure TfrmViewer.cm_ShowAsBin(const Params: array of String);
 begin
   ViewerControl.Mode := vcmBin;
   SetNormalViewerFont;
@@ -2614,7 +2614,7 @@ begin
   ActivatePanel(pnlText);
 end;
 
-procedure TfrmViewer.cm_ShowAsHex(const Params: array of string);
+procedure TfrmViewer.cm_ShowAsHex(const Params: array of String);
 begin
   ViewerControl.Mode := vcmHex;
   SetNormalViewerFont;
@@ -2623,7 +2623,7 @@ begin
   ActivatePanel(pnlText);
 end;
 
-procedure TfrmViewer.cm_ShowAsDec(const Params: array of string);
+procedure TfrmViewer.cm_ShowAsDec(const Params: array of String);
 begin
   ViewerControl.Mode := vcmDec;
   SetNormalViewerFont;
@@ -2632,7 +2632,7 @@ begin
   ActivatePanel(pnlText);
 end;
 
-procedure TfrmViewer.cm_ShowAsWrapText(const Params: array of string);
+procedure TfrmViewer.cm_ShowAsWrapText(const Params: array of String);
 begin
   ViewerControl.Mode := vcmWrap;
   SetNormalViewerFont;
@@ -2641,7 +2641,7 @@ begin
   ActivatePanel(pnlText);
 end;
 
-procedure TfrmViewer.cm_ShowAsBook(const Params: array of string);
+procedure TfrmViewer.cm_ShowAsBook(const Params: array of String);
 begin
   ViewerControl.Mode := vcmBook;
   SetNormalViewerFont;
@@ -2650,7 +2650,7 @@ begin
   ActivatePanel(pnlText);
 end;
 
-procedure TfrmViewer.cm_ShowGraphics(const Params: array of string);
+procedure TfrmViewer.cm_ShowGraphics(const Params: array of String);
 begin
   if CheckGraphics(FileList.Strings[iActiveFile]) then
     begin
@@ -2665,7 +2665,7 @@ begin
     end;
 end;
 
-procedure TfrmViewer.cm_ShowPlugins(const Params: array of string);
+procedure TfrmViewer.cm_ShowPlugins(const Params: array of String);
 begin
   bPlugin:= CheckPlugins(FileList.Strings[iActiveFile], True);
   if bPlugin then
@@ -2674,7 +2674,7 @@ begin
     ViewerControl.FileName := FileList.Strings[iActiveFile];
 end;
 
-procedure TfrmViewer.cm_ExitViewer(const Params: array of string);
+procedure TfrmViewer.cm_ExitViewer(const Params: array of String);
 begin
   Close;
 end;

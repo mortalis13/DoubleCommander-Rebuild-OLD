@@ -21,7 +21,8 @@ type
     fpLink,
     fpOwner,
     fpType,
-    fpComment
+    fpComment,
+    fpFilesCount
   );
 
 const
@@ -58,7 +59,7 @@ type
 
     function AsString: String; virtual;
 
-    // Formats the property value as a string using some formatter object.
+    // Formats the property value as a String using some formatter object.
     function Format(Formatter: IFilePropertyFormatter): String; virtual abstract;
   end;
 
@@ -189,6 +190,29 @@ type
 
     function Format(Formatter: IFilePropertyFormatter): String; override;
   end;
+  
+  
+  TFileFilesCountProperty = class(TFileProperty)
+  private
+    FFilesCount: String;   // only FilesCount, no path
+
+    procedure SetFilesCount(NewFilesCount: String);
+
+  public
+    constructor Create; override;
+    constructor Create(FilesCount: String); virtual; overload;
+
+    function Clone: TFileFilesCountProperty; override;
+    procedure CloneTo(FileProperty: TFileProperty); override;
+
+    class function GetDescription: String; override;
+    class function GetID: TFilePropertyType; override;
+
+    function Format(Formatter: IFilePropertyFormatter): String; override;
+
+    property Value: String read FFilesCount write FFilesCount;
+  end;
+
 
   {en
      File system attributes.
@@ -387,6 +411,7 @@ type
     ['{18EF8E34-1010-45CD-8DC9-678C7C2DC89F}']
 
     function FormatFileName(FileProperty: TFileNameProperty): String;
+    function FormatFileFilesCount(FileProperty: TFileFilesCountProperty): String;
     function FormatFileSize(FileProperty: TFileSizeProperty): String;
     function FormatDateTime(FileProperty: TFileDateTimeProperty): String;
     function FormatModificationDateTime(FileProperty: TFileModificationDateTimeProperty): String;
@@ -400,7 +425,7 @@ implementation
 uses
   DCOSUtils, DCFileAttributes, uDefaultFilePropertyFormatter, uDebug;
 
-resourcestring
+resourceString
   rsSizeDescription = 'Size';
   rsCompressedSizeDescription = 'Compressed size';
   rsDateTimeDescription = 'DateTime';
@@ -487,6 +512,60 @@ begin
     end;
 
   FName := NewName;
+end;
+
+// ----------------------------------------------------------------------------
+
+constructor TFileFilesCountProperty.Create;
+begin
+  Self.Create('');
+end;
+
+constructor TFileFilesCountProperty.Create(FilesCount: String);
+begin
+  inherited Create;
+  Value := FilesCount;
+end;
+
+function TFileFilesCountProperty.Clone: TFileFilesCountProperty;
+begin
+  Result := TFileFilesCountProperty.Create;
+  CloneTo(Result);
+end;
+
+procedure TFileFilesCountProperty.CloneTo(FileProperty: TFileProperty);
+begin
+  if Assigned(FileProperty) then
+  begin
+    inherited CloneTo(FileProperty);
+
+    with FileProperty as TFileFilesCountProperty do
+    begin
+      FFilesCount := Self.FFilesCount;
+    end;
+  end;
+end;
+
+class function TFileFilesCountProperty.GetDescription: String;
+begin
+  Result := 'FilesCount';
+end;
+
+class function TFileFilesCountProperty.GetID: TFilePropertyType;
+begin
+  Result := fpFilesCount;
+end;
+
+function TFileFilesCountProperty.Format(Formatter: IFilePropertyFormatter): String;
+begin
+  Result := Formatter.FormatFileFilesCount(Self);
+end;
+
+procedure TFileFilesCountProperty.SetFilesCount(NewFilesCount: String);
+var
+  i: Integer;
+begin
+  FFilesCount := NewFilesCount;
 end;
 
 // ----------------------------------------------------------------------------

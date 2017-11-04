@@ -50,8 +50,7 @@ type
     property FilesToDelete: TFiles read FFilesToDelete;
 
   public
-    constructor Create(aTargetFileSource: IFileSource;
-                       var theFilesToDelete: TFiles); virtual reintroduce;
+    constructor Create(aTargetFileSource: IFileSource; var theFilesToDelete: TFiles); virtual reintroduce;
     destructor Destroy; override;
 
     function GetDescription(Details: TFileSourceOperationDescriptionDetails): String; override;
@@ -63,8 +62,7 @@ implementation
 uses
   uDCUtils, uLng;
 
-constructor TFileSourceDeleteOperation.Create(aTargetFileSource: IFileSource;
-                                              var theFilesToDelete: TFiles);
+constructor TFileSourceDeleteOperation.Create(aTargetFileSource: IFileSource; var theFilesToDelete: TFiles);
 begin
   with FStatistics do
   begin

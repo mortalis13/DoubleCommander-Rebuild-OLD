@@ -40,9 +40,9 @@ type
   TRenameFileActionType=(rfatName,rfatExt,rfatFull,rfatToSeparators,rfatNextSeparated);
 
   TRenameFileEditInfo=record
-    LenNam:integer;    // length of renaming file name
-    LenExt:integer;    // length of renaming file ext
-    LenFul:integer;    // full length of renaming file name with ext and dot
+    LenNam:Integer;    // length of renaming file name
+    LenExt:Integer;    // length of renaming file ext
+    LenFul:Integer;    // full length of renaming file name with ext and dot
 
     CylceFinished:boolean;
     UserManualEdit:boolean; // true if user press a key or click/select part of filename, false - if pressed F2(or assigned key)
@@ -83,7 +83,7 @@ type
   protected
     edtRename: TEdit;
     FRenFile:TRenameFileEditInfo;
-    FRenTags:string;  // rename separators
+    FRenTags:String;  // rename separators
 
     FWindowProc: TWndMethod;
     // Used to register as a drag and drop source and target.
@@ -180,20 +180,20 @@ type
     procedure SetDragCursor(Shift: TShiftState); override;
 
   published
-    procedure cm_RenameOnly(const Params: array of string);
-    procedure cm_ContextMenu(const Params: array of string);
+    procedure cm_RenameOnly(const Params: array of String);
+    procedure cm_ContextMenu(const Params: array of String);
   end;
 
 
 // in future this function will moved to DCStrUtils
 {en
-   Return position of first founded tag in string begun from start position
+   Return position of first founded tag in String begun from start position
    @param(T String set of tags)
    @param(S String)
    @param(StartPos Start position)
-   @returns(Position of first founded tag in string)
+   @returns(Position of first founded tag in String)
 }
-function TagPos(T:string; const S: string; StartPos: Integer = 1; SearchBackward:boolean=False): Integer;
+function TagPos(T:String; const S: String; StartPos: Integer = 1; SearchBackward:boolean=False): Integer;
 
 
 implementation
@@ -206,7 +206,7 @@ uses
   LCLIntf, LCLProc, LazUTF8, Forms, Dialogs,
   fMain, uShowMsg, uLng, uFileProperty, uFileSource, uFileSourceOperationTypes,
   uGlobs, uInfoToolTip, uDisplayFile, uFileSystemFileSource, uFileSourceUtil,
-  uArchiveFileSourceUtil, uFormCommands, uKeyboard, uFileSourceSetFilePropertyOperation;
+  uArchiveFileSourceUtil, uFormCommands, uKeyboard, uFileSourceSetFilePropertyOperation, strutils;
 
 type
   TControlHandlersHack = class(TWinControl)
@@ -220,7 +220,7 @@ begin
   MainControl.ControlState := MainControl.ControlState - [csClicked, csLButtonDown];
 end;
 
-procedure TFileViewWithMainCtrl.cm_ContextMenu(const Params: array of string);
+procedure TFileViewWithMainCtrl.cm_ContextMenu(const Params: array of String);
 var
   Rect: TRect;
   Point: TPoint;
@@ -1135,7 +1135,7 @@ begin
     TControlHandlersHack(MainControl).DragCursor:= crDrag;
 end;
 
-procedure TFileViewWithMainCtrl.cm_RenameOnly(const Params: array of string);
+procedure TFileViewWithMainCtrl.cm_RenameOnly(const Params: array of String);
 var
   aFile: TFile;
 begin
@@ -1298,6 +1298,10 @@ var
   NewFileName: String;
   OldFileNameAbsolute: String;
   aFile: TFile = nil;
+  
+  i: Integer;
+  TextBefore, TextAfter: String;
+  CursorPos, wPos, wCount, wPosTemp, wNum, wLen, NewFileNameLen, DeletedChars: Integer;
 begin
 
   case Key of
@@ -1363,7 +1367,40 @@ begin
         FRenFile.UserManualEdit:=True; // user begin manual edit - no need cycle Name,Ext,FullName selection
 
 {$ENDIF}
-  end;
+
+    VK_BACK:
+      begin
+        if (ssCtrl in Shift) then
+        begin
+          NewFileName := edtRename.Text;
+          CursorPos := edtRename.SelStart + edtRename.SelLength + 1;
+          NewFileNameLen := Length(NewFileName);
+          
+          wPos := 0;
+          wCount := WordCount(NewFileName, StdWordDelims);
+          
+          if wCount > 0 then
+          begin
+            for i := 1 to wCount do
+            begin
+              wPosTemp := WordPosition(i, NewFileName, StdWordDelims);
+              if wPosTemp >= CursorPos then break;
+              wPos := wPosTemp;
+            end;
+          end;
+          
+          TextBefore := Copy(NewFileName, 1, wPos-1);
+          TextAfter := Copy(NewFileName, CursorPos, NewFileNameLen);
+          NewFileName := TextBefore + TextAfter;
+
+          edtRename.Text := NewFileName;
+          edtRename.SelStart := wPos-1;
+          
+          Key := 0;
+        end;
+      end;
+
+  end;  // case
 end;
 
 
@@ -1478,14 +1515,23 @@ var
   lenEdtText, lenEdtTextExt, i: Integer;
   seperatorSet: set of AnsiChar;
   ca:char;
-  s:string;
+  s:String;
 begin
   s:=AFile.Name;
   FRenFile.LenFul := UTF8Length(s);
   FRenFile.LenExt := UTF8Length(ExtractFileExt(s));
   FRenFile.LenNam := FRenFile.LenFul-FRenFile.LenExt;
 
+  if AFile.isDirectory then
+  begin
+    edtRename.Hint := aFile.FullPath;
+    edtRename.Text := aFile.Name;
+    edtRename.Visible := True;
+    edtRename.SetFocus;
 
+    RenameSelectPart(rfatFull);
+  end
+  else
   if edtRename.Visible then
   begin
 
@@ -1496,18 +1542,18 @@ begin
       if gRenameSelOnlyName then
       begin
         if FRenFile.LastAction=rfatName then
-           RenameSelectPart(rfatFull)
+           RenameSelectPart(rfatExt)
         else begin
-           RenameSelectPart(rfatExt);
+           RenameSelectPart(rfatFull);
            FRenFile.CylceFinished:=True;
            exit;
         end;
       end else
       begin
         if FRenFile.LastAction=rfatFull then
-           RenameSelectPart(rfatName)
+           RenameSelectPart(rfatExt)
         else begin
-           RenameSelectPart(rfatExt);
+           RenameSelectPart(rfatName);
            FRenFile.CylceFinished:=True;
            exit;
         end;
@@ -1546,8 +1592,8 @@ end;
 
 procedure TFileViewWithMainCtrl.RenameSelectPart(AActionType: TRenameFileActionType);
 var
-  ib,ie,a:integer;
-  s:string;
+  ib,ie,a:Integer;
+  s:String;
 begin
   FRenFile.LastAction:=AActionType;
 
@@ -1628,11 +1674,11 @@ begin
   UpdateInfoPanel; // Update status line only
 end;
 
-function TagPos(T: string; const S: string; StartPos: Integer;
+function TagPos(T: String; const S: String; StartPos: Integer;
   SearchBackward: boolean): Integer;
 // in future this function will moved to DCStrUtils
 var
-  i,cnt:integer;
+  i,cnt:Integer;
   ch:char;
 begin
   Result:=0;

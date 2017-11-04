@@ -1,7 +1,8 @@
 @echo off
 
 rem the next two line must be changed before run on your computer
-set lazpath=D:\Alexx\Prog\FreePascal\Lazarus
+rem set lazpath=D:\Alexx\Prog\FreePascal\Lazarus
+set lazpath=e:\tools\lazarus-1.8.0
 
 set PATH=%lazpath%;%PATH%
 
@@ -36,7 +37,7 @@ if "%1"=="" ( call :beta
   echo Available modes: components, plugins, default, nightly, all, beta
 )))))))
 
-pause
+rem pause
 GOTO:EOF
 
 :components

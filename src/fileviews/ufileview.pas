@@ -31,7 +31,8 @@ uses
   uFindFiles, Classes, SysUtils, Controls, ExtCtrls, Graphics, ComCtrls, contnrs, fgl, LMessages,
   uFile, uDisplayFile, uFileSource, uFormCommands, uDragDropEx, DCXmlConfig,
   DCClassesUtf8, uFileSorting, uFileViewHistory, uFileProperty, uFileViewWorker,
-  uFunctionThread, uFileSystemWatcher, fQuickSearch, StringHashList, uGlobs;
+  uFunctionThread, uFileSystemWatcher, fQuickSearch, StringHashList, uGlobs,
+  uDrivesListFileSource, uDrivesList, uUninstallerFileSource, uDrive, uDriveWatcher, Process;
 
 type
 
@@ -369,7 +370,7 @@ type
 
     destructor Destroy; override;
     procedure Clear;
-
+    
     function Clone({%H-}NewParent: TWinControl): TFileView; virtual;
     procedure CloneTo(AFileView: TFileView); virtual;
 
@@ -482,6 +483,7 @@ type
     procedure MarkCurrentPath(bSelect: Boolean);
     procedure MarkFile(AFile: TDisplayFile; bSelect: Boolean; bNotify: Boolean = True);
     procedure MarkFiles(bSelect: Boolean);
+    procedure MarkNFiles(Count: PtrInt; bSelect: Boolean); virtual; abstract;
     procedure MarkFiles(FromIndex, ToIndex: PtrInt; bSelect: Boolean);
     procedure MarkApplyOnAllFiles(const MarkApplyOnAllDispatcher: TMarkApplyOnAllDispatcher; MarkFileChecks: TFindFileChecks);
     procedure MarkGroup(const sMask: String; bSelect: Boolean; pbCaseSensitive:PBoolean = nil; pbIgnoreAccents: PBoolean = nil; pbWindowsInterpretation: PBoolean = nil; pMarkFileChecks: TPFindFileChecks = nil);
@@ -592,7 +594,7 @@ uses
   uShellExecute, fMaskInputDlg, uMasks, DCOSUtils, uOSUtils, DCStrUtils,
   uDCUtils, uDebug, uLng, uShowMsg, uFileSystemFileSource, uFileSourceUtil,
   uFileViewNotebook, uSearchTemplate, uKeyboard, uFileFunctions,
-  fMain, uSearchResultFileSource, uFileSourceProperty, uVfsModule, uFileViewWithPanels;
+  fMain, uSearchResultFileSource, uFileSourceProperty, uVfsModule, uFileViewWithPanels, uArchiveFileSourceUtil;
 
 const
   MinimumReloadInterval  = 1000; // 1 second
@@ -1418,6 +1420,8 @@ begin
     Exit; // File does not exist anymore (reference is invalid).
 
   OrigDisplayFile.FSFile.Size := UpdatedFile.FSFile.Size;
+  OrigDisplayFile.FSFile.FilesCount := UpdatedFile.FSFile.FilesCount;
+  
   DoFileUpdated(OrigDisplayFile, [fpSize]);
 end;
 
@@ -1849,13 +1853,40 @@ var
   bCaseSensitive: boolean = false;
   bIgnoreAccents: boolean = false;
   bWindowsInterpretation: boolean = false;
+  
+  bSelected: boolean = false;
+  I: Integer;
 begin
   if IsActiveItemValid then
   begin
-    sGroup := GetActiveDisplayFile.FSFile.Extension;
-    if sGroup <> '' then
-      sGroup := '.' + sGroup;
-    MarkGroup('*' + sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+    if GetActiveDisplayFile.FSFile.isDirectory then
+    begin
+      BeginUpdate;
+      try
+        for I := 0 to FFiles.Count - 1 do
+        begin
+          if FFiles[I].FSFile.isDirectory then
+          begin
+            FFiles[I].Selected := bSelect;
+            bSelected := True;
+          end;
+        end;
+        // for
+        
+        if bSelected then
+          Notify([fvnSelectionChanged]);
+      finally
+        EndUpdate;
+      end;
+    end
+    else
+    begin
+      sGroup := GetActiveDisplayFile.FSFile.Extension;
+      if sGroup <> '' then
+        sGroup := '.' + sGroup;
+      MarkGroup('*' + sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+    end;
+    
   end;
 end;
 
@@ -1998,6 +2029,7 @@ begin
     // Force reload if new sorting properties needed
     FForceReload:= (SortingProperties <> []) and (SortingProperties <> FSortingProperties);
     FSortingProperties:= SortingProperties;
+    
     if FForceReload then
       Reload()
     else begin
@@ -2168,7 +2200,7 @@ begin
         ChooseSymbolicLink(Self, FSFile)
       else if FSFile.IsDirectory then
         ChangePathToChild(FSFile)
-      else if not FolderMode then
+      else if (FileIsArchive(FSFile.FullPath)) or (not FolderMode) then
         try
           uFileSourceUtil.ChooseFile(Self, FileSource, FSFile);
         except
@@ -2853,6 +2885,7 @@ begin
 end;
 
 procedure TFileView.ChangePathToChild(const aFile: TFile);
+var uninstallPath, uninstallOut: String;
 begin
   if Assigned(aFile) and aFile.IsNameValid and
      (aFile.IsDirectory or aFile.IsLinkToDirectory) then
@@ -2860,6 +2893,13 @@ begin
     // Workaround for Search Result File Source
     if FileSource is TSearchResultFileSource then
       SetFileSystemPath(Self, aFile.FullPath)
+    else if FileSource is TDrivesListFileSource then
+      SetFileSystemPath(Self, aFile.Path)
+    else if FileSource is TUninstallerFileSource then
+    begin
+      uninstallPath := ExcludeTrailingPathDelimiter(aFile.Path);
+      RunCommand(uninstallPath, uninstallOut);
+    end
     else
       CurrentPath := CurrentPath + IncludeTrailingPathDelimiter(aFile.Name);
   end;
@@ -3089,6 +3129,12 @@ begin
       begin
         FNotifications := FNotifications - [fvnDisplayFileListChanged];
         DisplayFileListChanged;
+        
+        if Assigned(CloneActiveFile) and Assigned(OnChangeActiveFile) then
+        begin
+          OnChangeActiveFile(Self, CloneActiveFile);
+        end;
+        
         StartRecentlyUpdatedTimerIfNeeded;
       end
       else if fvnVisibleFilePropertiesChanged in FNotifications then

@@ -55,6 +55,7 @@ type
     actFileSaveAs: TAction;
     actFileNew: TAction;
     actFileExit: TAction;
+    actReload: TAction;
     MenuItem1: TMenuItem;
     miFindPrevious: TMenuItem;
     miGotoLine: TMenuItem;
@@ -79,6 +80,7 @@ type
     miSeparator1: TMenuItem;
     miUndoContext: TMenuItem;
     miFile: TMenuItem;
+    miReload: TMenuItem;
     New1: TMenuItem;
     Open1: TMenuItem;
     pmContextMenu: TPopupMenu;
@@ -120,7 +122,7 @@ type
     tbSeparator3: TToolButton;
     tbConfig: TToolButton;
     tbHelp: TToolButton;
-
+    
     procedure actExecute(Sender: TObject);
     procedure EditorMouseWheelDown(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
@@ -129,8 +131,8 @@ type
 
     procedure FormCreate(Sender: TObject);
     procedure EditorKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure EditorReplaceText(Sender: TObject; const ASearch, AReplace: string;
-       Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+    procedure EditorReplaceText(Sender: TObject; const ASearch, AReplace: String;
+       Line, Column: Integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChange(Sender: TObject);
     procedure EditorStatusChange(Sender: TObject;
       Changes: TSynStatusChanges);
@@ -153,7 +155,10 @@ type
     sEncodingOut,
     sOriginalText: String;
     FWaitData: TEditorWaitData;
-
+    
+    PrevTopLine: Integer;
+    PrevLineX: Integer;
+    PrevLineY: Integer;
 
     FCommands: TFormCommands;
 
@@ -192,33 +197,34 @@ type
     property FileName: String read FFileName write SetFileName;
 
    published
-     procedure cm_EditFind(const Params:array of string);
+     procedure cm_EditFind(const Params:array of String);
 
 
 
-     procedure cm_EditFindNext(const Params:array of string);
-     procedure cm_EditFindPrevious(const Params:array of string);
-     procedure cm_EditGotoLine(const Params:array of string);
-     procedure cm_EditLineEndCr(const Params:array of string);
-     procedure cm_EditLineEndCrLf(const Params:array of string);
-     procedure cm_EditLineEndLf(const Params:array of string);
-     procedure cm_EditDelete(const Params:array of string);
-     procedure cm_EditRedo(const Params:array of string);
-     procedure cm_About(const Params:array of string);
-     procedure cm_EditCopy(const Params:array of string);
-     procedure cm_EditCut(const Params:array of string);
-     procedure cm_EditPaste(const Params:array of string);
-     procedure cm_EditSelectAll(const Params:array of string);
-     procedure cm_FileNew(const Params:array of string);
-     procedure cm_FileOpen(const Params:array of string);
-     procedure cm_EditUndo(const Params:array of string);
-     procedure cm_FileSave(const Params:array of string);
-     procedure cm_FileSaveAs(const Params:array of string);
-     procedure cm_FileExit(const Params:array of string);
-//     procedure cm_Save2(const Params:array of string);
-     procedure cm_ConfHigh(const Params:array of string);
+     procedure cm_EditFindNext(const Params:array of String);
+     procedure cm_EditFindPrevious(const Params:array of String);
+     procedure cm_EditGotoLine(const Params:array of String);
+     procedure cm_EditLineEndCr(const Params:array of String);
+     procedure cm_EditLineEndCrLf(const Params:array of String);
+     procedure cm_EditLineEndLf(const Params:array of String);
+     procedure cm_EditDelete(const Params:array of String);
+     procedure cm_EditRedo(const Params:array of String);
+     procedure cm_About(const Params:array of String);
+     procedure cm_EditCopy(const Params:array of String);
+     procedure cm_EditCut(const Params:array of String);
+     procedure cm_EditPaste(const Params:array of String);
+     procedure cm_EditSelectAll(const Params:array of String);
+     procedure cm_FileNew(const Params:array of String);
+     procedure cm_FileOpen(const Params:array of String);
+     procedure cm_EditUndo(const Params:array of String);
+     procedure cm_FileSave(const Params:array of String);
+     procedure cm_FileSaveAs(const Params:array of String);
+     procedure cm_FileExit(const Params:array of String);
+//     procedure cm_Save2(const Params:array of String);
+     procedure cm_ConfHigh(const Params:array of String);
 
-     procedure cm_EditRplc(const Params:array of string);
+     procedure cm_EditRplc(const Params:array of String);
+     procedure cm_Reload(const Params:array of String);
 
   end;
 
@@ -325,7 +331,7 @@ end;
 
 procedure TfrmEditor.actExecute(Sender: TObject);
 var
-  cmd: string;
+  cmd: String;
 begin
   cmd := (Sender as TAction).Name;
   cmd := 'cm_' + Copy(cmd, 4, Length(cmd) - 3);
@@ -335,7 +341,7 @@ end;
 procedure TfrmEditor.EditorMouseWheelDown(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
 var
-   t:integer;
+   t:Integer;
 begin
   if (Shift=[ssCtrl])and(gFonts[dcfEditor].Size>MIN_FONT_SIZE_EDITOR) then
   begin
@@ -352,7 +358,7 @@ end;
 procedure TfrmEditor.EditorMouseWheelUp(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
 var
-   t:integer;
+   t:Integer;
 begin
   if (Shift=[ssCtrl])and(gFonts[dcfEditor].Size<MAX_FONT_SIZE_EDITOR) then
   begin
@@ -372,7 +378,7 @@ var
   Buffer: AnsiString;
   Reader: TFileStreamEx;
   Highlighter: TSynCustomHighlighter;
-begin
+begin 
   Result := False;
   try
     Reader := TFileStreamEx.Create(aFileName, fmOpenRead or fmShareDenyNone);
@@ -416,7 +422,7 @@ begin
 
     // Load text into editor
     Editor.Lines.Text := Buffer;
-
+    
     // Add empty line if needed
     if (Length(Buffer) > 0) and (Buffer[Length(Buffer)] in [#10, #13]) then
       Editor.Lines.Add(EmptyStr);
@@ -541,7 +547,7 @@ end;
 
 
 procedure TfrmEditor.EditorReplaceText(Sender: TObject; const ASearch,
-  AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction );
+  AReplace: String; Line, Column: Integer; var ReplaceAction: TSynReplaceAction );
 begin
 
   if ASearch = AReplace then
@@ -662,7 +668,7 @@ begin
 end;
 
 
-procedure TfrmEditor.cm_FileOpenExecute(const Params:array of string);
+procedure TfrmEditor.cm_FileOpenExecute(const Params:array of String);
 var
   iPageIndex:Integer;
 begin
@@ -861,13 +867,13 @@ begin
 end;
 
 
-procedure TfrmEditor.cm_EditFind(const Params: array of string);
+procedure TfrmEditor.cm_EditFind(const Params: array of String);
 begin
   ShowSearchReplaceDialog(False);
 end;
 
 
-procedure TfrmEditor.cm_EditFindNext(const Params:array of string);
+procedure TfrmEditor.cm_EditFindNext(const Params:array of String);
 begin
   if gFirstTextSearch then
     begin
@@ -881,7 +887,7 @@ begin
     end;
 end;
 
-procedure TfrmEditor.cm_EditFindPrevious(const Params: array of string);
+procedure TfrmEditor.cm_EditFindPrevious(const Params: array of String);
 begin
   if gFirstTextSearch then
     begin
@@ -898,7 +904,7 @@ begin
 end;
 
 
-procedure TfrmEditor.cm_EditGotoLine(const Params:array of string);
+procedure TfrmEditor.cm_EditGotoLine(const Params:array of String);
 var
   P: TPoint;
   Value: String;
@@ -916,61 +922,61 @@ begin
   end;
 end;
 
-procedure TfrmEditor.cm_EditLineEndCr(const Params:array of string);
+procedure TfrmEditor.cm_EditLineEndCr(const Params:array of String);
 begin
   Editor.Lines.TextLineBreakStyle:= tlbsCR;
 end;
 
-procedure TfrmEditor.cm_EditLineEndCrLf(const Params:array of string);
+procedure TfrmEditor.cm_EditLineEndCrLf(const Params:array of String);
 begin
   Editor.Lines.TextLineBreakStyle:= tlbsCRLF;
 end;
 
-procedure TfrmEditor.cm_EditLineEndLf(const Params:array of string);
+procedure TfrmEditor.cm_EditLineEndLf(const Params:array of String);
 begin
   Editor.Lines.TextLineBreakStyle:= tlbsLF;
 end;
 
 
 
-procedure TfrmEditor.cm_About(const Params:array of string);
+procedure TfrmEditor.cm_About(const Params:array of String);
 begin
   msgOK(rsEditAboutText);
 end;
 
-procedure TfrmEditor.cm_EditCopy(const Params:array of string);
+procedure TfrmEditor.cm_EditCopy(const Params:array of String);
 begin
   editor.CopyToClipboard;
   ClipboardSetText(Clipboard.AsText);
 end;
 
-procedure TfrmEditor.cm_EditCut(const Params:array of string);
+procedure TfrmEditor.cm_EditCut(const Params:array of String);
 begin
   Editor.CutToClipboard;
   ClipboardSetText(Clipboard.AsText);
 end;
 
-procedure TfrmEditor.cm_EditPaste(const Params:array of string);
+procedure TfrmEditor.cm_EditPaste(const Params:array of String);
 begin
   editor.PasteFromClipboard;
 end;
 
-procedure TfrmEditor.cm_EditDelete(const Params:array of string);
+procedure TfrmEditor.cm_EditDelete(const Params:array of String);
 begin
   Editor.ClearSelection;
 end;
 
-procedure TfrmEditor.cm_EditRedo(const Params:array of string);
+procedure TfrmEditor.cm_EditRedo(const Params:array of String);
 begin
   editor.Redo;
 end;
 
-procedure TfrmEditor.cm_EditSelectAll(const Params:array of string);
+procedure TfrmEditor.cm_EditSelectAll(const Params:array of String);
 begin
   editor.SelectAll;
 end;
 
-procedure TfrmEditor.cm_FileNew(const Params:array of string);
+procedure TfrmEditor.cm_FileNew(const Params:array of String);
 begin
   inherited;
   FileName := rsMsgNewFile;
@@ -980,7 +986,7 @@ begin
   UpdateStatus;
 end;
 
-procedure TfrmEditor.cm_FileOpen(const Params:array of string);
+procedure TfrmEditor.cm_FileOpen(const Params:array of String);
 begin
   dmComData.OpenDialog.Filter:='*.*';
   if not dmComData.OpenDialog.Execute then Exit;
@@ -989,7 +995,7 @@ begin
 end;
 
 
-procedure TfrmEditor.cm_EditUndo(const Params:array of string);
+procedure TfrmEditor.cm_EditUndo(const Params:array of String);
 begin
   inherited;
   Editor.Undo;
@@ -997,7 +1003,7 @@ begin
 end;
 
 
-procedure TfrmEditor.cm_FileSave(const Params:array of string);
+procedure TfrmEditor.cm_FileSave(const Params:array of String);
 begin
   if bNoname then
     actFileSaveAs.Execute
@@ -1009,7 +1015,7 @@ begin
   end;
 end;
 
-procedure TfrmEditor.cm_FileSaveAs(const Params:array of string);
+procedure TfrmEditor.cm_FileSaveAs(const Params:array of String);
 var
   Highlighter: TSynCustomHighlighter;
 begin
@@ -1028,26 +1034,37 @@ begin
   UpdateHighlighter(Highlighter);
 end;
 
-procedure TfrmEditor.cm_FileExit(const Params:array of string);
+procedure TfrmEditor.cm_FileExit(const Params:array of String);
 begin
   Close;
 end;
 
 {
-procedure TfrmEditor.cm_Save2(const Params:array of string);
+procedure TfrmEditor.cm_Save2(const Params:array of String);
 begin
   inherited;
   actFileSave.Execute;
 end;
 }
-procedure TfrmEditor.cm_ConfHigh(const Params:array of string);
+procedure TfrmEditor.cm_ConfHigh(const Params:array of String);
 begin
   ShowOptions(TfrmOptionsEditor);
 end;
 
-procedure TfrmEditor.cm_EditRplc(const Params: array of string);
+procedure TfrmEditor.cm_EditRplc(const Params: array of String);
 begin
   ShowSearchReplaceDialog(True);
+end;
+
+procedure TfrmEditor.cm_Reload(const Params: array of String);
+begin
+  PrevLineY := Editor.CaretY;
+  PrevTopLine := Editor.TopLine;
+  
+  OpenFile(Filename);
+  
+  Editor.CaretY := PrevLineY;
+  Editor.TopLine := PrevTopLine;
 end;
 
 

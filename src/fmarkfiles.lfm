@@ -1,0 +1,93 @@
+object frmMarkFiles: TfrmMarkFiles
+  Left = 338
+  Height = 84
+  Top = 233
+  Width = 350
+  ActiveControl = cbFilesCount
+  Caption = 'Mark files'
+  ClientHeight = 84
+  ClientWidth = 350
+  LCLVersion = '1.8.0.2'
+  object lblFilesCount: TLabel
+    Left = 6
+    Height = 15
+    Top = 3
+    Width = 338
+    Align = alTop
+    BorderSpacing.Left = 6
+    BorderSpacing.Top = 3
+    BorderSpacing.Right = 6
+    Caption = '&Input files count:'
+    ParentColor = False
+  end
+  object pnlBottom: TPanel
+    Left = 6
+    Height = 30
+    Top = 47
+    Width = 338
+    Align = alTop
+    AutoSize = True
+    BorderSpacing.Left = 6
+    BorderSpacing.Top = 6
+    BorderSpacing.Right = 6
+    BorderSpacing.Bottom = 3
+    BevelOuter = bvNone
+    ClientHeight = 30
+    ClientWidth = 338
+    TabOrder = 0
+    object pnlButtons: TPanel
+      Left = 183
+      Height = 30
+      Top = 0
+      Width = 155
+      Align = alRight
+      AutoSize = True
+      BevelOuter = bvNone
+      ClientHeight = 30
+      ClientWidth = 155
+      TabOrder = 0
+      object btnOK: TBitBtn
+        Left = 0
+        Height = 30
+        Top = 0
+        Width = 66
+        Align = alRight
+        AutoSize = True
+        BorderSpacing.Right = 3
+        BorderSpacing.InnerBorder = 2
+        Caption = '&OK'
+        Constraints.MinWidth = 50
+        Default = True
+        Kind = bkOK
+        ModalResult = 1
+        TabOrder = 0
+      end
+      object btnCancel: TBitBtn
+        Left = 69
+        Height = 30
+        Top = 0
+        Width = 86
+        Align = alRight
+        AutoSize = True
+        BorderSpacing.InnerBorder = 2
+        Cancel = True
+        Caption = '&Cancel'
+        Constraints.MinWidth = 50
+        Kind = bkCancel
+        ModalResult = 2
+        TabOrder = 1
+      end
+    end
+  end
+  object cbFilesCount: TEdit
+    Left = 6
+    Height = 23
+    Top = 18
+    Width = 338
+    Align = alTop
+    BorderSpacing.Left = 6
+    BorderSpacing.Right = 6
+    BorderSpacing.Bottom = 3
+    TabOrder = 1
+  end
+end

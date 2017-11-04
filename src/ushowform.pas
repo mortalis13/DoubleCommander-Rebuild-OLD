@@ -42,6 +42,7 @@ type
 procedure EditDone(WaitData: TEditorWaitData);
 procedure RunExtDiffer(CompareList: TStringList);
 
+procedure ShowEditorByGlob(const sFileName: String; useInternalEditor: boolean);
 procedure ShowEditorByGlob(const sFileName: String);
 procedure ShowEditorByGlob(WaitData: TEditorWaitData); overload;
 
@@ -93,14 +94,14 @@ type
 procedure RunExtTool(const ExtTool: TExternalToolOptions; sFileName: String);
 var
   sCmd: String;
-  sParams:string='';
+  sParams:String='';
 begin
   sCmd := ExtTool.Path;
   sParams := ExtTool.Parameters;
   //If there is %p already configured in the parameter, we assume user configured it the way he wants.
   //This might be in non-common case where there are parameters AFTER the filename to open.
   //If there is not %p, let's do thing like legacy was and let's add the filename received as paramter.
-  if pos('%p',sParams)=0 then
+  if Pos('%p',sParams)=0 then
     sParams := ConcatenateStrWithSpace(sParams,QuoteFilenameIfNecessary(sFileName));
   ProcessExtCommandFork(sCmd, sParams, '', nil, ExtTool.RunInTerminal, ExtTool.KeepTerminalOpen);
 end;
@@ -109,7 +110,7 @@ procedure RunExtDiffer(CompareList: TStringList);
 var
   i : Integer;
   sCmd: String;
-  sParams:string='';
+  sParams:String='';
 begin
   with gExternalTools[etDiffer] do
   begin
@@ -129,9 +130,9 @@ begin
   end;
 end;
 
-procedure ShowEditorByGlob(const sFileName: String);
+procedure ShowEditorByGlob(const sFileName: String; useInternalEditor: boolean);
 begin
-  if gExternalTools[etEditor].Enabled then
+  if gExternalTools[etEditor].Enabled and not useInternalEditor then
   begin
     try
       RunExtTool(gExternalTools[etEditor], sFileName);
@@ -144,6 +145,11 @@ begin
   end
   else
     ShowEditor(sFileName);
+end;
+
+procedure ShowEditorByGlob(const sFileName: String);
+begin
+  ShowEditorByGlob(sFileName, False);
 end;
 
 procedure ShowEditorByGlob(WaitData: TEditorWaitData);

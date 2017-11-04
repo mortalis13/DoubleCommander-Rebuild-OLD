@@ -883,7 +883,7 @@ begin
     if mbSameFile(TargetName, aFile.FullPath) then
     begin
       if (FMode = fsohmCopy) and FAutoRenameItSelf then
-        TargetName := GetNextCopyName(TargetName)
+        TargetName := GetNextCopyName(TargetName, aFile.IsDirectory)
       else
         case AskQuestion(Format(rsMsgCanNotCopyMoveItSelf, [TargetName]), '',
                          [fsourAbort, fsourSkip], fsourAbort, fsourSkip) of
@@ -927,6 +927,12 @@ begin
       end;
     end;
 
+    if gCopyOnlyFolders then
+    begin
+      if aFile.IsDirectory then
+        ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName)
+    end
+    else
     if aFile.IsDirectory then
       ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName)
     else if aFile.IsLink then
@@ -1451,7 +1457,7 @@ begin
             begin
               Result:= fsoofeAutoRenameSource;
               FFileExistsOption:= fsoofeAutoRenameSource;
-              AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName);
+              AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName, aFile.IsDirectory);
             end;
           fsourRenameSource:
             begin
@@ -1483,7 +1489,7 @@ begin
     fsoofeAutoRenameSource:
       begin
         Result:= fsoofeAutoRenameSource;
-        AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName);
+        AbsoluteTargetFileName:= GetNextCopyName(AbsoluteTargetFileName, aFile.IsDirectory);
       end;
 
     else
@@ -1541,7 +1547,7 @@ begin
   Handle := feInvalidHandle;
   FStatistics.CurrentFileDoneBytes:= 0;
   // Flag fmOpenDirect requires: file access sizes must be for a number of bytes
-  // that is an integer multiple of the volume block size, file access buffer
+  // that is an Integer multiple of the volume block size, file access buffer
   // addresses for read and write operations should be physical block size aligned
   BytesToRead:= BLOCK_SIZE;
   Buffer:= GetMem(BytesToRead * 2 - 1);

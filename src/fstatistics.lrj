@@ -1,0 +1,6 @@
+{"version":1,"Strings":[
+{"hash":185533731,"name":"tfrmstatistics.caption","sourcebytes":[83,116,97,116,105,115,116,105,99,115],"value":"Statistics"},
+{"hash":130966580,"name":"tfrmstatistics.lblstatistics.caption","sourcebytes":[68,101,102,97,117,108,116,32,84,101,120,116],"value":"Default Text"},
+{"hash":304761,"name":"tfrmstatistics.btncopy.caption","sourcebytes":[67,111,112,121],"value":"Copy"},
+{"hash":4863637,"name":"tfrmstatistics.btnclose.caption","sourcebytes":[67,108,111,115,101],"value":"Close"}
+]}

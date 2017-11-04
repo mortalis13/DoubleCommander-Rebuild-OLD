@@ -1,7 +1,7 @@
 object frmViewer: TfrmViewer
-  Left = 930
+  Left = 523
   Height = 458
-  Top = 427
+  Top = 163
   Width = 651
   HorzScrollBar.Page = 951
   VertScrollBar.Page = 491
@@ -267,7 +267,7 @@ object frmViewer: TfrmViewer
   OnShow = FormShow
   SessionProperties = 'Height;Width;Left;Top;WindowState'
   ShowInTaskBar = stAlways
-  LCLVersion = '1.6.4.0'
+  LCLVersion = '1.8.0.2'
   object pnlFolder: TPanel
     Left = 179
     Height = 435
@@ -330,6 +330,7 @@ object frmViewer: TfrmViewer
       Height = 435
       Top = 0
       Width = 472
+      Mode = vcmText
       OnPositionChanged = ViewerPositionChanged
       OnMouseUp = ViewerControlMouseUp
       OnMouseWheelUp = ViewerControlMouseWheelUp

@@ -1,7 +1,7 @@
 object frmMain: TfrmMain
-  Left = 485
+  Left = 269
   Height = 370
-  Top = 269
+  Top = 121
   Width = 760
   Caption = 'Double Commander'
   ClientHeight = 370
@@ -20,7 +20,7 @@ object frmMain: TfrmMain
   SessionProperties = 'nbConsole.Height;seLogWindow.Height;TreePanel.Width'
   ShowHint = True
   ShowInTaskBar = stAlways
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.8.0.2'
   Visible = True
   object MainToolBar: TKASToolBar
     AnchorSideTop.Control = Owner
@@ -86,6 +86,7 @@ object frmMain: TfrmMain
       Visible = False
       object pnlDskLeft: TPanel
         AnchorSideLeft.Control = pnlDisk
+        AnchorSideRight.Control = pnlDisk
         AnchorSideTop.Control = pnlDisk
         Left = 0
         Height = 24
@@ -989,7 +990,7 @@ object frmMain: TfrmMain
       Left = 568
       Height = 20
       Top = 0
-      Width = 110
+      Width = 111
       Action = actRunTerm
       Caption = 'Terminal'
       Flat = True
@@ -997,10 +998,10 @@ object frmMain: TfrmMain
       OnMouseWheelUp = btnF3MouseWheelUp
     end
     object btnF10: TSpeedButton
-      Left = 678
+      Left = 679
       Height = 20
       Top = 0
-      Width = 82
+      Width = 81
       Action = actExit
       Caption = 'Exit'
       Flat = True
@@ -1014,6 +1015,12 @@ object frmMain: TfrmMain
     top = 8
     object mnuFiles: TMenuItem
       Caption = '&Files'
+      object mnuNewInstance: TMenuItem
+        Action = actNewInstance
+      end
+      object miLineA1: TMenuItem
+        Caption = '-'
+      end
       object mnuFilesSymLink: TMenuItem
         Action = actSymLink
       end
@@ -1080,6 +1087,9 @@ object frmMain: TfrmMain
       object miLine50: TMenuItem
         Caption = '-'
       end
+      object miRestart: TMenuItem
+        Action = actRestart
+      end
       object miExit: TMenuItem
         Action = actExit
       end
@@ -1106,6 +1116,9 @@ object frmMain: TfrmMain
       end
       object mnuUnmarkCurrentExtension: TMenuItem
         Action = actUnmarkCurrentExtension
+      end
+      object mnuMarkNFiles: TMenuItem
+        Action = actMarkNFiles
       end
       object miLine47: TMenuItem
         Caption = '-'
@@ -1160,6 +1173,9 @@ object frmMain: TfrmMain
       end
       object mnuCmdSyncDirs: TMenuItem
         Action = actSyncDirs
+      end
+      object mnuLoadUninstallerList: TMenuItem
+        Action = actLoadUninstallerList
       end
       object miLine6: TMenuItem
         Caption = '-'
@@ -1291,6 +1307,15 @@ object frmMain: TfrmMain
       object mnuLoadFavoriteTabs: TMenuItem
         Action = actLoadFavoriteTabs
       end
+      object mnuRestoreTabs: TMenuItem
+        Action = actRestoreTabs
+      end
+      object miLineA2: TMenuItem
+        Caption = '-'
+      end
+      object mnuToggleMultilineTabs: TMenuItem
+        Action = actToggleMultilineTabs
+      end
       object miLine39: TMenuItem
         Caption = '-'
       end
@@ -1369,6 +1394,9 @@ object frmMain: TfrmMain
       object mnuFilesShwSysFiles: TMenuItem
         Action = actShowSysFiles
       end
+      object mnuFilesToggleFreeSorting: TMenuItem
+        Action = actToggleFreeSorting
+      end
       object miLine20: TMenuItem
         Caption = '-'
       end
@@ -1401,6 +1429,12 @@ object frmMain: TfrmMain
       end
       object mnuConfigFolderTabs: TMenuItem
         Action = actConfigFolderTabs
+      end
+      object miLineA3: TMenuItem
+        Caption = '-'
+      end
+      object mnuToggleAliasMode: TMenuItem
+        Action = actToggleAliasMode
       end
       object miLine55: TMenuItem
         Caption = '-'
@@ -2658,6 +2692,124 @@ object frmMain: TfrmMain
       Category = 'Navigation'
       Caption = 'Swap focus'
       Hint = 'Switch between left and right file list'
+      OnExecute = actExecute
+    end
+    object actNewInstance: TAction
+      Tag = 16
+      Category = 'Window'
+      Caption = 'New Instance'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actRestart: TAction
+      Tag = 16
+      Category = 'Window'
+      Caption = 'Restart'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actMarkNFiles: TAction
+      Tag = 10
+      Category = 'Mark'
+      Caption = 'Mark N Files'
+      OnExecute = actExecute
+    end
+    object actGoToPastTab: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = 'Go To Past Tab'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actTest: TAction
+      Tag = 7
+      Category = 'Miscellaneous'
+      Caption = 'Test'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actLoadAdbList: TAction
+      Tag = 18
+      Category = 'Tools'
+      Caption = 'Load Adb List'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actLoadUninstallerList: TAction
+      Tag = 18
+      Category = 'Tools'
+      Caption = 'Load Uninstaller List'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actToggleFreeSorting: TAction
+      Tag = 19
+      Category = 'View'
+      Caption = 'Toggle Free Sorting'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actOpenDriveByIndex: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Open Drive by Index'
+      OnExecute = actExecute
+    end
+    object actMaximizePanel: TAction
+      Tag = 16
+      Category = 'Window'
+      Caption = 'Maximize Current Panel'
+      OnExecute = actExecute
+    end
+    object actActivateTabByIndex: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = 'Activate Tab By Index'
+      OnExecute = actExecute
+    end
+    object actChangeColumnWidth: TAction
+      Tag = 19
+      Category = 'View'
+      Caption = 'Change Column Width'
+      OnExecute = actExecute
+    end
+    object actShellExecuteParent: TAction
+      Tag = 4
+      Category = 'File Operations'
+      Caption = 'Open Parent'
+      Hint = 'Open Parent using system associations'
+      OnExecute = actExecute
+    end
+    object actChangeDirToNextParentSibling: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Change Dir to Next Sibling'
+      Hint = 'Change Dir to Next Sibling'
+      OnExecute = actExecute
+    end
+    object actChangeDirToPrevParentSibling: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Change Dir to Previous Sibling'
+      Hint = 'Change Dir to Previous Sibling'
+      OnExecute = actExecute
+    end
+    object actRestoreTabs: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = '&Restore tabs'
+      OnExecute = actExecute
+    end
+    object actToggleMultilineTabs: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = 'Toggle Multiline Tabs'
+      OnExecute = actExecute
+    end
+    object actToggleAliasMode: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Toggle Alias Mode'
       OnExecute = actExecute
     end
   end

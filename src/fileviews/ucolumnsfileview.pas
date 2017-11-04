@@ -137,6 +137,7 @@ type
                                   MousePos: TPoint; var Handled: Boolean);
     procedure dgPanelMouseWheelDown(Sender: TObject; Shift: TShiftState;
                                   MousePos: TPoint; var Handled: Boolean);
+    procedure dgPanelMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure dgPanelSelection(Sender: TObject; aCol, aRow: Integer);
     procedure dgPanelTopLeftChanged(Sender: TObject);
     procedure dgPanelResize(Sender: TObject);
@@ -349,15 +350,14 @@ begin
   if not IsLoadingFileList then
   begin
 
-    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size<MAX_FONT_SIZE_MAIN) then
-    begin
-      gFonts[dcfMain].Size:=gFonts[dcfMain].Size+1;
-      frmMain.FrameLeft.UpdateView;
-      frmMain.FrameRight.UpdateView;
-      Handled:=True;
-      Exit;
-    end;
-
+    // if (Shift=[ssCtrl])and(gFonts[dcfMain].Size<MAX_FONT_SIZE_MAIN) then
+    // begin
+    //   gFonts[dcfMain].Size:=gFonts[dcfMain].Size+1;
+    //   frmMain.FrameLeft.UpdateView;
+    //   frmMain.FrameRight.UpdateView;
+    //   Handled:=True;
+    //   Exit;
+    // end;
 
     case gScrollMode of
       smLineByLine:
@@ -380,14 +380,14 @@ begin
   if not IsLoadingFileList then
   begin
 
-    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size>MIN_FONT_SIZE_MAIN) then
-    begin
-      gFonts[dcfMain].Size:=gFonts[dcfMain].Size-1;
-      frmMain.FrameLeft.UpdateView;
-      frmMain.FrameRight.UpdateView;
-      Handled:=True;
-      Exit;
-    end;
+    // if (Shift=[ssCtrl])and(gFonts[dcfMain].Size>MIN_FONT_SIZE_MAIN) then
+    // begin
+    //   gFonts[dcfMain].Size:=gFonts[dcfMain].Size-1;
+    //   frmMain.FrameLeft.UpdateView;
+    //   frmMain.FrameRight.UpdateView;
+    //   Handled:=True;
+    //   Exit;
+    // end;
 
     case gScrollMode of
       smLineByLine:
@@ -399,6 +399,15 @@ begin
         Handled:= False;
     end;
   end;
+end;
+
+procedure TColumnsFileView.dgPanelMouseWheel(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
+  gActiveVisibleTopRow := dgPanel.GetFullVisibleRows.First;
+  if WheelDelta > 0 then
+    gActiveVisibleTopRow := gActiveVisibleTopRow - gWheelScrollLines
+  else
+    gActiveVisibleTopRow := gActiveVisibleTopRow + gWheelScrollLines;
 end;
 
 procedure TColumnsFileView.dgPanelSelection(Sender: TObject; aCol, aRow: Integer);
@@ -422,6 +431,8 @@ end;
 procedure TColumnsFileView.AfterChangePath;
 begin
   inherited AfterChangePath;
+
+  gActiveVisibleTopRow := 0;
 
   if not IsLoadingFileList then
   begin
@@ -746,6 +757,7 @@ begin
   dgPanel.OnHeaderClick:=@dgPanelHeaderClick;
   dgPanel.OnMouseWheelUp := @dgPanelMouseWheelUp;
   dgPanel.OnMouseWheelDown := @dgPanelMouseWheelDown;
+  dgPanel.OnMouseWheel := @dgPanelMouseWheel;
   dgPanel.OnSelection:= @dgPanelSelection;
 {$IF lcl_fullversion >= 093100}
   dgPanel.OnBeforeSelection:= @dgPanelBeforeSelection;
@@ -816,7 +828,7 @@ end;
 procedure TColumnsFileView.ClearAfterDragDrop;
 begin
   inherited ClearAfterDragDrop;
-
+  
   // reset TCustomGrid state
   dgPanel.FGridState := gsNormal;
 end;
@@ -843,7 +855,12 @@ begin
   else if not SetActiveFileNow(LastActiveFile) then
   // Make sure at least that the previously active file is still visible after displaying file list.
     MakeActiveVisible;
-
+    
+  if gActiveVisibleTopRow > 0 then
+  begin
+    dgPanel.TopRow := gActiveVisibleTopRow;
+  end;
+  
   Notify([fvnVisibleFilePropertiesChanged]);
 
   inherited;
@@ -1444,6 +1461,12 @@ var
                 BackgroundColor := ColumnsSet.GetColumnInactiveMarkColor(ACol);
               TextColor := ColumnsSet.GetColumnBackground(ACol);
             end;
+          
+          if IsCursor then
+          begin
+            BackgroundColor := ColumnsSet.GetColumnSelectionCursorColor(ACol);
+          end;
+          
           //------------------------------------------------------
         end
       else

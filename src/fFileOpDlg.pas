@@ -30,7 +30,7 @@ interface
 uses
   SysUtils, Classes, Controls, Forms, StdCtrls, ComCtrls, Buttons, ExtCtrls,
   KASProgressBar, uOperationsManager, uFileSourceOperation,
-  uFileSourceOperationUI, uOSForms;
+  uFileSourceOperationUI, uOSForms, uFileSourceCopyOperation, uFileSourceMoveOperation, uFileSourceDeleteOperation;
 
 type
 
@@ -60,6 +60,7 @@ type
     btnMinimizeToPanel: TBitBtn;
     lblCurrentOperationText: TLabel;
     lblEstimated: TLabel;
+    lblFilesStat: TLabel;
     lblFileNameFrom: TLabel;
     lblFileNameTo: TLabel;
     lblFrom: TLabel;
@@ -105,6 +106,8 @@ type
     procedure SetProgressBytes(Operation: TFileSourceOperation; ProgressBar: TKASProgressBar; CurrentBytes: Int64; TotalBytes: Int64);
     procedure SetProgressFiles(Operation: TFileSourceOperation; ProgressBar: TKASProgressBar; CurrentFiles: Int64; TotalFiles: Int64);
     procedure SetSpeedAndTime(Operation: TFileSourceOperation; RemainingTime: TDateTime; Speed: String);
+    procedure SetFilesAndSize(Operation: TFileSourceOperation; Statistics: TFileSourceCopyOperationStatistics);
+    procedure SetFilesAndSize(Operation: TFileSourceOperation; Statistics: TFileSourceDeleteOperationStatistics);
     procedure StopOperationOrQueue;
 
     procedure InitializeCopyOperation(OpManItem: TOperationsManagerItem);
@@ -163,9 +166,6 @@ uses
    fViewOperations,
    uFileSourceOperationMisc,
    uFileSourceOperationTypes,
-   uFileSourceCopyOperation,
-   uFileSourceMoveOperation,
-   uFileSourceDeleteOperation,
    uFileSourceWipeOperation,
    uFileSourceSplitOperation,
    uFileSourceCombineOperation,
@@ -288,7 +288,6 @@ begin
   Constraints.MaxWidth:= Screen.Width;
   Constraints.MaxHeight:= Screen.Height;
 end;
-
 function TfrmFileOp.GetFirstOperationHandle(QueueIdentifier: TOperationsManagerQueueIdentifier): TOperationHandle;
 var
   Queue: TOperationsManagerQueue;
@@ -763,6 +762,42 @@ begin
   lblEstimated.Caption := sEstimated;
 end;
 
+procedure TfrmFileOp.SetFilesAndSize(Operation: TFileSourceOperation; Statistics: TFileSourceCopyOperationStatistics);
+var
+  sEstimated: String;
+  TotalFilesStr, DoneFilesStr, DoneBytesStr, TotalBytesStr, CurrentFileTotalBytesStr, CurrentFileDoneBytesStr: String;
+begin
+  with Statistics do
+  begin
+    CurrentFileDoneBytesStr := cnvFormatFileSize(CurrentFileDoneBytes, True);
+    CurrentFileTotalBytesStr := cnvFormatFileSize(CurrentFileTotalBytes, True);
+    DoneFilesStr := IntToStr(DoneFiles);
+    TotalFilesStr := IntToStr(TotalFiles);
+    DoneBytesStr := cnvFormatFileSize(DoneBytes, True);
+    TotalBytesStr := cnvFormatFileSize(TotalBytes, True);
+  end;
+
+  sEstimated := 'Files: ' + DoneFilesStr + '/' + TotalFilesStr + ' :: Current: ' + CurrentFileDoneBytesStr + ' / ' + CurrentFileTotalBytesStr + ' :: Total: ' + DoneBytesStr + ' / ' + TotalBytesStr;
+  lblFilesStat.Caption := sEstimated;
+end;
+
+procedure TfrmFileOp.SetFilesAndSize(Operation: TFileSourceOperation; Statistics: TFileSourceDeleteOperationStatistics);
+var
+  sEstimated: String;
+  TotalFilesStr, DoneFilesStr, DoneBytesStr, TotalBytesStr: String;
+begin
+  with Statistics do
+  begin
+    DoneFilesStr := IntToStr(DoneFiles);
+    TotalFilesStr := IntToStr(TotalFiles);
+    DoneBytesStr := cnvFormatFileSize(DoneBytes, True);
+    TotalBytesStr := cnvFormatFileSize(TotalBytes, True);
+  end;
+
+  sEstimated := 'Files: ' + DoneFilesStr + '/' + TotalFilesStr + ' :: Total: ' + DoneBytesStr + ' / ' + TotalBytesStr;
+  lblFilesStat.Caption := sEstimated;
+end;
+
 procedure TfrmFileOp.InitializeCopyOperation(OpManItem: TOperationsManagerItem);
 begin
   InitializeControls(OpManItem, [fodl_from_lbl, fodl_to_lbl, fodl_current_pb, fodl_total_pb]);
@@ -888,6 +923,8 @@ begin
     SetProgressBytes(Operation, pbTotal, DoneBytes, TotalBytes);
     SetSpeedAndTime(Operation, RemainingTime, cnvFormatFileSize(BytesPerSecond, True) + 'B');
   end;
+  
+  SetFilesAndSize(Operation, CopyStatistics);
 end;
 
 procedure TfrmFileOp.UpdateMoveOperation(Operation: TFileSourceOperation);
@@ -907,6 +944,8 @@ begin
     SetProgressBytes(Operation, pbTotal, DoneBytes, TotalBytes);
     SetSpeedAndTime(Operation, RemainingTime, cnvFormatFileSize(BytesPerSecond, True) + 'B');
   end;
+  
+  SetFilesAndSize(Operation, MoveStatistics);
 end;
 
 procedure TfrmFileOp.UpdateOperation(OpManItem: TOperationsManagerItem);
@@ -1021,6 +1060,8 @@ begin
     SetProgressFiles(Operation, pbTotal, DoneFiles, TotalFiles);
     SetSpeedAndTime(Operation, RemainingTime, cnvFormatFileSize(FilesPerSecond, True));
   end;
+  
+  SetFilesAndSize(Operation, DeleteStatistics);
 end;
 
 procedure TfrmFileOp.UpdateWipeOperation(Operation: TFileSourceOperation);

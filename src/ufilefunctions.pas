@@ -27,7 +27,7 @@ unit uFileFunctions;
 interface
 
 uses
-  Classes, SysUtils, Menus, uFile, uFileProperty, uFileSource;
+  Classes, SysUtils, Menus, uFile, uFileProperty, uFileSource, uDebug, uUninstallerFileSource;
 
 type
   TFileFunction = (fsfName,
@@ -46,11 +46,12 @@ type
                    fsfType,
                    fsfComment,
                    fsfCompressedSize,
+                   fsfFilesCount,
                    fsfInvalid);
 
   TFileFunctions = array of TFileFunction;
 
-  const TFileFunctionStrings: array [TFileFunction] of string
+  const TFileFunctionStrings: array [TFileFunction] of String
             = ('GETFILENAME',
                'GETFILEEXT',
                'GETFILESIZE',
@@ -67,6 +68,7 @@ type
                'GETFILETYPE',
                'GETFILECOMMENT',
                'GETFILECOMPRESSEDSIZE',
+               'GETFILEFILESCOUNT',
                ''                 // fsfInvalid
                );
 
@@ -88,11 +90,12 @@ type
                [fpType],
                [fpComment],
                [fpCompressedSize],
+               [fpFilesCount],
                [] { invalid });
 
-  function FormatFileFunction(FuncS: string; AFile: TFile; const AFileSource: IFileSource; RetrieveProperties: Boolean = False): string;
+  function FormatFileFunction(FuncS: String; AFile: TFile; const AFileSource: IFileSource; RetrieveProperties: Boolean = False): String;
   function FormatFileFunctions(FuncS: String; AFile: TFile; const AFileSource: IFileSource): String;
-  function GetFileFunctionByName(FuncS: string): TFileFunction;
+  function GetFileFunctionByName(FuncS: String): TFileFunction;
 
   procedure FillContentFieldMenu(MenuItem: TMenuItem; OnMenuItemClick: TNotifyEvent);
 
@@ -113,8 +116,8 @@ uses
 //Return type (Script or DC or Plugin etc)
 function GetModType(str: String): String;
 begin
-  if pos('(', Str) > 0 then
-    Result := Copy(Str, 1, pos('(', Str) - 1)
+  if Pos('(', Str) > 0 then
+    Result := Copy(Str, 1, Pos('(', Str) - 1)
   else
     Result := EmptyStr;
 end;
@@ -125,13 +128,13 @@ var
   s: String;
 begin
   s := str;
-  if pos('(', S) > 0 then
-    Delete(s, 1, pos('(', S))
+  if Pos('(', S) > 0 then
+    Delete(s, 1, Pos('(', S))
   else
     Exit(EmptyStr);
 
-  if pos(')', s) > 0 then
-    Result := Copy(s, 1, pos(')', s) - 1);
+  if Pos(')', s) > 0 then
+    Result := Copy(s, 1, Pos(')', s) - 1);
 end;
 
 //Return function name (DCFunction,PluginFunction etc)
@@ -140,13 +143,13 @@ var
   s: String;
 begin
   s := str;
-  if pos('.', S) > 0 then
-    Delete(s, 1, pos('.', S))
+  if Pos('.', S) > 0 then
+    Delete(s, 1, Pos('.', S))
   else
     Exit(EmptyStr);
 
-  if pos('{', S) > 0 then
-    Result := Copy(s, 1, pos('{', S) - 1);
+  if Pos('{', S) > 0 then
+    Result := Copy(s, 1, Pos('{', S) - 1);
 end;
 
 // Return function parameters
@@ -156,11 +159,11 @@ var
   S: String;
 begin
   S := str;
-  I := pos('{', S);
+  I := Pos('{', S);
   if I < 0 then
     Exit(EmptyStr);
   Delete(S, 1, I);
-  I := pos('}', S);
+  I := Pos('}', S);
   if I < 0 then
     Exit(EmptyStr);
   Result := Copy(S, 1, I - 1);
@@ -212,10 +215,14 @@ begin
 
       fsfSize:
         begin
-          if (AFile.IsDirectory or AFile.IsLinkToDirectory) and
-            ((not (fpSize in AFile.SupportedProperties)) or (AFile.Size = 0))
+          if (AFile.IsDirectory or AFile.IsLinkToDirectory) and ((not (fpSize in AFile.SupportedProperties)) or (AFile.Size = 0))
           then
-            Result := '<DIR>'
+          begin
+            if AFileSource is TUninstallerFileSource then
+              Result := ''
+            else
+              Result := '<DIR>'
+          end
           else if fpSize in AFile.SupportedProperties then
             Result := AFile.Properties[fpSize].Format(DefaultFilePropertyFormatter);
         end;
@@ -284,7 +291,21 @@ begin
           then
             Result := '<DIR>'
           else if fpCompressedSize in AFile.SupportedProperties then
+          begin
             Result := AFile.Properties[fpCompressedSize].Format(DefaultFilePropertyFormatter);
+          end;
+        end;
+        
+      fsfFilesCount:
+        begin
+          if (AFile.IsDirectory or AFile.IsLinkToDirectory) and (not (fpFilesCount in AFile.SupportedProperties)) then
+          begin
+            Result := '<STAT>'
+          end
+          else if fpFilesCount in AFile.SupportedProperties then
+          begin
+            Result := AFile.FilesCount;
+          end
         end;
     end;
   end
@@ -436,6 +457,7 @@ begin
     Add(TFileFunctionStrings[fsfType] + '=' + rsFuncType);
     Add(TFileFunctionStrings[fsfComment] + '=' + rsFuncComment);
     Add(TFileFunctionStrings[fsfCompressedSize] + '=' + rsFuncCompressedSize);
+    Add(TFileFunctionStrings[fsfFilesCount] + '=' + 'Total files');
   end;
 end;
 

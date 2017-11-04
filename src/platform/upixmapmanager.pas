@@ -278,6 +278,7 @@ type
     }
     function GetIconByFile(AFile: TFile; DirectAccess: Boolean; LoadIcon: Boolean;
                            IconsMode: TShowIconsMode; GetIconWithLink: Boolean): PtrInt;
+    function GetUninstallerIcon(AFile: TFile): PtrInt;
     {$IF DEFINED(MSWINDOWS) OR DEFINED(RabbitVCS)}
     {en
        Retrieves overlay icon index for a file.
@@ -303,6 +304,8 @@ type
        For example default folder icon for folder, default executable icon for *.exe, etc.
     }
     function GetDefaultIcon(AFile: TFile): PtrInt;
+    
+    function GetDriveIconIndex(Drive : PDrive; IconSize : Integer; clBackColor : TColor) : PtrInt;
   end;
 
 var
@@ -707,7 +710,7 @@ end;
 
 procedure TPixMapManager.CreateIconTheme;
 var
-  DirList: array of string;
+  DirList: array of String;
 begin
 {$IF DEFINED(UNIX) AND NOT DEFINED(DARWIN)}
   {$IFDEF LCLGTK2}
@@ -1324,7 +1327,7 @@ var
   slPixmapList: TStringListEx;
   s:String;
   sExt, sPixMap:String;
-  iekv:integer;
+  iekv:Integer;
   iPixMap:PtrInt;
   I : Integer;
   iPixmapSize: Integer;
@@ -1390,7 +1393,7 @@ begin
   FiArcIconID := -1;
   if (gShowIcons > sim_standart) and (not (cimArchive in gCustomIcons)) then
     FiArcIconID := GetSystemArchiveIcon;
-  if FiArcIconID = -1 then
+  // if FiArcIconID = -1 then       // force internal archive icon
   {$ENDIF}
   FiArcIconID := CheckAddThemePixmap('package-x-generic');
   {$IFDEF MSWINDOWS}
@@ -1880,6 +1883,20 @@ begin
   end;
 end;
 
+function TPixMapManager.GetUninstallerIcon(AFile: TFile): PtrInt;
+var
+  Ext: String;
+  sFileName: String;
+begin
+  Result := -1;
+  if not Assigned(AFile) then Exit;
+
+  with AFile do
+  begin
+    Exit(FiExeIconID);
+  end;
+end;
+
 {$IF DEFINED(MSWINDOWS)}
 function TPixMapManager.GetIconOverlayByFile(AFile: TFile; DirectAccess: Boolean): PtrInt;
 begin
@@ -2103,6 +2120,80 @@ begin
     Result := FiExeIconID
   else
     Result := FiDefaultIconID;
+end;
+
+function TPixMapManager.GetDriveIconIndex(Drive : PDrive; IconSize : Integer; clBackColor : TColor) : PtrInt;
+{$IFDEF MSWINDOWS}
+var
+  SFI: TSHFileInfoW;
+  Icon: TIcon = nil;
+  uFlags: UINT;
+  iIconSmall,
+  iIconLarge: Integer;
+{$ENDIF}
+  tmpBitmap: Graphics.TBitmap;
+begin
+  if Drive^.DriveType = dtVirtual then
+  begin
+    tmpBitmap := GetVirtualDriveIcon(IconSize, clBackColor);
+    Result := FPixmapList.Add(tmpBitmap);
+    Exit;
+  end;
+  Result := -1;
+{$IFDEF MSWINDOWS}
+  if GetDeviceCaps(Application.MainForm.Canvas.Handle, BITSPIXEL) < 15 then Exit;
+  // if (not gCustomDriveIcons) and (GetDeviceCaps(Application.MainForm.Canvas.Handle, BITSPIXEL) > 16) then
+  if (not (cimDrive in gCustomIcons)) and (GetDeviceCaps(Application.MainForm.Canvas.Handle, BITSPIXEL) > 16) then
+    begin
+      SFI.hIcon := 0;
+      tmpBitmap := Graphics.TBitMap.Create;
+      iIconSmall:= GetSystemMetrics(SM_CXSMICON);
+      iIconLarge:= GetSystemMetrics(SM_CXICON);
+
+      if (IconSize = 16) and (iIconSmall = 16) then // standart small icon
+        uFlags := SHGFI_SMALLICON // Use small icon
+      else if (IconSize = 32) and (iIconLarge = 32) then // standart large icon
+        uFlags := SHGFI_LARGEICON // Use large icon
+      else if IconSize > iIconSmall then
+        uFlags := SHGFI_LARGEICON // Use large icon
+      else
+        uFlags := SHGFI_SMALLICON; // Use small icon
+
+      if (SHGetFileInfoW(PWideChar(UTF8Decode(Drive^.Path)), 0, SFI,
+                         SizeOf(SFI), uFlags or SHGFI_ICON) <> 0) and
+         (SFI.hIcon <> 0) then
+        begin
+          if (IconSize = iIconSmall) or (IconSize = iIconLarge) then // standart icon size
+            try
+              Icon := CreateIconFromHandle(SFI.hIcon);
+              tmpBitmap.Assign(Icon);
+              tmpBitmap.Masked := True; // Need to explicitly set Masked=True, Lazarus issue #0019747
+              
+              Result := FPixmapList.Add(tmpBitmap);
+            finally
+              FreeThenNil(Icon);
+              DestroyIcon(SFI.hIcon);
+            end
+          else // non standart icon size
+            try
+              Icon := CreateIconFromHandle(SFI.hIcon);
+              tmpBitmap.Assign(Icon);
+              tmpBitmap.Masked := True; // Need to explicitly set Masked=True, Lazarus issue #0019747
+              tmpBitmap := StretchBitmap(tmpBitmap, IconSize, clBackColor, True);
+              
+              Result := FPixmapList.Add(tmpBitmap);
+            finally
+              FreeThenNil(Icon);
+              DestroyIcon(SFI.hIcon);
+            end
+        end;
+    end // not gCustomDriveIcons
+  else
+{$ENDIF}
+    begin
+      tmpBitmap := GetBuiltInDriveIcon(Drive, IconSize, clBackColor);
+      Result := FPixmapList.Add(tmpBitmap);
+    end;
 end;
 
 procedure LoadPixMapManager;

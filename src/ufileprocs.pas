@@ -28,7 +28,7 @@ uses
    @returns(@true if DirectoryName already existed or was created succesfully.
    If it failed to create any of the parts, @false is returned.)
 }
-function mbForceDirectory(DirectoryName: string): boolean;
+function mbForceDirectory(DirectoryName: String): boolean;
 {en
    Copies a file.
    @param(sSrc String expression that specifies the name of the file to be copied)
@@ -42,19 +42,19 @@ function CopyFile(const sSrc, sDst: String; bAppend: Boolean = False): Boolean;
 }
 procedure DelTree(const sFolderName: String);
 {en
-   Read string from a text file into variable and goto next line
+   Read String from a text file into variable and goto next line
    @param(hFile Handle of file)
-   @param(S Stores the result string)
+   @param(S Stores the result String)
 }
 function FileReadLn(hFile: THandle; out S: String): Boolean;
 {en
-   Write string to a text file and append newline
+   Write String to a text file and append newline
    @param(hFile Handle of file)
    @param(S String for writing)
 }
 procedure FileWriteLn(hFile: Integer; S: String);
 
-function GetNextCopyName(FileName: String): String;
+function GetNextCopyName(FileName: String; aFolder: Boolean): String;
 
 function mbReadFileToString(const FileName: String): String;
 
@@ -212,10 +212,10 @@ begin
   FileWrite(hFile, PChar(S)[0], Length(S));
 end;
 
-function mbForceDirectory(DirectoryName: string): boolean;
+function mbForceDirectory(DirectoryName: String): boolean;
 var
-  i: integer;
-  sDir: string;
+  i: Integer;
+  sDir: String;
 begin
   if DirectoryName = '' then Exit;
   DirectoryName := IncludeTrailingPathDelimiter(DirectoryName);
@@ -247,28 +247,36 @@ begin
   Result := True;
 end;
 
-function GetNextCopyName(FileName: String): String;
+function GetNextCopyName(FileName: String; aFolder: Boolean): String;
 var
   CopyNumber: Int64 = 1;
-  sFilePath,
-  sFileName, SuffixStr: String;
+  sFilePath, sFileName, SuffixStr, NewFileName: String;
 begin
   sFilePath:= ExtractFilePath(FileName);
   sFileName:= ExtractFileName(FileName);
   SuffixStr:= '';
+  
   repeat
     case gTypeOfDuplicatedRename of
       drLegacyWithCopy: Result := sFilePath + Format(rsCopyNameTemplate, [CopyNumber, sFileName]);
-      drLikeWindows7, drLikeTC: Result :=sFilePath + RemoveFileExt(sFileName) + SuffixStr + ExtractFileExt(sFileName);
+      drLikeWindows7, drLikeTC, drDash:
+      begin
+        if aFolder then
+          NewFileName := sFileName + SuffixStr
+        else
+          NewFileName := RemoveFileExt(sFileName) + SuffixStr + ExtractFileExt(sFileName);
+          
+        Result := sFilePath + NewFileName;
+      end;
     end;
 
     Inc(CopyNumber);
     case gTypeOfDuplicatedRename of
       drLikeWindows7: SuffixStr:=' ('+IntToStr(CopyNumber)+')';
       drLikeTC: SuffixStr:='('+IntToStr(CopyNumber)+')';
+      drDash: SuffixStr:='-'+IntToStr(CopyNumber);
     end;
-
-    until not mbFileSystemEntryExists(Result);
+  until not mbFileSystemEntryExists(Result);
 end;
 
 function mbReadFileToString(const FileName: String): String;

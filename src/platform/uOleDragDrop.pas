@@ -1143,11 +1143,12 @@ begin
             case gTypeOfDuplicatedRename of
               drLikeWindows7: SuffixStr:=' ('+IntToStr(CopyNumber)+')';
               drLikeTC: SuffixStr:='('+IntToStr(CopyNumber)+')';
+              drDash: SuffixStr:='-'+IntToStr(CopyNumber);
             end;
 
             case gTypeOfDuplicatedRename of
               drLegacyWithCopy: DroppedTextFilename := GetTempFolderDeletableAtTheEnd+SysUtils.Format(rsCopyNameTemplate, [CopyNumber, ActualFilename]);
-              drLikeWindows7, drLikeTC: DroppedTextFilename := GetTempFolderDeletableAtTheEnd+RemoveFileExt(ActualFilename) + SuffixStr + ExtractFileExt(ActualFilename);
+              drLikeWindows7, drLikeTC, drDash: DroppedTextFilename := GetTempFolderDeletableAtTheEnd+RemoveFileExt(ActualFilename) + SuffixStr + ExtractFileExt(ActualFilename);
             end;
             Inc(CopyNumber);
           until result.IndexOf(DroppedTextFilename) = -1;

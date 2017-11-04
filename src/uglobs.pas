@@ -110,11 +110,11 @@ type
   TKeyTypingAction = (ktaNone, ktaCommandLine, ktaQuickSearch, ktaQuickFilter);
 
   tDesiredDropTextFormat=record
-    Name:string;
+    Name:String;
     DesireLevel:longint;
   end;
 
-  tDuplicatedRename = (drLegacyWithCopy, drLikeWindows7, drLikeTC);
+  tDuplicatedRename = (drLegacyWithCopy, drLikeWindows7, drLikeTC, drDash);
 
   TBriefViewMode = (bvmFixedWidth, bvmFixedCount, bvmAutoSize);
 
@@ -184,6 +184,16 @@ const
 
 
 var
+  gTempColWidth: Integer;
+  gTempSplitterPos: Double;
+  gPrevPageIndex: Integer;
+  gActiveVisibleTopRow: Integer;
+  gCopyOnlyFolders: Boolean = False;
+  gFreeSorting: Boolean = False;
+  gLoadTabsFromFile: Boolean = False;
+  gTabsFilePath: String;
+  gUseAliasCommands: Boolean = False;
+  
   { For localization }
   gPOFileName,
   gHelpLang: String;
@@ -306,8 +316,8 @@ var
   gbMarkMaskIgnoreAccents: boolean;
   gMarkMaskFilterWindows: boolean;
   gMarkShowWantedAttribute: boolean;
-  gMarkDefaultWantedAttribute: string;
-  gMarkLastWantedAttribute: string;
+  gMarkDefaultWantedAttribute: String;
+  gMarkLastWantedAttribute: String;
 
   { Favorite Tabs }
   gFavoriteTabsUseRestoreExtraOptions: boolean;
@@ -348,13 +358,14 @@ var
   gBackColor2, //Background color 2
   gMarkColor,  // Mark color
   gCursorColor, //Cursor color
+  gSelectionCursorColor, //Cursor color
   gCursorText,  //text color under cursor
   gInactiveCursorColor, //Inactive cursor color
   gInactiveMarkColor: TColor; //Inactive Mark color
   gUseInvertedSelection: Boolean;
   gUseInactiveSelColor: Boolean;
   gAllowOverColor: Boolean;
-  gBorderFrameWidth :integer;
+  gBorderFrameWidth :Integer;
 
   gInactivePanelBrightness: Integer; // 0 .. 100 (black .. full color)
   gIndUseGradient : Boolean; // use gradient on drive label
@@ -461,7 +472,7 @@ var
 
   {HotKey Manager}
   HotMan:THotKeyManager;
-  gNameSCFile: string;
+  gNameSCFile: String;
   gHotKeySortOrder: THotKeySortOrder;
   gUseEnterToCloseHotKeyEditor: boolean;
   
@@ -521,11 +532,11 @@ var
   gSyncDirsShowFilterCopyLeft,
   gSyncDirsShowFilterDuplicates,
   gSyncDirsShowFilterSingles: Boolean;
-  gSyncDirsFileMask: string;
+  gSyncDirsFileMask: String;
 
   { Internal Associations}
   gUseShellForFileOperations: Boolean;
-  gFileAssociationLastCustomAction: string;
+  gFileAssociationLastCustomAction: String;
   gOfferToAddToFileAssociations: boolean;
   gExtendedContextMenu: boolean;
   gOpenExecuteViaShell: boolean;
@@ -565,9 +576,9 @@ var
 
   { TotalCommander Import/Export }
   {$IFDEF MSWINDOWS}
-  gTotalCommanderExecutableFilename:string;
-  gTotalCommanderConfigFilename:string;
-  gTotalCommanderToolbarPath:string;
+  gTotalCommanderExecutableFilename:String;
+  gTotalCommanderConfigFilename:String;
+  gTotalCommanderToolbarPath:String;
   {$ENDIF}
 
 function LoadConfig: Boolean;
@@ -587,7 +598,7 @@ procedure FontOptionsToFont(Options: TDCFontOptions; Font: TFont);
 
 function GetKeyTypingAction(ShiftStateEx: TShiftState): TKeyTypingAction;
 function IsFileSystemWatcher: Boolean;
-function GetValidDateTimeFormat(const aFormat, ADefaultFormat: string): string;
+function GetValidDateTimeFormat(const aFormat, ADefaultFormat: String): String;
 
 procedure RegisterInitialization(InitProc: TProcedure);
 
@@ -818,7 +829,7 @@ begin
   end;
 end;
 
-function GetValidDateTimeFormat(const aFormat, ADefaultFormat: string): string;
+function GetValidDateTimeFormat(const aFormat, ADefaultFormat: String): String;
 begin
   try
     SysUtils.FormatDateTime(aFormat, Now);
@@ -866,7 +877,7 @@ begin
       AddIfNotExists(['F8','','',
                       'Shift+F8','','trashcan=reversesetting',''], 'cm_Delete');
       AddIfNotExists(['F9'],[],'cm_RunTerm');
-      AddIfNotExists(['Ctrl+7'],[],'cm_ShowCmdLineHistory');
+      // AddIfNotExists(['Ctrl+7'],[],'cm_ShowCmdLineHistory');
       AddIfNotExists(['Ctrl+Down'],'cm_ShowCmdLineHistory',['Ctrl+7'],[]); //Historic backward support reason...
       AddIfNotExists(['Ctrl+B'],[],'cm_FlatView');
       AddIfNotExists(['Ctrl+D'],[],'cm_DirHotList');
@@ -932,6 +943,34 @@ begin
         if Assigned(HMHotKey) and HMHotKey.SameShortcuts(['Ctrl+Z']) then
           Remove(HMHotKey);
       end;
+      
+      AddIfNotExists([
+        'Ctrl+1','','1','',
+        'Ctrl+2','','2','',
+        'Ctrl+3','','3','',
+        'Ctrl+4','','4','',
+        'Ctrl+5','','5','',
+        'Ctrl+6','','6','',
+        'Ctrl+7','','7','',
+        'Ctrl+8','','8','',
+        'Ctrl+9','','9','',
+        'Ctrl+`','','-1',''],
+      'cm_ActivateTabByIndex');
+      
+      AddIfNotExists([
+        'Alt+1','','1','',
+        'Alt+2','','2','',
+        'Alt+3','','3','',
+        'Alt+4','','4','',
+        'Alt+5','','5','',
+        'Alt+6','','6','',
+        'Alt+7','','7','',
+        'Alt+8','','8','',
+        'Alt+9','','9',''],
+      'cm_OpenDriveByIndex');
+      
+      AddIfNotExists(['F11','','colwidth=2,200',''],'cm_MaximizePanel');
+      AddIfNotExists(['Ctrl+Shift+B'],[],'cm_ShellExecuteParent');
     end;
 
   HMControl := HMForm.Controls.FindOrCreate('Files Panel');
@@ -1041,7 +1080,8 @@ begin
   with HMForm.Hotkeys do
     begin
       AddIfNotExists(['F7'],[],'cm_EditFind');
-      AddIfNotExists(['F2'],[],'cm_FileSave');
+      // AddIfNotExists(['F2'],[],'cm_FileSave');
+      AddIfNotExists(['F2'],[],'cm_Reload');
       AddIfNotExists(['F3'],[],'cm_EditFindNext');
       AddIfNotExists(['Shift+F3'],[],'cm_EditFindPrevious');
       AddIfNotExists(['Esc'],[],'cm_FileExit');
@@ -1259,9 +1299,9 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-function GetPathNameIfItMatch(SpecialConstant:integer; FilenameSearched:string):string;
+function GetPathNameIfItMatch(SpecialConstant:Integer; FilenameSearched:String):String;
 var
-  MaybePath:string;
+  MaybePath:String;
   FilePath: array [0..Pred(MAX_PATH)] of WideChar = '';
 begin
   result:='';
@@ -1291,7 +1331,7 @@ procedure SetDefaultConfigGlobs;
   end;
 
 var
-  iIndexContextMode:integer;
+  iIndexContextMode:Integer;
 
 begin
   { Language page }
@@ -1416,6 +1456,7 @@ begin
   gBackColor2 := clWindow;
   gMarkColor := clRed;
   gCursorColor := clHighlight;
+  gSelectionCursorColor := clBlack;
   gCursorText := clHighlightText;
   gInactiveCursorColor := clInactiveCaption;
   gInactiveMarkColor := clMaroon;
@@ -1462,6 +1503,7 @@ begin
   gKeyTyping[ktmNone]    := ktaQuickSearch;
   gKeyTyping[ktmAlt]     := ktaNone;
   gKeyTyping[ktmCtrlAlt] := ktaQuickFilter;
+  // gKeyTyping[ktmCtrlAlt] := ktaQuickSearch;
 
   { File operations page }
   gCopyBlockSize := 524288;
@@ -2218,6 +2260,7 @@ begin
       gBackColor2 := GetValue(Node, 'Background2', gBackColor2);
       gMarkColor := GetValue(Node, 'Mark', gMarkColor);
       gCursorColor := GetValue(Node, 'Cursor', gCursorColor);
+      gSelectionCursorColor := GetValue(Node, 'SelectionCursor', gSelectionCursorColor);
       gCursorText := GetValue(Node, 'CursorText', gCursorText);
       gInactiveCursorColor := GetValue(Node, 'InactiveCursor', gInactiveCursorColor);
       gInactiveMarkColor := GetValue(Node, 'InactiveMark', gInactiveMarkColor);
@@ -2347,7 +2390,7 @@ begin
       gUseMmapInSearch := GetValue(Node, 'UseMmapInSearch', gUseMmapInSearch);
       gPartialNameSearch := GetValue(Node, 'PartialNameSearch', gPartialNameSearch);
       gInitiallyClearFileMask := GetValue(Node, 'InitiallyClearFileMask', gInitiallyClearFileMask);
-      gNewSearchClearFiltersAction := TFiltersOnNewSearch(GetValue(Node, 'NewSearchClearFiltersAction', integer(gNewSearchClearFiltersAction)));
+      gNewSearchClearFiltersAction := TFiltersOnNewSearch(GetValue(Node, 'NewSearchClearFiltersAction', Integer(gNewSearchClearFiltersAction)));
       gShowMenuBarInFindFiles := GetValue(Node, 'ShowMenuBarInFindFiles', gShowMenuBarInFindFiles);
       gWipePassNumber := GetValue(Node, 'WipePassNumber', gWipePassNumber);
       gDropReadOnlyFlag := GetValue(Node, 'DropReadOnlyFlag', gDropReadOnlyFlag);
@@ -2538,6 +2581,14 @@ begin
 
     { Directories HotList }
     gDirectoryHotlist.LoadFromXML(gConfig, Root);
+    
+    { Extended page }
+    Node := Root.FindNode('Extended');
+    if Assigned(Node) then
+    begin
+      gFreeSorting:= GetValue(Node, 'FreeSorting', gFreeSorting);
+      gUseAliasCommands:= GetValue(Node, 'UseAliasCommands', gUseAliasCommands);
+    end;
 
     { Viewer }
     Node := Root.FindNode('Viewer');
@@ -2733,7 +2784,7 @@ procedure SaveXmlConfig;
 var
   Root, Node, SubNode: TXmlNode;
   KeyTypingModifier: TKeyTypingModifier;
-  iIndexContextMode: integer;
+  iIndexContextMode: Integer;
 begin
   with gConfig do
   begin
@@ -2821,6 +2872,7 @@ begin
     SetValue(Node, 'Background', gBackColor);
     SetValue(Node, 'Background2', gBackColor2);
     SetValue(Node, 'Cursor', gCursorColor);
+    SetValue(Node, 'SelectionCursor', gSelectionCursorColor);
     SetValue(Node, 'CursorText', gCursorText);
     SetValue(Node, 'Mark', gMarkColor);
     SetValue(Node, 'InactiveCursor', gInactiveCursorColor);
@@ -2908,7 +2960,7 @@ begin
     SetValue(Node, 'UseMmapInSearch', gUseMmapInSearch);
     SetValue(Node, 'PartialNameSearch', gPartialNameSearch);
     SetValue(Node, 'InitiallyClearFileMask', gInitiallyClearFileMask);
-    SetValue(Node, 'NewSearchClearFiltersAction', integer(gNewSearchClearFiltersAction));
+    SetValue(Node, 'NewSearchClearFiltersAction', Integer(gNewSearchClearFiltersAction));
     SetValue(Node, 'ShowMenuBarInFindFiles', gShowMenuBarInFindFiles);
     SetValue(Node, 'WipePassNumber', gWipePassNumber);
     SetValue(Node, 'DropReadOnlyFlag', gDropReadOnlyFlag);
@@ -3034,6 +3086,12 @@ begin
 
     { Directories HotList }
     gDirectoryHotlist.SaveToXml(gConfig, Root, TRUE);
+    
+    { Extended page }
+    Node := FindNode(Root, 'Extended', True);
+    ClearNode(Node);
+    SetValue(Node, 'FreeSorting', gFreeSorting);
+    SetValue(Node, 'UseAliasCommands', gUseAliasCommands);
 
     { Viewer }
     Node := FindNode(Root, 'Viewer',True);

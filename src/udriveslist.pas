@@ -32,7 +32,7 @@ interface
 
 uses
   Classes, SysUtils, Grids, Controls, LCLType,
-  uFilePanelSelect, uDrive;
+  uFilePanelSelect, uDrive, uDebug;
 
 type
   TDriveSelected = procedure (Sender: TObject; ADriveIndex: Integer;
@@ -43,6 +43,7 @@ type
   TDrivesListPopup = class(TStringGrid)
   private
     FDriveIconSize: Integer;
+    CurrentDriveIndex: Integer;
     FDrivesList: TDrivesList;
     FPanel: TFilePanelSelect;
     FShortCuts: array of TUTF8Char;
@@ -114,8 +115,7 @@ type
        @param(ASelectedDriveIndex
               Which drive to pre-select (0..DrivesCount-1).)
     }
-    procedure Show(AtPoint: TPoint; APanel: TFilePanelSelect;
-                   ASelectedDriveIndex: Integer = -1);
+    procedure Show(AtPoint: TPoint; APanel: TFilePanelSelect; ASelectedDriveLabel: String);
 
     procedure SetFocus; override;
 
@@ -210,8 +210,10 @@ begin
   Columns.Items[4].Visible := dlbShowFreeSpace in gDrivesListButtonOptions;
 end;
 
-procedure TDrivesListPopup.Show(AtPoint: TPoint; APanel: TFilePanelSelect;
-                                ASelectedDriveIndex: Integer = -1);
+procedure TDrivesListPopup.Show(AtPoint: TPoint; APanel: TFilePanelSelect; ASelectedDriveLabel: String);
+var
+  ASelectedDriveIndex, I: Integer;
+  Drive: PDrive;
 begin
   UpdateCells;
   UpdateSize;
@@ -221,7 +223,18 @@ begin
   Left := AtPoint.X;
   Top := AtPoint.Y;
   Visible := True;
-
+  
+  for I := 0 to FDrivesList.Count - 1 do
+  begin
+    Drive := FDrivesList[I];
+    if ASelectedDriveLabel + '\' = Drive^.Path then
+    begin
+      ASelectedDriveIndex := I;
+      CurrentDriveIndex := ASelectedDriveIndex+1;
+      break;
+    end;
+  end;
+  
   ASelectedDriveIndex := LowestRow + ASelectedDriveIndex;
   if (ASelectedDriveIndex >= LowestRow) and (ASelectedDriveIndex <= HighestRow) then
     Row := ASelectedDriveIndex
@@ -260,6 +273,11 @@ begin
     ts.Alignment := taLeftJustify;
     Canvas.TextStyle := ts;
   end;
+  
+  if aRow = CurrentDriveIndex then
+    Canvas.Font.Style := [fsBold]
+  else
+    Canvas.Font.Style := [];
 end;
 
 function TDrivesListPopup.GetDriveIndexByRow(ARow: Integer): Integer;

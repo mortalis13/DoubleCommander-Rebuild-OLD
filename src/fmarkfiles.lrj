@@ -1,0 +1,6 @@
+{"version":1,"Strings":[
+{"hash":225040963,"name":"tfrmmarkfiles.caption","sourcebytes":[77,97,114,107,32,102,105,108,101,115],"value":"Mark files"},
+{"hash":191755626,"name":"tfrmmarkfiles.lblfilescount.caption","sourcebytes":[38,73,110,112,117,116,32,102,105,108,101,115,32,99,111,117,110,116,58],"value":"&Input files count:"},
+{"hash":11067,"name":"tfrmmarkfiles.btnok.caption","sourcebytes":[38,79,75],"value":"&OK"},
+{"hash":177752476,"name":"tfrmmarkfiles.btncancel.caption","sourcebytes":[38,67,97,110,99,101,108],"value":"&Cancel"}
+]}

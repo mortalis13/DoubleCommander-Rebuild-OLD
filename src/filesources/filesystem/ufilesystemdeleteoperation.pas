@@ -11,7 +11,7 @@ uses
   uFileSourceOperationOptions,
   uFileSourceOperationUI,
   uFile,
-  uDescr, uGlobs, uLog;
+  uDescr, uGlobs, uLog, udebug;
 
 type
 
@@ -30,6 +30,8 @@ type
     FRecycle: Boolean;
     FDeleteReadOnly,
     FDeleteDirectly: TFileSourceOperationOptionGeneral;
+    
+    AfterDeleteProcSelf: TAfterDeleteProc;
 
     procedure DeleteSubDirectory(const aFile: TFile);
 
@@ -40,8 +42,8 @@ type
     procedure LogMessage(sMessage: String; logOptions: TLogOptions; logMsgType: TLogMsgType);
 
   public
-    constructor Create(aTargetFileSource: IFileSource;
-                       var theFilesToDelete: TFiles); override;
+    constructor Create(aTargetFileSource: IFileSource; var theFilesToDelete: TFiles); override;
+    constructor Create(aTargetFileSource: IFileSource; var theFilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc);
 
     destructor Destroy; override;
 
@@ -61,13 +63,18 @@ implementation
 uses
   DCOSUtils, uLng, uFileSystemUtil, uTrash, uAdministrator, uOSUtils;
 
-constructor TFileSystemDeleteOperation.Create(aTargetFileSource: IFileSource;
-                                              var theFilesToDelete: TFiles);
+constructor TFileSystemDeleteOperation.Create(aTargetFileSource: IFileSource; var theFilesToDelete: TFiles);
 begin
+  Create(aTargetFileSource, theFilesToDelete, nil);
+end;
+
+constructor TFileSystemDeleteOperation.Create(aTargetFileSource: IFileSource; var theFilesToDelete: TFiles; AfterDeleteProc: TAfterDeleteProc);
+begin
+  AfterDeleteProcSelf := AfterDeleteProc;
   FSymLinkOption := fsooslNone;
   FSkipErrors := gSkipFileOpError;
   FRecycle := False;
-  FDeleteReadOnly := fsoogNone;
+  FDeleteReadOnly := fsoogYes;
   FDeleteDirectly:= fsoogNone;
 
   if gProcessComments then
@@ -121,6 +128,8 @@ end;
 
 procedure TFileSystemDeleteOperation.Finalize;
 begin
+  if Assigned(AfterDeleteProcSelf) then
+    AfterDeleteProcSelf;
 end;
 
 procedure TFileSystemDeleteOperation.DeleteSubDirectory(const aFile: TFile);

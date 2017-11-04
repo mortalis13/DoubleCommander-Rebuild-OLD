@@ -176,7 +176,8 @@ uses
   fOptionsToolTips,
   fOptionsFileAssoc,
   fOptionsFileAssocExtra,
-  fOptionsDirectoryHotlist;
+  fOptionsDirectoryHotlist,
+  fOptionsExtended;
 
 { TOptionsEditorRec }
 
@@ -393,6 +394,7 @@ begin
   FileAssoc := Main.Add(TfrmOptionsFileAssoc);
   FileAssoc.Add(TfrmOptionsFileAssocExtra);
   Main.Add(TfrmOptionsDirectoryHotlist);
+  Main.Add(TfrmOptionsExtended);
 end;
 
 initialization
