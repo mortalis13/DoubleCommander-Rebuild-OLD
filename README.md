@@ -1,9 +1,7 @@
 
-A custom build of the file manager [**Double Commander**](http://doublecmd.sourceforge.net).
-
-The changed version is **0.8.0** on the [SVN **trunk**](https://svn.code.sf.net/p/doublecmd/code/trunk).
-
-Current SVN revision is **7623**.
+A custom build of the file manager [**Double Commander**](http://doublecmd.sourceforge.net). <br>
+The changed version is **0.8.0** of the [SVN trunk](https://svn.code.sf.net/p/doublecmd/code/trunk). <br>
+Current SVN revision is **7623**. <br>
 
 ---
 
