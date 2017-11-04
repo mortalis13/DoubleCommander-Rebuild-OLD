@@ -24,5 +24,11 @@ lazbuild wdx\xpi_wdx\src\xpi_wdx.lpi %DC_ARCH%
 rem WFX plugins
 lazbuild wfx\ftp\src\ftp.lpi %DC_ARCH%
 
+lazbuild dsx\DSXLocate\src\DSXLocate.lpi %DC_ARCH%
+lazbuild wdx\apkinfo\src\ApkInfo.lpi %DC_ARCH%
+lazbuild wdx\audioinfo\src\AudioInfo.lpi %DC_ARCH%
+lazbuild wlx\simplewlx\src\simplewlx.lpi %DC_ARCH%
+lazbuild wlx\WlxMplayer\src\wlxMplayer.lpi %DC_ARCH%
+
 rem Return from plugins directory
 popd
