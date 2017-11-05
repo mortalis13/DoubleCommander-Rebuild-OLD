@@ -8,8 +8,8 @@ Current SVN revision is **7623**. <br>
 ## Download
 
 ### v1.0.0
-- [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/7623-1.0.0/doublecmd-0.8.0-7623-rebuild-x32.zip)
-- [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/7623-1.0.0/doublecmd-0.8.0-7623-rebuild-x64.zip)
+- [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/7623-1.0.0/doublecmd-0.8.0-7623-rebuild-x32.zip) **(22.6 MB)**
+- [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/7623-1.0.0/doublecmd-0.8.0-7623-rebuild-x64.zip) **(22.9 MB)**
 
 
 ## Changelog
