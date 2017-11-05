@@ -63,3 +63,14 @@ Current SVN revision is **7623**. <br>
 - redesigned Calculate space dialog with larger font, non-modal type and Copy button
 - click event for tree view to open folder on single click
 - select files with current extension is extended to select all folders when used on a folder
+
+## Build
+
+To build the code:
+
+1. Install [Lazarus 1.8.0](https://sourceforge.net/projects/lazarus/files/Lazarus%20Windows%2064%20bits/Lazarus%201.8RC2/lazarus-1.8.0RC2-fpc-3.0.2-win64.exe/download).
+2. In the **r.bat** modify *OS_TARGET* and *lazpath* variables.
+3. Run command `r a`.
+
+- To rebuild the code if build errors occur run `r r` or `rr`
+- To build the final ready to use executable run `r p`

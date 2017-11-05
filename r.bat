@@ -3,8 +3,8 @@
 
 rem add 'Silent' project profile with Lazarus to disable hints and warnings, activate 'silent' build in the :build method
 
-rem set OS_TARGET=win64
-set OS_TARGET=win32
+set OS_TARGET=win64
+rem set OS_TARGET=win32
 
 if "%OS_TARGET%" == "win64" (
   set CPU_TARGET=x86_64
