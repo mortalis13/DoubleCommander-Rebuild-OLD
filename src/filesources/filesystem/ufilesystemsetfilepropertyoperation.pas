@@ -12,7 +12,7 @@ uses
   uFileSourceOperationUI,
   uFile,
   uFileProperty,
-  uDescr;
+  uDescr, udebug;
 
 type
 
@@ -252,7 +252,10 @@ begin
       {$ENDIF}
 
       else
+      begin
+        dcdebug('SetNewProperty, Trying to set unsupported property, aTemplateProperty.GetID: ' + inttostr(ord(aTemplateProperty.GetID)));
         raise Exception.Create('Trying to set unsupported property');
+      end;
     end;
 
   except

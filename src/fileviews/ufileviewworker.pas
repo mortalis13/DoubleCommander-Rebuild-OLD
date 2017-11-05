@@ -1100,6 +1100,8 @@ begin
             CalcStatisticsOperationStatistics := CalcStatisticsOperation.RetrieveStatistics;
 
             AFile.Size := CalcStatisticsOperationStatistics.Size;
+            
+            AFile.FilesCountProperty := TFileFilesCountProperty.Create;
             FilesCount := IntToStr(CalcStatisticsOperationStatistics.Files) + 'F ' + IntToStr(CalcStatisticsOperationStatistics.Directories) + 'D';
             AFile.FilesCount := FilesCount;
 

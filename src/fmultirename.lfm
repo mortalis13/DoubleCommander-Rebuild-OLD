@@ -12,7 +12,7 @@ object frmMultiRename: TfrmMultiRename
   Position = poScreenCenter
   SessionProperties = 'Height;Width;WindowState;Left;Top'
   ShowInTaskBar = stAlways
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.8.0.2'
   object StringGrid: TStringGrid
     Left = 6
     Height = 244
