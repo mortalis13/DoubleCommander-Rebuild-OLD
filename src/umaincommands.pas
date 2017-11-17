@@ -2471,10 +2471,10 @@ begin
           end;
         end;
 
-        // Operation := FileSource.CreateDeleteOperation(theFilesToDelete);
+        Operation := FileSource.CreateDeleteOperation(theFilesToDelete);
         
-        AfterDeleteProc := @DoReload;
-        Operation := FileSource.CreateDeleteOperation(theFilesToDelete, AfterDeleteProc);
+        // AfterDeleteProc := @DoReload;
+        // Operation := FileSource.CreateDeleteOperation(theFilesToDelete, AfterDeleteProc);
 
         if Assigned(Operation) then
         begin
@@ -2493,6 +2493,7 @@ begin
         end
         else
         begin
+          dcdebug('--uMainCommands - rsMsgNotImplemented');
           msgWarning(rsMsgNotImplemented);
         end;
       end;
