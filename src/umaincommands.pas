@@ -2235,6 +2235,10 @@ var
   bConfirmation, HasQueueId: Boolean;
   QueueIdentifier: TOperationsManagerQueueIdentifier;
 begin
+  // temp fix after cm_Copy
+  gCopyFolders := False;
+  gCopyFoldersPlain := False;
+  
   bConfirmation := focMove in gFileOperationsConfirmations;
   ReadCopyRenameParams(Params, bConfirmation, HasQueueId, QueueIdentifier);
 
