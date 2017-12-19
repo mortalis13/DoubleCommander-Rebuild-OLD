@@ -1073,6 +1073,11 @@ msgstr "Съхраняване &като..."
 msgid "Save As"
 msgstr "Съхраняване като"
 
+#: tfrmeditor.actreload.caption
+msgctxt "tfrmeditor.actreload.caption"
+msgid "Reload"
+msgstr ""
+
 #: tfrmeditor.actsaveall.caption
 msgid "Sa&ve All"
 msgstr "Съ&храняване на всички"
@@ -1090,17 +1095,6 @@ msgstr "Обработчик"
 msgctxt "TFRMEDITOR.HELP1.CAPTION"
 msgid "&Help"
 msgstr "Помо&щ"
-
-#: tfrmeditor.menuitem1.caption
-#, fuzzy
-msgctxt "tfrmeditor.menuitem1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.midiv.caption
-msgctxt "TFRMEDITOR.MIDIV.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmeditor.miedit.caption
 msgctxt "TFRMEDITOR.MIEDIT.CAPTION"
@@ -1133,36 +1127,6 @@ msgstr "Синтактично подчертаване"
 #: tfrmeditor.milineendtype.caption
 msgid "End Of Line"
 msgstr ""
-
-#: tfrmeditor.miseparator1.caption
-msgctxt "TFRMEDITOR.MISEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.miseparator2.caption
-msgctxt "TFRMEDITOR.MISEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n1.caption
-msgctxt "TFRMEDITOR.N1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n3.caption
-msgctxt "TFRMEDITOR.N3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n4.caption
-msgctxt "TFRMEDITOR.N4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n5.caption
-msgctxt "TFRMEDITOR.N5.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmeditsearchreplace.buttonpanel.cancelbutton.caption
 #, fuzzy
@@ -1875,18 +1839,6 @@ msgstr ""
 msgid "&Result"
 msgstr ""
 
-#: tfrmfinddlg.miseparator1.caption
-#, fuzzy
-msgctxt "tfrmfinddlg.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmfinddlg.miseparator2.caption
-#, fuzzy
-msgctxt "tfrmfinddlg.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
 #: tfrmfinddlg.mishowallfound.caption
 msgid "Show all found items"
 msgstr ""
@@ -2074,6 +2026,10 @@ msgctxt "TFRMMAIN.ACTABOUT.CAPTION"
 msgid "&About"
 msgstr "&За"
 
+#: tfrmmain.actactivatetabbyindex.caption
+msgid "Activate Tab By Index"
+msgstr ""
+
 #: tfrmmain.actaddfilenametocmdline.caption
 msgid "Add file name to command line"
 msgstr "Добавяне името на файла в командния ред"
@@ -2107,6 +2063,10 @@ msgstr "Съкратен изглед"
 msgid "Calculate &Occupied Space"
 msgstr "Изчисляване на &заетото място..."
 
+#: tfrmmain.actchangecolumnwidth.caption
+msgid "Change Column Width"
+msgstr ""
+
 #: tfrmmain.actchangedir.caption
 msgid "Change directory"
 msgstr "Смяна на папката"
@@ -2115,9 +2075,29 @@ msgstr "Смяна на папката"
 msgid "Change directory to home"
 msgstr "Отиване в домашната папка"
 
+#: tfrmmain.actchangedirtonextparentsibling.caption
+msgctxt "tfrmmain.actchangedirtonextparentsibling.caption"
+msgid "Change Dir to Next Sibling"
+msgstr ""
+
+#: tfrmmain.actchangedirtonextparentsibling.hint
+msgctxt "tfrmmain.actchangedirtonextparentsibling.hint"
+msgid "Change Dir to Next Sibling"
+msgstr ""
+
 #: tfrmmain.actchangedirtoparent.caption
 msgid "Change Directory To Parent"
 msgstr "Папка нагоре"
+
+#: tfrmmain.actchangedirtoprevparentsibling.caption
+msgctxt "tfrmmain.actchangedirtoprevparentsibling.caption"
+msgid "Change Dir to Previous Sibling"
+msgstr ""
+
+#: tfrmmain.actchangedirtoprevparentsibling.hint
+msgctxt "tfrmmain.actchangedirtoprevparentsibling.hint"
+msgid "Change Dir to Previous Sibling"
+msgstr ""
 
 #: tfrmmain.actchangedirtoroot.caption
 msgid "Change directory to root"
@@ -2419,6 +2399,10 @@ msgstr ""
 msgid "Place cursor on last file in list"
 msgstr ""
 
+#: tfrmmain.actgotopasttab.caption
+msgid "Go To Past Tab"
+msgstr ""
+
 #: tfrmmain.acthardlink.caption
 #, fuzzy
 #| msgid "Create hard link..."
@@ -2486,6 +2470,10 @@ msgstr ""
 msgid "Thumbnails view on left panel"
 msgstr ""
 
+#: tfrmmain.actloadadblist.caption
+msgid "Load Adb List"
+msgstr ""
+
 #: tfrmmain.actloadfavoritetabs.caption
 msgid "Load tabs from Favorite Tabs"
 msgstr ""
@@ -2546,6 +2534,10 @@ msgstr "Избор на вси&чки"
 msgid "Unselect a Gro&up..."
 msgstr "Снемане на избора от група"
 
+#: tfrmmain.actmarknfiles.caption
+msgid "Mark N Files"
+msgstr ""
+
 #: tfrmmain.actmarkplus.caption
 #, fuzzy
 #| msgid "Select a group"
@@ -2557,6 +2549,10 @@ msgstr "Избор на група"
 #| msgid "Unselect All"
 msgid "&Unselect All"
 msgstr "Снемане на избора от всички"
+
+#: tfrmmain.actmaximizepanel.caption
+msgid "Maximize Current Panel"
+msgstr ""
 
 #: tfrmmain.actminimize.caption
 msgid "Minimize window"
@@ -2620,6 +2616,10 @@ msgstr ""
 #| msgid "Open &folder in new tab"
 msgid "Open &Folder in a New Tab"
 msgstr "Отваряне на &папката в нов подпрозорец"
+
+#: tfrmmain.actopendrivebyindex.caption
+msgid "Open Drive by Index"
+msgstr ""
 
 #: tfrmmain.actopenvirtualfilesystemlist.caption
 msgctxt "TFRMMAIN.ACTOPENVIRTUALFILESYSTEMLIST.CAPTION"
@@ -2710,6 +2710,10 @@ msgstr ""
 #| msgid "Restore Selection"
 msgid "&Restore Selection"
 msgstr "Възстановяване на отбелязването"
+
+#: tfrmmain.actrestoretabs.caption
+msgid "&Restore tabs"
+msgstr ""
 
 #: tfrmmain.actreverseorder.caption
 #, fuzzy
@@ -2850,6 +2854,14 @@ msgstr "Отваряне"
 msgid "Open using system associations"
 msgstr ""
 
+#: tfrmmain.actshellexecuteparent.caption
+msgid "Open Parent"
+msgstr ""
+
+#: tfrmmain.actshellexecuteparent.hint
+msgid "Open Parent using system associations"
+msgstr ""
+
 #: tfrmmain.actshowbuttonmenu.caption
 msgid "Show button menu"
 msgstr "Показване на изборници на копчетата"
@@ -2924,6 +2936,10 @@ msgstr "Съгласуване на папки..."
 #: tfrmmain.acttargetequalsource.caption
 msgid "Target &= Source"
 msgstr "Цел &= източник"
+
+#: tfrmmain.acttest.caption
+msgid "Test"
+msgstr ""
 
 #: tfrmmain.acttestarchive.caption
 #, fuzzy
@@ -3136,11 +3152,6 @@ msgctxt "TFRMMAIN.LBLCOMMANDPATH.CAPTION"
 msgid "Path"
 msgstr "Път"
 
-#: tfrmmain.menuitem2.caption
-msgctxt "TFRMMAIN.MENUITEM2.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmmain.mi2080.caption
 msgid "&20/80"
 msgstr "&20/80"
@@ -3182,189 +3193,6 @@ msgstr "Презапис..."
 msgctxt "TFRMMAIN.MIHARDLINK.CAPTION"
 msgid "Create link..."
 msgstr "Създаване на връзка..."
-
-#: tfrmmain.miline1.caption
-msgctxt "TFRMMAIN.MILINE1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline10.caption
-#, fuzzy
-msgctxt "tfrmmain.miline10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline11.caption
-#, fuzzy
-msgctxt "tfrmmain.miline11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline12.caption
-msgctxt "TFRMMAIN.MILINE12.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline13.caption
-msgctxt "TFRMMAIN.MILINE13.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline14.caption
-msgctxt "TFRMMAIN.MILINE14.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline15.caption
-msgctxt "TFRMMAIN.MILINE15.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline16.caption
-msgctxt "TFRMMAIN.MILINE16.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline17.caption
-msgctxt "TFRMMAIN.MILINE17.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline18.caption
-msgctxt "TFRMMAIN.MILINE18.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline19.caption
-msgctxt "TFRMMAIN.MILINE19.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline2.caption
-msgctxt "TFRMMAIN.MILINE2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline20.caption
-msgctxt "TFRMMAIN.MILINE20.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline21.caption
-#, fuzzy
-msgctxt "tfrmmain.miline21.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline22.caption
-msgctxt "TFRMMAIN.MILINE22.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline23.caption
-#, fuzzy
-msgctxt "tfrmmain.miline23.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline24.caption
-msgctxt "TFRMMAIN.MILINE24.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline25.caption
-msgctxt "TFRMMAIN.MILINE25.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline26.caption
-#, fuzzy
-msgctxt "tfrmmain.miline26.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline3.caption
-msgctxt "TFRMMAIN.MILINE3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline32.caption
-msgctxt "TFRMMAIN.MILINE32.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline33.caption
-msgctxt "tfrmmain.miline33.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline37.caption
-msgctxt "TFRMMAIN.MILINE37.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline38.caption
-msgctxt "tfrmmain.miline38.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline39.caption
-#, fuzzy
-msgctxt "tfrmmain.miline39.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline4.caption
-msgctxt "TFRMMAIN.MILINE4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline40.caption
-#, fuzzy
-msgctxt "tfrmmain.miline40.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline47.caption
-msgctxt "TFRMMAIN.MILINE47.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline5.caption
-msgctxt "TFRMMAIN.MILINE5.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline50.caption
-msgctxt "tfrmmain.miline50.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline55.caption
-#, fuzzy
-msgctxt "tfrmmain.miline55.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline6.caption
-msgctxt "TFRMMAIN.MILINE6.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline7.caption
-msgctxt "TFRMMAIN.MILINE7.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline8.caption
-msgctxt "TFRMMAIN.MILINE8.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline9.caption
-msgctxt "TFRMMAIN.MILINE9.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmmain.milogclear.caption
 msgid "Clear"
@@ -3428,16 +3256,6 @@ msgstr "&Заповеди"
 #: tfrmmain.mnuconfig.caption
 msgid "C&onfiguration"
 msgstr "&Настройка"
-
-#: tfrmmain.mnucontextline1.caption
-msgctxt "tfrmmain.mnucontextline1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.mnucontextline2.caption
-msgctxt "tfrmmain.mnucontextline2.caption"
-msgid "-"
-msgstr "-"
 
 #: tfrmmain.mnufavoritetabs.caption
 msgid "Favorites"
@@ -3504,11 +3322,6 @@ msgstr "Обработка"
 msgctxt "TFRMMAIN.TBPASTE.CAPTION"
 msgid "Paste"
 msgstr "Поставяне"
-
-#: tfrmmain.tbseparator.caption
-msgctxt "TFRMMAIN.TBSEPARATOR.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmmaincommandsdlg.btncancel.caption
 #, fuzzy
@@ -6317,6 +6130,12 @@ msgctxt "TFRMOPTIONSFILEPANELSCOLORS.BTNCURSORCOLOR.CAPTION"
 msgid ">>"
 msgstr ">>"
 
+#: tfrmoptionsfilepanelscolors.btncursorcolor1.caption
+#, fuzzy
+msgctxt "tfrmoptionsfilepanelscolors.btncursorcolor1.caption"
+msgid ">>"
+msgstr ">>"
+
 #: tfrmoptionsfilepanelscolors.btncursortext.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.BTNCURSORTEXT.CAPTION"
 msgid ">>"
@@ -6458,6 +6277,13 @@ msgstr "Цвят на от&белязване:"
 #: tfrmoptionsfilepanelscolors.lblpreview.caption
 msgid "Below is a preview. You may move cursor, select file and get immediately an actual look and feel of the various settings."
 msgstr ""
+
+#: tfrmoptionsfilepanelscolors.lblselectioncursorcolor.caption
+#, fuzzy
+#| msgid "Cursor Color:"
+msgctxt "tfrmoptionsfilepanelscolors.lblselectioncursorcolor.caption"
+msgid "C&ursor Color:"
+msgstr "Цвят на показалеца:"
 
 #: tfrmoptionsfilepanelscolors.lbltextcolor.caption
 #, fuzzy
@@ -9956,31 +9782,6 @@ msgctxt "TFRMVIEWER.MIABOUT.CAPTION"
 msgid "About"
 msgstr "За"
 
-#: tfrmviewer.midiv1.caption
-msgctxt "TFRMVIEWER.MIDIV1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv2.caption
-msgctxt "TFRMVIEWER.MIDIV2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv3.caption
-msgctxt "TFRMVIEWER.MIDIV3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv4.caption
-msgctxt "TFRMVIEWER.MIDIV4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv5.caption
-msgctxt "TFRMVIEWER.MIDIV5.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmviewer.miedit.caption
 msgctxt "TFRMVIEWER.MIEDIT.CAPTION"
 msgid "&Edit"
@@ -10012,11 +9813,6 @@ msgstr "Завъртане"
 msgctxt "TFRMVIEWER.MISCREENSHOT.CAPTION"
 msgid "Screenshot"
 msgstr "Снимка на екрана"
-
-#: tfrmviewer.miseparator.caption
-msgctxt "TFRMVIEWER.MISEPARATOR.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmviewer.miview.caption
 msgctxt "TFRMVIEWER.MIVIEW.CAPTION"

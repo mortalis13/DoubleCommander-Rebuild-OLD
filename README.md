@@ -27,13 +27,16 @@ Current SVN revision is **7623**. <br>
 - cm_LoadUninstallerList command to show an uninstaller list, executing an item will call the corresponding uninstaller for the selected app
 - cm_NewInstance command to open a new instance of the app
 - cm_Restart command to restart the app and restore current tabs
+- cm_EditFileNames command to rename selected files editing their names with a text editor, equivalent to the Edit names button of the MultiRename window
 
 <p>
 
-- parameter 'skiperrors' for the cm_Delete command to delete all files without showing errors dialog
-- parameter 'unixSeparator' for the cm_CopyFullNamesToClip, cm_CopyPathOfFilesToClip, cm_CopyPathNoSepOfFilesToClip commands to copy paths with '/' separator
-- parameter 'folders_only' for the cm_Copy command to copy only folder without files
+- parameter 'SkipErrors' for the cm_Delete command to delete all files without showing errors dialog
+- parameter 'UnixSeparator' for the cm_CopyFullNamesToClip, cm_CopyPathOfFilesToClip, cm_CopyPathNoSepOfFilesToClip commands to copy paths with '/' separator
+- parameter 'CopyFolders' for the cm_Copy command to copy only folders structure without files
+- parameter 'CopyPlainFolders' for the cm_Copy command to copy only top-level folders without files
 - parameter 'OpenEditor' for the cm_EditNew command to create new file without opening it in editor
+- parameter 'UseInternal' for the cm_Edit command to open a file in the internal editor
 
 <p>
 

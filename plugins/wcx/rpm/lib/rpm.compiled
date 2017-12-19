@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Compiler Value="E:\tools\lazarus-1.8.0\fpc\3.0.2\bin\x86_64-win64\fpc.exe" Date="1254430562"/>
-  <Params Value=" -MDelphi -Scgi -CX -O3 -XX -l -vewnhibq -Fie:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\components\doublecmd\lib\x86_64-win64 -FuE:\tools\lazarus-1.8.0\components\lazutils\lib\x86_64-win64 -FuE:\tools\lazarus-1.8.0\packager\units\x86_64-win64 -Fue:\Documents\SVN\doublecmd-code\plugins\wcx\rpm\src\ -FUe:\Documents\SVN\doublecmd-code\plugins\wcx\rpm\lib\ -FEe:\Documents\SVN\doublecmd-code\plugins\wcx\rpm\lib\ -orpm.wcx -fPIC -fPIC rpm.dpr"/>
+  <Compiler Value="e:\tools\lazarus-1.8.0_32\fpc\3.0.2\bin\i386-win32\fpc.exe" Date="1254427005"/>
+  <Params Value=" -MDelphi -Scgi -CX -O3 -XX -l -vewnhibq -Fie:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\components\doublecmd\lib\i386-win32 -Fue:\tools\lazarus-1.8.0_32\components\lazutils\lib\i386-win32 -Fue:\tools\lazarus-1.8.0_32\packager\units\i386-win32 -Fue:\Documents\SVN\doublecmd-code\plugins\wcx\rpm\src\ -FUe:\Documents\SVN\doublecmd-code\plugins\wcx\rpm\lib\ -FEe:\Documents\SVN\doublecmd-code\plugins\wcx\rpm\lib\ -orpm.wcx -fPIC -fPIC rpm.dpr"/>
 </CONFIG>

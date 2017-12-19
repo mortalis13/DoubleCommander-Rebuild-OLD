@@ -2,14 +2,13 @@ object frmStatistics: TfrmStatistics
   Left = 468
   Height = 83
   Top = 368
-  Width = 400
-  Caption = 'Statistics'
+  Width = 480
+  Caption = 'Statistics РУС'
   ClientHeight = 83
-  ClientWidth = 400
+  ClientWidth = 480
   Constraints.MaxHeight = 83
-  Constraints.MaxWidth = 400
   Constraints.MinHeight = 83
-  Constraints.MinWidth = 400
+  Constraints.MinWidth = 480
   OnKeyPress = FormKeyPress
   Position = poDesktopCenter
   ShowInTaskBar = stAlways
@@ -18,8 +17,9 @@ object frmStatistics: TfrmStatistics
     Left = 10
     Height = 21
     Top = 8
-    Width = 380
+    Width = 460
     Alignment = taCenter
+    Anchors = [akTop, akLeft, akRight]
     AutoSize = False
     Caption = 'Default Text'
     Font.Height = -16
@@ -31,16 +31,17 @@ object frmStatistics: TfrmStatistics
     Left = 10
     Height = 32
     Top = 40
-    Width = 380
+    Width = 460
+    Anchors = [akTop, akLeft, akRight]
     BevelOuter = bvNone
     ClientHeight = 32
-    ClientWidth = 380
+    ClientWidth = 460
     TabOrder = 0
     object btnClose: TButton
       AnchorSideLeft.Side = asrCenter
       AnchorSideTop.Side = asrCenter
       AnchorSideRight.Side = asrCenter
-      Left = 200
+      Left = 270
       Height = 32
       Top = 0
       Width = 90
@@ -52,7 +53,7 @@ object frmStatistics: TfrmStatistics
     end
     object btnCopy: TButton
       AnchorSideLeft.Side = asrCenter
-      Left = 90
+      Left = 120
       Height = 32
       Top = 0
       Width = 90

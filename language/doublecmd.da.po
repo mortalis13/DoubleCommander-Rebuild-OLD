@@ -1032,6 +1032,12 @@ msgstr "Gem &som..."
 msgid "Save As"
 msgstr "Gem som"
 
+#: tfrmeditor.actreload.caption
+#, fuzzy
+msgctxt "tfrmeditor.actreload.caption"
+msgid "Reload"
+msgstr "Genindlæs"
+
 #: tfrmeditor.actsaveall.caption
 msgid "Sa&ve All"
 msgstr "Gem alle"
@@ -1049,17 +1055,6 @@ msgstr "Editor"
 msgctxt "TFRMEDITOR.HELP1.CAPTION"
 msgid "&Help"
 msgstr "&Hjælp"
-
-#: tfrmeditor.menuitem1.caption
-#, fuzzy
-msgctxt "tfrmeditor.menuitem1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.midiv.caption
-msgctxt "TFRMEDITOR.MIDIV.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmeditor.miedit.caption
 msgctxt "TFRMEDITOR.MIEDIT.CAPTION"
@@ -1092,36 +1087,6 @@ msgstr "Fremhæv syntaks"
 #: tfrmeditor.milineendtype.caption
 msgid "End Of Line"
 msgstr "Linjeafslutning"
-
-#: tfrmeditor.miseparator1.caption
-msgctxt "TFRMEDITOR.MISEPARATOR1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.miseparator2.caption
-msgctxt "TFRMEDITOR.MISEPARATOR2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n1.caption
-msgctxt "TFRMEDITOR.N1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n3.caption
-msgctxt "TFRMEDITOR.N3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n4.caption
-msgctxt "TFRMEDITOR.N4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmeditor.n5.caption
-msgctxt "tfrmeditor.n5.caption"
-msgid "-"
-msgstr "-"
 
 #: tfrmeditsearchreplace.buttonpanel.cancelbutton.caption
 #, fuzzy
@@ -1808,18 +1773,6 @@ msgstr "Fjern fra liste"
 msgid "&Result"
 msgstr ""
 
-#: tfrmfinddlg.miseparator1.caption
-#, fuzzy
-msgctxt "tfrmfinddlg.miseparator1.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmfinddlg.miseparator2.caption
-#, fuzzy
-msgctxt "tfrmfinddlg.miseparator2.caption"
-msgid "-"
-msgstr "-"
-
 #: tfrmfinddlg.mishowallfound.caption
 msgid "Show all found items"
 msgstr "Vis alle fundne elementer"
@@ -1985,6 +1938,10 @@ msgctxt "TFRMMAIN.ACTABOUT.CAPTION"
 msgid "&About"
 msgstr "&Om Double Commander"
 
+#: tfrmmain.actactivatetabbyindex.caption
+msgid "Activate Tab By Index"
+msgstr ""
+
 #: tfrmmain.actaddfilenametocmdline.caption
 msgid "Add file name to command line"
 msgstr "Tilføj filnavn til kommandolinje"
@@ -2016,6 +1973,10 @@ msgstr "Kort visning"
 msgid "Calculate &Occupied Space"
 msgstr "B&eregn brugt plads..."
 
+#: tfrmmain.actchangecolumnwidth.caption
+msgid "Change Column Width"
+msgstr ""
+
 #: tfrmmain.actchangedir.caption
 msgid "Change directory"
 msgstr "Skift mappe"
@@ -2024,9 +1985,29 @@ msgstr "Skift mappe"
 msgid "Change directory to home"
 msgstr "Gå til home-mappen"
 
+#: tfrmmain.actchangedirtonextparentsibling.caption
+msgctxt "tfrmmain.actchangedirtonextparentsibling.caption"
+msgid "Change Dir to Next Sibling"
+msgstr ""
+
+#: tfrmmain.actchangedirtonextparentsibling.hint
+msgctxt "tfrmmain.actchangedirtonextparentsibling.hint"
+msgid "Change Dir to Next Sibling"
+msgstr ""
+
 #: tfrmmain.actchangedirtoparent.caption
 msgid "Change Directory To Parent"
 msgstr "Gå til overmappe"
+
+#: tfrmmain.actchangedirtoprevparentsibling.caption
+msgctxt "tfrmmain.actchangedirtoprevparentsibling.caption"
+msgid "Change Dir to Previous Sibling"
+msgstr ""
+
+#: tfrmmain.actchangedirtoprevparentsibling.hint
+msgctxt "tfrmmain.actchangedirtoprevparentsibling.hint"
+msgid "Change Dir to Previous Sibling"
+msgstr ""
 
 #: tfrmmain.actchangedirtoroot.caption
 msgid "Change directory to root"
@@ -2300,6 +2281,10 @@ msgstr "Placer markøren på første fil på listen"
 msgid "Place cursor on last file in list"
 msgstr "Placer markøren på sidste fil på listen"
 
+#: tfrmmain.actgotopasttab.caption
+msgid "Go To Past Tab"
+msgstr ""
+
 #: tfrmmain.acthardlink.caption
 msgctxt "TFRMMAIN.ACTHARDLINK.CAPTION"
 msgid "Create &Hard Link..."
@@ -2365,6 +2350,10 @@ msgstr ""
 msgid "Thumbnails view on left panel"
 msgstr ""
 
+#: tfrmmain.actloadadblist.caption
+msgid "Load Adb List"
+msgstr ""
+
 #: tfrmmain.actloadfavoritetabs.caption
 msgid "Load tabs from Favorite Tabs"
 msgstr ""
@@ -2415,6 +2404,10 @@ msgstr "Vælg &alle"
 msgid "Unselect a Gro&up..."
 msgstr "In&dskrænk valg..."
 
+#: tfrmmain.actmarknfiles.caption
+msgid "Mark N Files"
+msgstr ""
+
 #: tfrmmain.actmarkplus.caption
 msgid "Select a &Group..."
 msgstr "&Udvid valg..."
@@ -2422,6 +2415,10 @@ msgstr "&Udvid valg..."
 #: tfrmmain.actmarkunmarkall.caption
 msgid "&Unselect All"
 msgstr "&Fravælg alle"
+
+#: tfrmmain.actmaximizepanel.caption
+msgid "Maximize Current Panel"
+msgstr ""
 
 #: tfrmmain.actminimize.caption
 msgid "Minimize window"
@@ -2471,6 +2468,10 @@ msgstr "Åbn panelfil"
 #: tfrmmain.actopendirinnewtab.caption
 msgid "Open &Folder in a New Tab"
 msgstr "Åbn mappe i et nyt faneblad"
+
+#: tfrmmain.actopendrivebyindex.caption
+msgid "Open Drive by Index"
+msgstr ""
 
 #: tfrmmain.actopenvirtualfilesystemlist.caption
 msgctxt "TFRMMAIN.ACTOPENVIRTUALFILESYSTEMLIST.CAPTION"
@@ -2551,6 +2552,10 @@ msgstr ""
 #: tfrmmain.actrestoreselection.caption
 msgid "&Restore Selection"
 msgstr "&Gendan valg"
+
+#: tfrmmain.actrestoretabs.caption
+msgid "&Restore tabs"
+msgstr ""
 
 #: tfrmmain.actreverseorder.caption
 msgid "Re&verse Order"
@@ -2676,6 +2681,14 @@ msgstr "Åbn"
 msgid "Open using system associations"
 msgstr "Åbner ved brug af systemassociationer (eksterne programmer)"
 
+#: tfrmmain.actshellexecuteparent.caption
+msgid "Open Parent"
+msgstr ""
+
+#: tfrmmain.actshellexecuteparent.hint
+msgid "Open Parent using system associations"
+msgstr ""
+
 #: tfrmmain.actshowbuttonmenu.caption
 msgid "Show button menu"
 msgstr "Vis knappemenu"
@@ -2734,6 +2747,10 @@ msgstr "Synkronisér mapper..."
 #: tfrmmain.acttargetequalsource.caption
 msgid "Target &= Source"
 msgstr "Mål &= kilde"
+
+#: tfrmmain.acttest.caption
+msgid "Test"
+msgstr ""
 
 #: tfrmmain.acttestarchive.caption
 msgid "&Test Archive(s)"
@@ -2937,11 +2954,6 @@ msgctxt "TFRMMAIN.LBLCOMMANDPATH.CAPTION"
 msgid "Path"
 msgstr "Sti:"
 
-#: tfrmmain.menuitem2.caption
-msgctxt "TFRMMAIN.MENUITEM2.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmmain.mi2080.caption
 msgid "&20/80"
 msgstr ""
@@ -2983,191 +2995,6 @@ msgstr "Kopier..."
 msgctxt "TFRMMAIN.MIHARDLINK.CAPTION"
 msgid "Create link..."
 msgstr "Dan link..."
-
-#: tfrmmain.miline1.caption
-msgctxt "TFRMMAIN.MILINE1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline10.caption
-#, fuzzy
-msgctxt "tfrmmain.miline10.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline11.caption
-#, fuzzy
-msgctxt "tfrmmain.miline11.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline12.caption
-msgctxt "TFRMMAIN.MILINE12.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline13.caption
-msgctxt "TFRMMAIN.MILINE13.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline14.caption
-msgctxt "TFRMMAIN.MILINE14.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline15.caption
-msgctxt "TFRMMAIN.MILINE15.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline16.caption
-msgctxt "TFRMMAIN.MILINE16.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline17.caption
-msgctxt "TFRMMAIN.MILINE17.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline18.caption
-msgctxt "TFRMMAIN.MILINE18.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline19.caption
-msgctxt "TFRMMAIN.MILINE19.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline2.caption
-msgctxt "TFRMMAIN.MILINE2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline20.caption
-msgctxt "TFRMMAIN.MILINE20.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline21.caption
-#, fuzzy
-msgctxt "tfrmmain.miline21.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline22.caption
-msgctxt "TFRMMAIN.MILINE22.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline23.caption
-#, fuzzy
-msgctxt "tfrmmain.miline23.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline24.caption
-msgctxt "TFRMMAIN.MILINE24.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline25.caption
-msgctxt "TFRMMAIN.MILINE25.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline26.caption
-#, fuzzy
-msgctxt "tfrmmain.miline26.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline3.caption
-msgctxt "TFRMMAIN.MILINE3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline32.caption
-msgctxt "TFRMMAIN.MILINE32.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline33.caption
-msgctxt "tfrmmain.miline33.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline37.caption
-#, fuzzy
-msgctxt "TFRMMAIN.MILINE37.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline38.caption
-msgctxt "TFRMMAIN.MILINE38.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline39.caption
-#, fuzzy
-msgctxt "tfrmmain.miline39.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline4.caption
-msgctxt "TFRMMAIN.MILINE4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline40.caption
-#, fuzzy
-msgctxt "tfrmmain.miline40.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline47.caption
-msgctxt "TFRMMAIN.MILINE47.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline5.caption
-msgctxt "TFRMMAIN.MILINE5.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline50.caption
-#, fuzzy
-msgctxt "TFRMMAIN.MILINE50.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline55.caption
-#, fuzzy
-msgctxt "tfrmmain.miline55.caption"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline6.caption
-msgctxt "TFRMMAIN.MILINE6.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline7.caption
-msgctxt "TFRMMAIN.MILINE7.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline8.caption
-msgctxt "TFRMMAIN.MILINE8.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.miline9.caption
-msgctxt "TFRMMAIN.MILINE9.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmmain.milogclear.caption
 msgid "Clear"
@@ -3231,18 +3058,6 @@ msgstr "&Kommandoer"
 #: tfrmmain.mnuconfig.caption
 msgid "C&onfiguration"
 msgstr "&Opsætning"
-
-#: tfrmmain.mnucontextline1.caption
-#, fuzzy
-msgctxt "TFRMMAIN.MNUCONTEXTLINE1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmmain.mnucontextline2.caption
-#, fuzzy
-msgctxt "TFRMMAIN.MNUCONTEXTLINE2.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmmain.mnufavoritetabs.caption
 msgid "Favorites"
@@ -3309,11 +3124,6 @@ msgstr "&Rediger..."
 msgctxt "TFRMMAIN.TBPASTE.CAPTION"
 msgid "Paste"
 msgstr "Sæt ind"
-
-#: tfrmmain.tbseparator.caption
-msgctxt "TFRMMAIN.TBSEPARATOR.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmmaincommandsdlg.btncancel.caption
 #, fuzzy
@@ -6008,6 +5818,12 @@ msgctxt "tfrmoptionsfilepanelscolors.btncursorcolor.caption"
 msgid ">>"
 msgstr ">>"
 
+#: tfrmoptionsfilepanelscolors.btncursorcolor1.caption
+#, fuzzy
+msgctxt "tfrmoptionsfilepanelscolors.btncursorcolor1.caption"
+msgid ">>"
+msgstr ">>"
+
 #: tfrmoptionsfilepanelscolors.btncursortext.caption
 msgctxt "tfrmoptionsfilepanelscolors.btncursortext.caption"
 msgid ">>"
@@ -6131,6 +5947,12 @@ msgstr "&Valgt farve:"
 #: tfrmoptionsfilepanelscolors.lblpreview.caption
 msgid "Below is a preview. You may move cursor, select file and get immediately an actual look and feel of the various settings."
 msgstr ""
+
+#: tfrmoptionsfilepanelscolors.lblselectioncursorcolor.caption
+#, fuzzy
+msgctxt "tfrmoptionsfilepanelscolors.lblselectioncursorcolor.caption"
+msgid "C&ursor Color:"
+msgstr "&Markørfarve:"
 
 #: tfrmoptionsfilepanelscolors.lbltextcolor.caption
 msgctxt "TFRMOPTIONSFILEPANELSCOLORS.LBLTEXTCOLOR.CAPTION"
@@ -9411,31 +9233,6 @@ msgctxt "TFRMVIEWER.MIABOUT.CAPTION"
 msgid "About"
 msgstr "&Om"
 
-#: tfrmviewer.midiv1.caption
-msgctxt "TFRMVIEWER.MIDIV1.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv2.caption
-msgctxt "TFRMVIEWER.MIDIV2.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv3.caption
-msgctxt "TFRMVIEWER.MIDIV3.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv4.caption
-msgctxt "TFRMVIEWER.MIDIV4.CAPTION"
-msgid "-"
-msgstr "-"
-
-#: tfrmviewer.midiv5.caption
-msgctxt "TFRMVIEWER.MIDIV5.CAPTION"
-msgid "-"
-msgstr "-"
-
 #: tfrmviewer.miedit.caption
 msgctxt "TFRMVIEWER.MIEDIT.CAPTION"
 msgid "&Edit"
@@ -9468,11 +9265,6 @@ msgstr "Rotér"
 msgctxt "TFRMVIEWER.MISCREENSHOT.CAPTION"
 msgid "Screenshot"
 msgstr "Tag et skærmbillede"
-
-#: tfrmviewer.miseparator.caption
-msgctxt "TFRMVIEWER.MISEPARATOR.CAPTION"
-msgid "-"
-msgstr "-"
 
 #: tfrmviewer.miview.caption
 msgctxt "TFRMVIEWER.MIVIEW.CAPTION"

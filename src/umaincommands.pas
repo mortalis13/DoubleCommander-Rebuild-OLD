@@ -29,10 +29,11 @@ interface
 
 uses
   Classes, SysUtils, ActnList, uFileView, uFileViewNotebook, uFileSourceOperation,
-  uGlobs, uFileFunctions, uFormCommands, uFileSorting, uShellContextMenu, Menus, ufavoritetabs, ufile, Registry, LazUTF8, DCConvertEncoding;
+  uGlobs, uFileFunctions, uFormCommands, uFileSorting, uShellContextMenu, Menus, ufavoritetabs, ufile, Registry, LazUTF8, DCConvertEncoding
+  , DCClassesUtf8, fMultiRenameWait;
 
 type
-
+  
   TCopyFileNamesToClipboard = (cfntcPathAndFileNames, cfntcJustFileNames, cfntcJustPathWithSeparator, cfntcPathWithoutSeparator);
 
   { TProcedureDoingActionOnMultipleTabs }
@@ -373,6 +374,7 @@ type
    procedure cm_Restart(const Params: array of String);
    procedure cm_ToggleMultilineTabs(const Params: array of String);
    procedure cm_ToggleAliasMode(const Params: array of String);
+   procedure cm_EditFileNames(const Params: array of String);
    procedure cm_Test(const Params: array of String);
 
    // Internal commands
@@ -1087,13 +1089,15 @@ begin
 end;
 
 procedure TMainCommands.cm_CopyFullNamesToClip(const Params: array of String);
-var unixSeparator: Boolean;
+var bUnixSeparator: Boolean = False;
+    Param: String;
 begin
-  unixSeparator := False;
-  if Length(Params) > 0 then
-    GetParamBoolValue(Params[0], 'UnixSeparator', unixSeparator);
+  for Param in Params do
+  begin
+    if Param = 'UnixSeparator' then bUnixSeparator := True;
+  end;
   
-  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathAndFileNames, unixSeparator);
+  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathAndFileNames, bUnixSeparator);
 end;
 
 procedure TMainCommands.cm_CopyFileDetailsToClip(const Params: array of String);
@@ -2095,7 +2099,9 @@ var
   sParams: String = '';
   sStartPath: String = '';
   sEditorType: String;
-  useInternalEditor: boolean = False;
+  bUseInternalEditor: boolean = False;
+  ActiveFile : TFile;
+  Param: String;
 begin
   with frmMain do
   try
@@ -2142,7 +2148,8 @@ begin
     try
       for i := 0 to SelectedFiles.Count - 1 do
       begin
-        aFile := SelectedFiles[i];
+        // aFile := SelectedFiles[i];
+        aFile := ActiveFrame.CloneActiveFile;
 
         // For now we only process one file.
         if not (aFile.IsDirectory or aFile.IsLinkToDirectory) then
@@ -2154,9 +2161,12 @@ begin
             end
           else
             begin
-              if Length(Params) > 0 then
-                GetParamBoolValue(Params[0], 'UseInternal', useInternalEditor);              
-              ShowEditorByGlob(aFile.FullPath, useInternalEditor);
+              for Param in Params do
+              begin
+                if Param = 'UseInternal' then bUseInternalEditor := True;
+              end;
+              
+              ShowEditorByGlob(aFile.FullPath, bUseInternalEditor);
             end;
           Break;
         end;
@@ -2195,10 +2205,12 @@ begin
   bConfirmation := focCopy in gFileOperationsConfirmations;
   ReadCopyRenameParams(Params, bConfirmation, HasQueueId, QueueIdentifier);
   
-  gCopyOnlyFolders := False;
+  gCopyFolders := False;
+  gCopyFoldersPlain := False;
   for Param in Params do
   begin
-    GetParamBoolValue(Param, 'FoldersOnly', gCopyOnlyFolders);
+    if Param = 'CopyFolders' then gCopyFolders := True;
+    if Param = 'CopyPlainFolders' then gCopyFoldersPlain := True;
   end;
   
   if HasQueueId then
@@ -2345,7 +2357,8 @@ var
   // 12.05.2009 - if delete to trash, then show another messages
   MsgDelSel, MsgDelFlDr : String;
   Operation: TFileSourceOperation;
-  bRecycle, bSkipErrors: Boolean;
+  bRecycle: Boolean;
+  bSkipErrors: Boolean = False;
   QueueId: TOperationsManagerQueueIdentifier;
   bConfirmation, HasConfirmationParam: Boolean;
   Param, ParamTrashCan: String;
@@ -2362,7 +2375,6 @@ begin
     end;
 
     bRecycle := gUseTrash;
-    bSkipErrors := False;
     HasConfirmationParam := False;
 
     for Param in Params do
@@ -3622,13 +3634,12 @@ var
   sCmd: String = '';
   sParams: String = '';
   sStartPath: String = '';
-  OpenEditor: boolean;
+  bOpenEditor: boolean = False;
   Param: String;
 begin
-  OpenEditor := False;
   for Param in Params do
   begin
-    GetParamBoolValue(Param, 'OpenEditor', OpenEditor);
+    if Param = 'OpenEditor' then bOpenEditor := True;
   end;
   
   frmMain.ActiveFrame.ExecuteCommand('cm_EditNew', Params);
@@ -3679,7 +3690,7 @@ begin
     
     try
       // Try to find Edit command in "extassoc.xml"
-      if OpenEditor then
+      if bOpenEditor then
       begin
         if not gExts.GetExtActionCmd(aFile, 'edit', sCmd, sParams, sStartPath) then
           ShowEditorByGlob(aFile.FullPath) // If command not found then use default editor
@@ -4485,24 +4496,28 @@ end;
 
 { TMainCommands.cm_CopyPathOfFilesToClip }
 procedure TMainCommands.cm_CopyPathOfFilesToClip(const Params: array of String);
-var unixSeparator: Boolean;
+var bUnixSeparator: Boolean = False;
+    Param: String;
 begin
-  unixSeparator := False;
-  if Length(Params) > 0 then
-    GetParamBoolValue(Params[0], 'UnixSeparator', unixSeparator);
+  for Param in Params do
+  begin
+    if Param = 'UnixSeparator' then bUnixSeparator := True;
+  end;
   
-  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcJustPathWithSeparator, unixSeparator);
+  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcJustPathWithSeparator, bUnixSeparator);
 end;
 
 { TMainCommands.cm_CopyPathNoSepOfFilesToClip }
 procedure TMainCommands.cm_CopyPathNoSepOfFilesToClip(const Params: array of String);
-var unixSeparator: Boolean;
+var bUnixSeparator: Boolean = False;
+    Param: String;
 begin
-  unixSeparator := False;
-  if Length(Params) > 0 then
-    GetParamBoolValue(Params[0], 'UnixSeparator', unixSeparator);
+  for Param in Params do
+  begin
+    if Param = 'UnixSeparator' then bUnixSeparator := True;
+  end;
   
-  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathWithoutSeparator, unixSeparator);
+  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathWithoutSeparator, bUnixSeparator);
 end;
 
 { TMainCommands.cm_DoAnyCmCommand }
@@ -5368,7 +5383,7 @@ begin
   if not frmMarkFiles.ShowForm(sCount) then Exit;
   if (sCount = EmptyStr) then Exit;
   
-  iCount := strtoint(sCount);
+  iCount := StrToInt(sCount);
   totalFiles := frmMain.ActiveFrame.DisplayFiles.Count;
   
   if (iCount > 0) then
@@ -5558,6 +5573,81 @@ begin
   frmMain.actToggleAliasMode.Checked := uGlobs.gUseAliasCommands;
 end;
 
+procedure TMainCommands.cm_EditFileNames(const Params: array of String);
+var
+  I, J: Integer;
+  MarkIndex: Integer;
+  AFileName: String;
+  FileNameSource: String;
+  FileNameResult: String;
+  AFileList: TStringListEx;
+  AFileListResult: TStringListEx;
+  FFiles, AllFiles: TFiles;
+  DisplayFiles: TDisplayFiles;
+  SelectedIndices: TList;
+begin
+  SelectedIndices := TList.Create;
+  
+  AFileList:= TStringListEx.Create;
+  AFileName:= GetTempFolderDeletableAtTheEnd;
+  AFileName:= GetTempName(AFileName) + '.txt';
+  
+  FFiles := frmMain.ActiveFrame.CloneSelectedFiles;
+  AllFiles := frmMain.ActiveFrame.CloneFiles;
+  
+  for I:=0 to AllFiles.Count - 1 do
+    for J:=0 to FFiles.Count - 1 do
+    begin
+      if AllFiles[I].Name = FFiles[J].Name then
+      begin
+        SelectedIndices.Add(Pointer(I));
+        break;
+      end;
+    end;
+  
+  for I:= 0 to FFiles.Count - 1 do
+    AFileList.Add(FFiles[I].Name);
+
+  try
+    AFileList.SaveToFile(AFileName);
+
+    if ShowMultiRenameWaitForm(AFileName, frmMain) then
+    begin
+      AFileListResult:= TStringListEx.Create;
+      AFileListResult.LoadFromFile(AFileName);
+      
+      if AFileListResult.Count <> FFiles.Count then
+      begin
+        msgError(Format(rsMulRenWrongLinesNumber, [AFileListResult.Count, FFiles.Count]));
+      end
+      else
+      begin
+        for I:= 0 to AFileListResult.Count - 1 do
+        begin
+          FileNameSource := FFiles[I].FullPath;
+          FileNameResult := ExtractFilePath(FileNameSource) + AFileListResult[I];
+          mbRenameFile(FileNameSource, FileNameResult);
+        end;
+      end;
+      
+      frmMain.ActiveFrame.MarkFiles(False);
+      // for I:=0 to SelectedIndices.Count - 1 do
+      // begin
+      //   MarkIndex := Integer(SelectedIndices[I]);
+      //   frmMain.ActiveFrame.MarkFiles(MarkIndex, MarkIndex, True);
+      // end;
+
+      AFileListResult.Free;
+      mbDeleteFile(AFileName);
+    end;
+  except
+    on E: Exception do msgError(E.Message);
+  end;
+  
+  AFileList.Free;
+  SelectedIndices.Free;
+end;
+
 procedure TMainCommands.cm_Test(const Params: array of String);
 var
   frmStatistics: TfrmStatistics;
@@ -5565,6 +5655,7 @@ var
   wsFileName: UnicodeString;
   wsStartPath: UnicodeString;
 begin
+  frmMain.Caption := 'юд';
   // frmStatistics := TfrmStatistics.Create(Self);
   // frmStatistics.ShowForm;
   

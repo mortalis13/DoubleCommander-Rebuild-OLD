@@ -1,4 +1,4 @@
-﻿{
+{
    Double Commander
    -------------------------------------------------------------------------
    Licence  : GNU GPL v 2.0
@@ -549,6 +549,7 @@ type
     actLoadUninstallerList: TAction;
     actToggleMultilineTabs: TAction;
     actToggleAliasMode: TAction;
+    actEditFileNames: TAction;
     
     mnuMarkNFiles: TMenuItem;
     mnuToggleMultilineTabs: TMenuItem;
@@ -957,6 +958,7 @@ begin
   aPathIndex := aTag and ((1<<16) - 1);
 end;
 
+
 procedure TfrmMain.FormCreate(Sender: TObject);
 
   function CreateNotebook(aParent: TWinControl; aSide: TFilePanelSelect): TFileViewNotebook;
@@ -1010,6 +1012,7 @@ begin
 
   //Caption of main window
   Self.Caption := 'Double Commander';
+  
   // Remove the initial caption of the button, which is just a text of the associated action.
   // The text would otherwise be briefly shown before the drive button was updated.
   btnLeftDrive.Caption := '';
@@ -6253,12 +6256,14 @@ begin
 end;
 
 procedure TfrmMain.UpdateTitle;
-  var ServernameString: String;
+var ServernameString: String;
+    TitlePath: String;
 begin
   ServernameString := '';
   if Length(UniqueInstance.ServernameByUser) > 0 then
     ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
-  Self.Caption := Format('%s - %s%s %s %s %s', [ActiveFrame.CurrentPath, 'Double Commander', ServernameString, dcVersion, dcRevision, TargetOS]);
+  TitlePath := ActiveFrame.CurrentLocation;
+  Self.Caption := Format('%s - %s%s %s %s %s', [TitlePath, 'Double Commander', ServernameString, dcVersion, dcRevision, TargetOS]);
 end;
 
 initialization

@@ -2812,6 +2812,12 @@ object frmMain: TfrmMain
       Caption = 'Toggle Alias Mode'
       OnExecute = actExecute
     end
+    object actEditFileNames: TAction
+      Tag = 4
+      Category = 'File Operations'
+      Caption = 'Edit File Names'
+      OnExecute = actExecute
+    end
   end
   object pmHotList: TPopupMenu
     Images = imgLstDirectoryHotlist

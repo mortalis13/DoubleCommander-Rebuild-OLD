@@ -1788,6 +1788,11 @@ end;"/>
       </Debugging>
     </Linking>
     <Other>
+      <Verbosity>
+        <ShowWarn Value="False"/>
+        <ShowNotes Value="False"/>
+        <ShowHints Value="False"/>
+      </Verbosity>
       <ExecuteBefore>
         <Command Value="$(ProjPath)\platform\svn2revisioninc$(ExeExt).cmd $MakeFile($(ProjOutDir))"/>
         <CompileReasons Run="False"/>

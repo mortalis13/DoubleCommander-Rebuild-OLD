@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Compiler Value="E:\tools\lazarus-1.8.0\fpc\3.0.2\bin\x86_64-win64\fpc.exe" Date="1254430562"/>
-  <Params Value=" -MObjFPC -Scgi -CX -O3 -XX -l -vewnhibq @fpc-extra.cfg -Fie:\Documents\SVN\doublecmd-code\sdk -FuE:\tools\lazarus-1.8.0\lcl\units\x86_64-win64\win32 -Fue:\Documents\SVN\doublecmd-code\sdk -FuE:\tools\lazarus-1.8.0\lcl\units\x86_64-win64 -FuE:\tools\lazarus-1.8.0\components\lazutils\lib\x86_64-win64 -FuE:\tools\lazarus-1.8.0\packager\units\x86_64-win64 -Fue:\Documents\SVN\doublecmd-code\plugins\wlx\WlxMplayer\src\ -FUe:\Documents\SVN\doublecmd-code\plugins\wlx\WlxMplayer\lib\ -FEe:\Documents\SVN\doublecmd-code\plugins\wlx\WlxMplayer\lib\ -owlxmplayer.wlx -dLCL -dLCLwin32 -dLCLwin32 -fPIC wlxMplayer.lpr"/>
+  <Compiler Value="e:\tools\lazarus-1.8.0_32\fpc\3.0.2\bin\i386-win32\fpc.exe" Date="1254427005"/>
+  <Params Value=" -MObjFPC -Scgi -CX -O3 -XX -l -vewnhibq @fpc-extra.cfg -Fie:\Documents\SVN\doublecmd-code\sdk -Fue:\tools\lazarus-1.8.0_32\lcl\units\i386-win32\win32 -Fue:\Documents\SVN\doublecmd-code\sdk -Fue:\tools\lazarus-1.8.0_32\lcl\units\i386-win32 -Fue:\tools\lazarus-1.8.0_32\components\lazutils\lib\i386-win32 -Fue:\tools\lazarus-1.8.0_32\packager\units\i386-win32 -Fue:\Documents\SVN\doublecmd-code\plugins\wlx\WlxMplayer\src\ -FUe:\Documents\SVN\doublecmd-code\plugins\wlx\WlxMplayer\lib\ -FEe:\Documents\SVN\doublecmd-code\plugins\wlx\WlxMplayer\lib\ -owlxmplayer.wlx -dLCL -dLCLwin32 -dLCLwin32 -fPIC wlxMplayer.lpr"/>
   <Complete Value="False"/>
 </CONFIG>

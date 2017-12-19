@@ -102,6 +102,8 @@ var Index, i: Integer;
 const
   MAX_LINES = 20;
 begin
+  mDirList.Text := '';
+  
   ActiveControl := cbMkDir;
   if (sPath <> '..') then
     cbMkDir.Text := sPath

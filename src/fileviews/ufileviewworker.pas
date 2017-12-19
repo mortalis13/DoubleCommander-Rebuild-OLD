@@ -415,6 +415,7 @@ var
   AFile: TFile;
   I: Integer;
   HaveUpDir: Boolean = False;
+  ShowUpDir: Boolean = False;
   FileSourceFiles: TFiles = nil;
 begin
   try
@@ -468,7 +469,7 @@ begin
       end;
 
       // Add '..' to go to higher level file source, if there is more than one.
-      if (not HaveUpDir) and ( (not FFileSource.IsPathAtRoot(FCurrentPath)) or ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties)) ) then
+      if (FileSourceFiles.Count = 0) or (ShowUpDir) and (not HaveUpDir) and ( (not FFileSource.IsPathAtRoot(FCurrentPath)) or ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties)) ) then
       // if FileSourceFiles.Count = 0 then
       begin
         AFile := FFileSource.CreateFileObject(FCurrentPath);

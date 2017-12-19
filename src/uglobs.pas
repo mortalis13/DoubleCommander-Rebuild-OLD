@@ -188,7 +188,8 @@ var
   gTempSplitterPos: Double;
   gPrevPageIndex: Integer;
   gActiveVisibleTopRow: Integer;
-  gCopyOnlyFolders: Boolean = False;
+  gCopyFolders: Boolean = False;
+  gCopyFoldersPlain: Boolean = False;
   gFreeSorting: Boolean = False;
   gLoadTabsFromFile: Boolean = False;
   gTabsFilePath: String;

@@ -927,10 +927,13 @@ begin
       end;
     end;
 
-    if gCopyOnlyFolders then
+    if gCopyFolders then
     begin
-      if aFile.IsDirectory then
-        ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName)
+      if aFile.IsDirectory then ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName);
+    end
+    else if gCopyFoldersPlain then
+    begin
+      if aFile.IsDirectory then mbCreateDir(TargetName);
     end
     else
     if aFile.IsDirectory then

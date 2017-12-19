@@ -190,13 +190,15 @@ begin
         end;
       end;
   end; // case
-  Result := CallWindowProc(OldWProc, hWnd, uiMsg, wParam, lParam);
+  // Result := CallWindowProc(OldWProc, hWnd, uiMsg, wParam, lParam);
+  Result := CallWindowProcW(OldWProc, hWnd, uiMsg, wParam, lParam);
 end;
 
 procedure SetMyWndProc(Handle : HWND);
 begin
   {$PUSH}{$HINTS OFF}
-  OldWProc := WNDPROC(SetWindowLongPtr(Handle, GWL_WNDPROC, LONG_PTR(@MyWndProc)));
+  // OldWProc := WNDPROC(SetWindowLongPtr(Handle, GWL_WNDPROC, LONG_PTR(@MyWndProc)));
+  OldWProc := WNDPROC(SetWindowLongPtrW(Handle, GWL_WNDPROC, LONG_PTR(@MyWndProc)));
   {$POP}
 end;
 {$ENDIF}

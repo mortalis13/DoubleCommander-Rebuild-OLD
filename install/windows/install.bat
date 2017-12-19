@@ -25,10 +25,12 @@ mkdir  %DC_INSTALL_DIR%\plugins\wfx
 mkdir  %DC_INSTALL_DIR%\plugins\wfx\ftp
 
 mkdir  %DC_INSTALL_DIR%\doc
+
 rem Copy directories
 xcopy /E language     %DC_INSTALL_DIR%\language\
 xcopy /E pixmaps      %DC_INSTALL_DIR%\pixmaps\
 xcopy /E highlighters %DC_INSTALL_DIR%\highlighters\
+
 rem Copy files
 copy doc\*.txt                      %DC_INSTALL_DIR%\doc\
 copy doublecmd.exe                  %DC_INSTALL_DIR%\
@@ -37,6 +39,7 @@ copy install\windows\doublecmd.xml  %DC_INSTALL_DIR%\
 copy doublecmd.ext.example          %DC_INSTALL_DIR%\
 copy pixmaps.txt                    %DC_INSTALL_DIR%\
 copy multiarc.ini                   %DC_INSTALL_DIR%\
+
 rem Copy libraries
 copy *.dll                          %DC_INSTALL_DIR%\
 
