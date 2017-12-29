@@ -3,7 +3,7 @@ object frmStatistics: TfrmStatistics
   Height = 83
   Top = 368
   Width = 480
-  Caption = 'Statistics РУС'
+  Caption = 'Statistics'
   ClientHeight = 83
   ClientWidth = 480
   Constraints.MaxHeight = 83
