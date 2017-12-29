@@ -2205,8 +2205,8 @@ begin
   bConfirmation := focCopy in gFileOperationsConfirmations;
   ReadCopyRenameParams(Params, bConfirmation, HasQueueId, QueueIdentifier);
   
-  gCopyFolders := False;
-  gCopyFoldersPlain := False;
+  // gCopyFolders := False;
+  // gCopyFoldersPlain := False;
   for Param in Params do
   begin
     if Param = 'CopyFolders' then gCopyFolders := True;
@@ -2235,10 +2235,6 @@ var
   bConfirmation, HasQueueId: Boolean;
   QueueIdentifier: TOperationsManagerQueueIdentifier;
 begin
-  // temp fix after cm_Copy
-  gCopyFolders := False;
-  gCopyFoldersPlain := False;
-  
   bConfirmation := focMove in gFileOperationsConfirmations;
   ReadCopyRenameParams(Params, bConfirmation, HasQueueId, QueueIdentifier);
 

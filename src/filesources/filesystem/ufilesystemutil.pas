@@ -935,8 +935,7 @@ begin
     begin
       if aFile.IsDirectory then mbCreateDir(TargetName);
     end
-    else
-    if aFile.IsDirectory then
+    else if aFile.IsDirectory then
       ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName)
     else if aFile.IsLink then
       ProcessedOk := ProcessLink(CurrentSubNode, TargetName)
@@ -959,6 +958,10 @@ begin
     AppProcessMessages;
     CheckOperationState;
   end;
+  
+  // reset params for other operations
+  gCopyFolders := False;
+  gCopyFoldersPlain := False;
 end;
 
 function TFileSystemOperationHelper.ProcessDirectory(aNode: TFileTreeNode; AbsoluteTargetFileName: String): Boolean;
