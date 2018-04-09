@@ -2205,12 +2205,13 @@ begin
   bConfirmation := focCopy in gFileOperationsConfirmations;
   ReadCopyRenameParams(Params, bConfirmation, HasQueueId, QueueIdentifier);
   
-  // gCopyFolders := False;
-  // gCopyFoldersPlain := False;
+  gCopyFoldersTree := False;
+  gCopyFolderOnly := False;
+  
   for Param in Params do
   begin
-    if Param = 'CopyFolders' then gCopyFolders := True;
-    if Param = 'CopyPlainFolders' then gCopyFoldersPlain := True;
+    if Param = 'CopyFoldersTree' then gCopyFoldersTree := True;
+    if Param = 'CopyFolderOnly' then gCopyFolderOnly := True;
   end;
   
   if HasQueueId then

@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="10"/>
     <BuildModes Active="Debug"/>
-    <Units Count="240">
+    <Units Count="241">
       <Unit0>
         <Filename Value="doublecmd.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -20,7 +20,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fMain"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <TopLine Value="765"/>
         <CursorPos X="14" Y="781"/>
         <UsageCount Value="96"/>
@@ -177,12 +177,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="fMultiRename"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <TopLine Value="155"/>
-        <CursorPos X="24" Y="181"/>
+        <CursorPos X="19" Y="160"/>
         <UsageCount Value="96"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="fpackdlg.pas"/>
@@ -1760,14 +1760,14 @@
       <Unit237>
         <Filename Value="..\components\doublecmd\dcclassesutf8.pas"/>
         <UnitName Value="DCClassesUtf8"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <TopLine Value="34"/>
         <CursorPos X="3" Y="50"/>
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit237>
       <Unit238>
-        <Filename Value="E:\tools\lazarus-1.8.0\fpc\3.0.2\source\rtl\objpas\classes\classesh.inc"/>
+        <Filename Value="E:\tools\lazarus-1.8.0_64\fpc\3.0.2\source\rtl\objpas\classes\classesh.inc"/>
         <EditorIndex Value="4"/>
         <TopLine Value="282"/>
         <CursorPos X="3" Y="298"/>
@@ -1775,7 +1775,7 @@
         <Loaded Value="True"/>
       </Unit238>
       <Unit239>
-        <Filename Value="E:\tools\lazarus-1.8.0\components\lazutils\stringhashlist.pas"/>
+        <Filename Value="E:\tools\lazarus-1.8.0_64\components\lazutils\stringhashlist.pas"/>
         <UnitName Value="StringHashList"/>
         <EditorIndex Value="2"/>
         <TopLine Value="55"/>
@@ -1783,6 +1783,19 @@
         <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit239>
+      <Unit240>
+        <Filename Value="fstatistics.pas"/>
+        <ComponentName Value="frmStatistics"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="fStatistics"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
+        <CursorPos X="31" Y="21"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit240>
     </Units>
     <JumpHistory Count="13" HistoryIndex="12">
       <Position1>

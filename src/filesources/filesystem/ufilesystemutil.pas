@@ -416,6 +416,10 @@ begin
   end;
 
   ProcessNode(aFileTree, FRootTargetPath);
+  
+  // reset params for other operations
+  gCopyFoldersTree := False;
+  gCopyFolderOnly := False;
 end;
 
 // ----------------------------------------------------------------------------
@@ -927,11 +931,11 @@ begin
       end;
     end;
 
-    if gCopyFolders then
+    if gCopyFoldersTree then
     begin
       if aFile.IsDirectory then ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName);
     end
-    else if gCopyFoldersPlain then
+    else if gCopyFolderOnly then
     begin
       if aFile.IsDirectory then mbCreateDir(TargetName);
     end
@@ -958,10 +962,6 @@ begin
     AppProcessMessages;
     CheckOperationState;
   end;
-  
-  // reset params for other operations
-  gCopyFolders := False;
-  gCopyFoldersPlain := False;
 end;
 
 function TFileSystemOperationHelper.ProcessDirectory(aNode: TFileTreeNode; AbsoluteTargetFileName: String): Boolean;
