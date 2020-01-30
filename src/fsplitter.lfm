@@ -1,0 +1,268 @@
+inherited frmSplitter: TfrmSplitter
+  Left = 890
+  Height = 247
+  Top = 363
+  Width = 500
+  HorzScrollBar.Page = 464
+  HorzScrollBar.Range = 369
+  VertScrollBar.Page = 301
+  VertScrollBar.Range = 227
+  ActiveControl = cmbxSize
+  AutoSize = True
+  BorderIcons = [biSystemMenu]
+  Caption = 'Splitter'
+  ChildSizing.LeftRightSpacing = 6
+  ChildSizing.TopBottomSpacing = 6
+  ClientHeight = 247
+  ClientWidth = 500
+  Constraints.MinWidth = 500
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  SessionProperties = 'cmbxSize.Text;rbtnByte.Checked;rbtnGigaB.Checked;rbtnKiloB.Checked;rbtnMegaB.Checked;teNumberParts.Text;Width;cbRequireACRC32VerificationFile.Checked'
+  inherited pnlContent: TPanel
+    Left = 6
+    Height = 197
+    Top = 6
+    Width = 488
+    ClientHeight = 197
+    ClientWidth = 488
+    object grbxSize: TGroupBox[0]
+      AnchorSideLeft.Control = pnlContent
+      AnchorSideTop.Control = edDirTarget
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = pnlContent
+      AnchorSideRight.Side = asrBottom
+      Left = 0
+      Height = 138
+      Top = 52
+      Width = 488
+      Anchors = [akTop, akLeft, akRight]
+      AutoSize = True
+      BorderSpacing.Top = 10
+      Caption = 'Size and number of parts'
+      ChildSizing.LeftRightSpacing = 6
+      ChildSizing.TopBottomSpacing = 6
+      ClientHeight = 118
+      ClientWidth = 484
+      Constraints.MinWidth = 300
+      TabOrder = 1
+      object cmbxSize: TComboBoxAutoWidth
+        AnchorSideLeft.Control = grbxSize
+        AnchorSideTop.Control = grbxSize
+        AnchorSideRight.Side = asrBottom
+        Left = 6
+        Height = 23
+        Top = 6
+        Width = 272
+        DropDownCount = 16
+        ItemHeight = 15
+        Items.Strings = (
+          'Automatic'
+          '1457664B - 3.5" High Density 1.44M'
+          '1213952B - 5.25" High Density 1.2M'
+          '730112B - 3.5" Double Density 720K'
+          '362496B - 5.25" Double Density 360K'
+          '98078KB - ZIP 100MB'
+          '650MB - CD 650MB'
+          '700MB - CD 700MB'
+          '4482MB - DVD+R'
+        )
+        OnChange = cmbxSizeChange
+        TabOrder = 0
+        Text = '1457664B - 3.5"'
+      end
+      object rbtnByte: TRadioButton
+        AnchorSideLeft.Control = grbxSize
+        AnchorSideTop.Control = cmbxSize
+        AnchorSideTop.Side = asrBottom
+        Left = 6
+        Height = 19
+        Top = 31
+        Width = 48
+        BorderSpacing.Top = 2
+        Caption = '&Bytes'
+        Checked = True
+        OnChange = rbtnByteChange
+        TabOrder = 1
+        TabStop = True
+      end
+      object rbtnKiloB: TRadioButton
+        AnchorSideLeft.Control = rbtnByte
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = rbtnByte
+        Left = 56
+        Height = 19
+        Top = 31
+        Width = 68
+        BorderSpacing.Left = 2
+        Caption = '&Kilobytes'
+        OnChange = rbtnByteChange
+        TabOrder = 2
+      end
+      object rbtnMegaB: TRadioButton
+        AnchorSideLeft.Control = rbtnKiloB
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = rbtnKiloB
+        Left = 126
+        Height = 19
+        Top = 31
+        Width = 78
+        BorderSpacing.Left = 2
+        Caption = '&Megabytes'
+        OnChange = rbtnByteChange
+        TabOrder = 3
+      end
+      object teNumberParts: TEdit
+        AnchorSideLeft.Control = lblNumberParts
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = rbtnKiloB
+        AnchorSideTop.Side = asrBottom
+        Left = 97
+        Height = 23
+        Top = 60
+        Width = 128
+        BorderSpacing.Left = 4
+        BorderSpacing.Top = 10
+        OnChange = teNumberPartsChange
+        TabOrder = 5
+      end
+      object lblNumberParts: TLabel
+        AnchorSideLeft.Control = rbtnByte
+        AnchorSideTop.Control = teNumberParts
+        AnchorSideTop.Side = asrCenter
+        Left = 6
+        Height = 15
+        Top = 64
+        Width = 87
+        Caption = '&Number of parts'
+        FocusControl = teNumberParts
+        ParentColor = False
+      end
+      object rbtnGigaB: TRadioButton
+        AnchorSideLeft.Control = rbtnMegaB
+        AnchorSideLeft.Side = asrBottom
+        AnchorSideTop.Control = rbtnKiloB
+        Left = 206
+        Height = 19
+        Top = 31
+        Width = 72
+        BorderSpacing.Left = 2
+        Caption = '&Gigabytes'
+        OnChange = rbtnByteChange
+        TabOrder = 4
+      end
+      object cbRequireACRC32VerificationFile: TCheckBox
+        AnchorSideLeft.Control = cmbxSize
+        AnchorSideTop.Control = teNumberParts
+        AnchorSideTop.Side = asrBottom
+        Left = 6
+        Height = 19
+        Top = 93
+        Width = 188
+        BorderSpacing.Top = 10
+        Caption = 'Require a CRC32 verification file'
+        Checked = True
+        State = cbChecked
+        TabOrder = 6
+      end
+    end
+    object lbDirTarget: TLabel[1]
+      AnchorSideTop.Control = pnlContent
+      Left = 0
+      Height = 15
+      Top = 0
+      Width = 129
+      Caption = 'Split the file to directory:'
+      FocusControl = edDirTarget
+      ParentColor = False
+    end
+    object edDirTarget: TDirectoryEdit[2]
+      AnchorSideTop.Control = lbDirTarget
+      AnchorSideTop.Side = asrBottom
+      AnchorSideRight.Control = btnRelativeFTChoice
+      Left = 0
+      Height = 23
+      Top = 19
+      Width = 462
+      ShowHidden = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      Anchors = [akTop, akLeft, akRight]
+      BorderSpacing.Top = 4
+      MaxLength = 0
+      TabOrder = 0
+    end
+    object btnRelativeFTChoice: TSpeedButton[3]
+      AnchorSideLeft.Side = asrBottom
+      AnchorSideTop.Control = edDirTarget
+      AnchorSideRight.Control = pnlContent
+      AnchorSideRight.Side = asrBottom
+      AnchorSideBottom.Control = edDirTarget
+      AnchorSideBottom.Side = asrBottom
+      Left = 462
+      Height = 23
+      Hint = 'Some functions to select appropriate path'
+      Top = 19
+      Width = 26
+      Anchors = [akTop, akRight, akBottom]
+      Glyph.Data = {
+        36040000424D3604000000000000360000002800000010000000100000000100
+        20000000000000040000640000006400000000000000000000002C86D8702D88
+        D8A62D87D8EA2D88D8F72D88D8F72D88D8F72D88D8F72D88D8F72D88D8F72D88
+        D8F72D88D8F72D87D8F72D88D8F12C86D893FFFFFF00FFFFFF00338ED9E6DCF0
+        FAF0A7DDF4FD9EDBF4FF96DAF3FF8ED8F3FF86D7F3FF7FD4F2FF79D3F2FF72D2
+        F1FF6CD0F1FF69CFF1FFC2EAF8FE338ED9F0FFFFFF00FFFFFF003594DAF7EFFA
+        FEFFA1E9F9FF91E5F8FF81E1F7FF72DEF6FF63DAF5FF54D7F4FF47D3F3FF39D0
+        F2FF2ECDF1FF26CBF0FFCAF2FBFF3594DAF7FFFFFF00FFFFFF00369ADAF8F2FA
+        FDFFB3EDFAFFA4E9F9FF95E6F8FF85E2F7FF81E1F7FF7AE0F7FF7CE0F7FF62DA
+        F5FF54D6F3FF47D3F2FFE8F9FDFF3594DAFFFFFFFF00FFFFFF0036A1DAF9F6FC
+        FEFFC8F2FCFFB9EFFBFF94DFEFFF8CE4F8FF99CED3FF91D0D8FF82E1F7FF6DDD
+        F6FF61DAF5FF57D7F4FFE7F8FDFF3594DAFFFFFFFF00FFFFFF0037A6DAFAFEFF
+        FFFFF8FDFFFFF6FDFFFFF4F4F2FFE8FAFEFFB6D7D8FFAAC7C5FF92D8E4FF7DE0
+        F7FF72DDF6FF68DBF5FFE9F9FDFF3594DAFFFFFFFF00FFFFFF0035ABDAFAE8F6
+        FBFF7EC5EAFF4AA3DFFF5E97C2FF4DA3DEFFF2F1EDFFF3EFECFFEDE5DFFFEDEB
+        E8FFF1F9FDFFF0F9FDFFFFFFFFFF3594DAFFFFFFFF00FFFFFF0036AADAF2F1FA
+        FDFF94DEF5FF93DCF4FFACBFBFFFBC9F90FF64A1CFFF3594DAFF3594DAFF3594
+        DAFF3594DAFF3594DAFF3594DAFF3594DAFFFFFFFF00FFFFFF0035AFDAF0F7FC
+        FEFF8EE4F8FF91DEF5FF9FE0F5FFC5C7C2FFDFA583FFEDC8B3FFEDCDB8FFE9BE
+        A3FFD58E64FFEEFBFEFFFAFDFFF936AFDAD4FFFFFF00FFFFFF0036B3DAF8FDFE
+        FEFFFEFFFFFFFEFEFFFFFDFEFFFFFEFFFFFFE7D6C9FFE0A987FFEBC7B0FFDDA1
+        7CFFBCA595FF839DA5FC7BAEBEEC6395A58E81818117FFFFFF0034B4D9D05EC2
+        E1FA60C3E2FA60C3E2FA60C3E2FA5FC3E2FA3CB6DBDDD5B1968CDDAB8DF9C4AF
+        A3FFD5D5D5FFBBBBBBFFA6A6A6FFA0A0A0FF848484E482828262FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00969696029494
+        94C5CBCBCBFFD2D2D2FFC9C9C9FFD2D2D2FFC6C6C6FF858585E8FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF009898
+        9855B2B2B2FFD6D6D6FF919191DA8E8E8EF5C0C0C0FF898989FDFFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF009B9B
+        9B54B5B5B5FFE6E6E6FF949494EF929292AF8F8F8FA68D8D8D90FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF009E9E
+        9E1B9C9C9CE4E1E1E1FFD2D2D2FF969696ABFFFFFF00FFFFFF00FFFFFF00FFFF
+        FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
+        FF009E9E9E629D9D9DE89B9B9BF999999992FFFFFF00FFFFFF00
+      }
+      OnClick = btnRelativeFTChoiceClick
+    end
+  end
+  inherited pnlButtons: TPanel
+    Left = 6
+    Top = 207
+    Width = 488
+    ClientWidth = 488
+    inherited btnCancel: TBitBtn
+      Left = 306
+    end
+    inherited btnOK: TBitBtn
+      Left = 400
+    end
+  end
+  inherited pmQueuePopup: TPopupMenu
+    left = 192
+  end
+  object pmPathHelper: TPopupMenu[3]
+    left = 368
+    top = 104
+  end
+end

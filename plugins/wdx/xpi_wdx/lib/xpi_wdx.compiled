@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="D:\lazarus\fpc\3.0.4\bin\x86_64-win64\fpc.exe" Date="1286836893"/>
+  <Params Value=" -MObjFPC -Scghi -CX -O3 -XX -l -vewnhibq -Fid:\Work\other\doublecmd\doublecmd-0.9\plugins\wdx\xpi_wdx\lib -Fid:\Work\other\doublecmd\doublecmd-0.9\sdk -Fud:\Work\other\doublecmd\doublecmd-0.9\sdk -Fud:\Work\other\doublecmd\doublecmd-0.9\plugins\wdx\xpi_wdx\src\ -FUd:\Work\other\doublecmd\doublecmd-0.9\plugins\wdx\xpi_wdx\lib\ -FEd:\Work\other\doublecmd\doublecmd-0.9\plugins\wdx\xpi_wdx\lib\ -oxpi_wdx.wdx -fPIC xpi_wdx.lpr"/>
+</CONFIG>

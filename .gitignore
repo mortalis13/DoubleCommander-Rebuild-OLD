@@ -1,0 +1,9 @@
+*.o
+*.ppu
+*.bak
+*.obj
+*.or
+*.exe
+*.dbg
+
+components/**/lib/

@@ -1,0 +1,4 @@
+Revision 9293
+svn checkout https://svn.code.sf.net/p/doublecmd/code/branches/0.9 doublecmd-0.9
+
+Lazarus 1.8.4
