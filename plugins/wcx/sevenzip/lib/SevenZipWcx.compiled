@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="D:\lazarus\fpc\3.0.4\bin\x86_64-win64\fpc.exe" Date="1286836893"/>
-  <Params Value=" -MDelphi -Scghi -CX -O3 -XX -l -vewnhibq -Fid:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\lib -Fud:\Work\other\doublecmd\doublecmd-0.9\sdk -Fud:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\src\jcl\common -Fud:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\src\jcl\windows -Fud:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\src\jcl -Fud:\lazarus\components\lazutils\lib\x86_64-win64 -Fud:\lazarus\packager\units\x86_64-win64 -Fud:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\src\ -FUd:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\lib\ -FEd:\Work\other\doublecmd\doublecmd-0.9\plugins\wcx\sevenzip\ -osevenzip.wcx -dUNICODE_CTRLS SevenZipWcx.dpr"/>
-</CONFIG>
