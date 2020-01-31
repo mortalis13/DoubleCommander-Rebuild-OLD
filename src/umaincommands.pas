@@ -2117,9 +2117,19 @@ procedure TMainCommands.cm_Copy(const Params: array of string);
 var
   bConfirmation, HasQueueId: Boolean;
   QueueIdentifier: TOperationsManagerQueueIdentifier;
+  Param: String;
 begin
   bConfirmation := focCopy in gFileOperationsConfirmations;
   ReadCopyRenameParams(Params, bConfirmation, HasQueueId, QueueIdentifier);
+  
+  gCopyFoldersTree := False;
+  gCopyFolderOnly := False;
+  
+  for Param in Params do
+  begin
+    if Param = 'CopyFoldersTree' then gCopyFoldersTree := True;
+    if Param = 'CopyFolderOnly'  then gCopyFolderOnly := True;
+  end;
 
   if HasQueueId then
     frmMain.CopyFiles(frmMain.NotActiveFrame.CurrentPath, bConfirmation, QueueIdentifier)

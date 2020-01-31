@@ -798,7 +798,8 @@ begin
              fpChangeTime,
              {$ENDIF}
              fpLastAccessTime,
-             uFileProperty.fpLink
+             uFileProperty.fpLink,
+             fpFilesCount
             ];
 end;
 

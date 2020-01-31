@@ -975,6 +975,7 @@ var
   TargetFiles: TFiles = nil;
   AFile: TFile;
   i: Integer;
+  FilesCount: String;
 begin
   if fsoCalcStatistics in FFileSource.GetOperationsTypes then
   begin
@@ -1014,6 +1015,11 @@ begin
           begin
             CalcStatisticsOperationStatistics := CalcStatisticsOperation.RetrieveStatistics;
             AFile.Size := CalcStatisticsOperationStatistics.Size;
+            
+            AFile.FilesCountProperty := TFileFilesCountProperty.Create;
+            FilesCount := IntToStr(CalcStatisticsOperationStatistics.Files) + 'F ' + IntToStr(CalcStatisticsOperationStatistics.Directories) + 'D';
+            AFile.FilesCount := FilesCount;
+            
             Inc(FCompletedCalculations);
 
             if Aborted then

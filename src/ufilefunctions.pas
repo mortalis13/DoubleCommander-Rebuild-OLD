@@ -46,7 +46,8 @@ type
                    fsfType = 13,
                    fsfComment = 14,
                    fsfCompressedSize = 15,
-                   fsfInvalid = 16,
+                   fsfFilesCount = 16,
+                   fsfInvalid = 17,
                    fsfVariant = Ord(fpVariant),
                    fsfMaximum = Ord(fpMaximum));
 
@@ -72,6 +73,7 @@ const
                'GETFILETYPE',
                'GETFILECOMMENT',
                'GETFILECOMPRESSEDSIZE',
+               'GETFILEFILESCOUNT',
                ''                 // fsfInvalid
                );
 
@@ -122,6 +124,7 @@ const TFileFunctionToProperty: array [Low(TFileFunction)..fsfInvalid] of TFilePr
              [fpType],
              [fpComment],
              [fpCompressedSize],
+             [fpFilesCount],
              [] { invalid });
 
 //Return type (Script or DC or Plugin etc)
@@ -325,6 +328,17 @@ begin
           end
           else if fpCompressedSize in AFile.SupportedProperties then
             Result := AFile.Properties[fpCompressedSize].Format(DefaultFilePropertyFormatter);
+        end;
+      fsfFilesCount:
+        begin
+          if (AFile.IsDirectory or AFile.IsLinkToDirectory) and (not (fpFilesCount in AFile.SupportedProperties)) then
+          begin
+            Result := '<STAT>'
+          end
+          else if fpFilesCount in AFile.SupportedProperties then
+          begin
+            Result := AFile.FilesCount;
+          end
         end;
     end;
   end
@@ -588,6 +602,7 @@ begin
     Add(TFileFunctionStrings[fsfType] + '=' + rsFuncType);
     Add(TFileFunctionStrings[fsfComment] + '=' + rsFuncComment);
     Add(TFileFunctionStrings[fsfCompressedSize] + '=' + rsFuncCompressedSize);
+    Add(TFileFunctionStrings[fsfFilesCount] + '=' + 'Total files');
   end;
 end;
 

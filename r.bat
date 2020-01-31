@@ -38,12 +38,15 @@ if "%1"=="p" (
   call :package
   goto:eof
 )
+if "%1"=="b" (
+  call :build
+  goto:eof
+)
 if "%1"=="" (
   call :build
+  call :run
+  goto:eof
 )
-
-call :run
-goto:eof
 
 rem ----------------------------------
 
@@ -63,8 +66,8 @@ goto:eof
 
 :build
   echo build method
-  lazbuild -q --bm=debug --os=%OS_TARGET% --cpu=%CPU_TARGET% src\doublecmd.lpi
-  rem lazbuild -q --bm=silent --os=%OS_TARGET% --cpu=%CPU_TARGET% src\doublecmd.lpi
+  rem lazbuild -q --bm=debug --os=%OS_TARGET% --cpu=%CPU_TARGET% src\doublecmd.lpi
+  lazbuild -q --bm=silent --os=%OS_TARGET% --cpu=%CPU_TARGET% src\doublecmd.lpi
 goto:eof
 
 :package

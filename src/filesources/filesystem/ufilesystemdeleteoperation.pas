@@ -71,7 +71,7 @@ begin
   FSymLinkOption := fsooslNone;
   FSkipErrors := gSkipFileOpError;
   FRecycle := False;
-  FDeleteReadOnly := fsoogNone;
+  FDeleteReadOnly := fsoogYes;
   FDeleteDirectly:= fsoogNone;
 
   if gProcessComments then

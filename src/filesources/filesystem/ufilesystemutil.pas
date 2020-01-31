@@ -440,6 +440,10 @@ begin
   end;
 
   ProcessNode(aFileTree, FRootTargetPath);
+  
+  // reset params for other operations
+  gCopyFoldersTree := False;
+  gCopyFolderOnly := False;
 end;
 
 // ----------------------------------------------------------------------------
@@ -952,8 +956,16 @@ begin
         fsourIgnoreAll: FMaxPathOption := fsourIgnore;
       end;
     end;
-
-    if aFile.IsLink then
+    
+    if gCopyFoldersTree then
+    begin
+      if aFile.IsDirectory then ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName);
+    end
+    else if gCopyFolderOnly then
+    begin
+      if aFile.IsDirectory then mbCreateDir(TargetName);
+    end
+    else if aFile.IsLink then
       ProcessedOk := ProcessLink(CurrentSubNode, TargetName)
     else if aFile.IsDirectory then
       ProcessedOk := ProcessDirectory(CurrentSubNode, TargetName)

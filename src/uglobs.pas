@@ -217,6 +217,9 @@ const
 
 
 var
+  gCopyFoldersTree: Boolean = False;
+  gCopyFolderOnly: Boolean = False;
+  
   { For localization }
   gPOFileName,
   gHelpLang: String;

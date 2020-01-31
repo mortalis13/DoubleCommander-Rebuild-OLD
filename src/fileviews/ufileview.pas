@@ -1419,6 +1419,8 @@ begin
     Exit; // File does not exist anymore (reference is invalid).
 
   OrigDisplayFile.FSFile.Size := UpdatedFile.FSFile.Size;
+  OrigDisplayFile.FSFile.FilesCountProperty := TFileFilesCountProperty.Create;
+  OrigDisplayFile.FSFile.FilesCount := UpdatedFile.FSFile.FilesCount;
   DoFileUpdated(OrigDisplayFile, [fpSize]);
 end;
 
