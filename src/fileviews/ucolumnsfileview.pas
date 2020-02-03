@@ -842,8 +842,8 @@ begin
 
   // ---
   dgPanel.OnHeaderClick:=@dgPanelHeaderClick;
-  dgPanel.OnMouseWheelUp := @dgPanelMouseWheelUp;
-  dgPanel.OnMouseWheelDown := @dgPanelMouseWheelDown;
+  // dgPanel.OnMouseWheelUp := @dgPanelMouseWheelUp;
+  // dgPanel.OnMouseWheelDown := @dgPanelMouseWheelDown;
   dgPanel.OnSelection:= @dgPanelSelection;
 {$IF lcl_fullversion >= 093100}
   dgPanel.OnBeforeSelection:= @dgPanelBeforeSelection;
@@ -1544,6 +1544,11 @@ var
                 BackgroundColor := ColumnsSet.GetColumnInactiveMarkColor(ACol);
               TextColor := ColumnsSet.GetColumnBackground(ACol);
             end;
+          
+          if IsCursor then
+          begin
+            BackgroundColor := ColumnsSet.GetColumnSelectionCursorColor(ACol);
+          end;
           //------------------------------------------------------
         end
       else

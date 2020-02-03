@@ -472,11 +472,10 @@ begin
           Break;
         end;
       end;
-
-      if (not HaveUpDir) and
-         ((not FFileSource.IsPathAtRoot(FCurrentPath)) or
-          // Add '..' to go to higher level file source, if there is more than one.
-          ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties))) then
+      
+      // Add '..' to go to higher level file source, if there is more than one.
+      if (not HaveUpDir) and (FileSourceFiles.Count = 0) and ( (not FFileSource.IsPathAtRoot(FCurrentPath)) 
+        or ((FFileSourceIndex > 0) and not (fspNoneParent in FFileSource.Properties)) ) then
       begin
         AFile := FFileSource.CreateFileObject(FCurrentPath);
         AFile.Name := '..';

@@ -568,7 +568,9 @@ end;
 
 function TFileSource.GetFreeSpace(Path: String; out FreeSize, TotalSize : Int64) : Boolean;
 begin
-  Result := False; // not supported by default
+  FreeSize := 0;
+  TotalSize := 0;
+  Result := True;
 end;
 
 function TFileSource.GetLocalName(var aFile: TFile): Boolean;
