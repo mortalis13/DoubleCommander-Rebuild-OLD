@@ -93,11 +93,10 @@ begin
         CheckOperationState;
 
         if sr.Name='.' then Continue;
-        if sr.Name='..' then Continue;
 
         // Don't include '..' in the root directory.
-        // if (sr.Name='..') and IsRootPath then
-        //   Continue;
+        if (sr.Name='..') and IsRootPath then
+          Continue;
 
         AFile := TFileSystemFileSource.CreateFile(Path, @sr);
         FFiles.Add(AFile);
