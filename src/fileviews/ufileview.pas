@@ -592,7 +592,8 @@ uses
   uShellExecute, fMaskInputDlg, uMasks, DCOSUtils, uOSUtils, DCStrUtils,
   uDCUtils, uDebug, uLng, uShowMsg, uFileSystemFileSource, uFileSourceUtil,
   uFileViewNotebook, uSearchTemplate, uKeyboard, uFileFunctions,
-  fMain, uSearchResultFileSource, uFileSourceProperty, uVfsModule, uFileViewWithPanels;
+  fMain, uSearchResultFileSource, uFileSourceProperty, uVfsModule, uFileViewWithPanels
+  , uArchiveFileSourceUtil;
 
 const
   MinimumReloadInterval  = 1000; // 1 second
@@ -1852,13 +1853,39 @@ var
   bCaseSensitive: boolean = false;
   bIgnoreAccents: boolean = false;
   bWindowsInterpretation: boolean = false;
+  
+  bSelected: boolean = false;
+  I: Integer;
 begin
   if IsActiveItemValid then
   begin
-    sGroup := GetActiveDisplayFile.FSFile.Extension;
-    if sGroup <> '' then
-      sGroup := '.' + sGroup;
-    MarkGroup('*' + sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+    if not GetActiveDisplayFile.FSFile.isDirectory then
+    begin
+      sGroup := GetActiveDisplayFile.FSFile.Extension;
+      if sGroup <> '' then
+        sGroup := '.' + sGroup;
+      MarkGroup('*' + sGroup, bSelect, @bCaseSensitive, @bIgnoreAccents, @bWindowsInterpretation);
+    end
+    else
+    begin
+      BeginUpdate;
+      try
+        for I := 0 to FFiles.Count - 1 do
+        begin
+          if FFiles[I].FSFile.isDirectory then
+          begin
+            FFiles[I].Selected := bSelect;
+            bSelected := True;
+          end;
+        end;
+        // for
+        
+        if bSelected then
+          Notify([fvnSelectionChanged]);
+      finally
+        EndUpdate;
+      end;
+    end;
   end;
 end;
 
@@ -2172,7 +2199,7 @@ begin
         ChooseSymbolicLink(Self, FSFile)
       else if FSFile.IsDirectory then
         ChangePathToChild(FSFile)
-      else if not FolderMode then
+      else if (not FolderMode) or (FileIsArchive(FSFile.FullPath)) then
         try
           uFileSourceUtil.ChooseFile(Self, FileSource, FSFile);
         except

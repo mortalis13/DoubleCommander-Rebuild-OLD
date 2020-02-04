@@ -367,12 +367,9 @@ begin
   if not IsLoadingFileList then
   begin
 
-    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size<MAX_FONT_SIZE_MAIN) then
+    if Shift=[ssCtrl] then
     begin
-      gFonts[dcfMain].Size:=gFonts[dcfMain].Size+1;
-      frmMain.FrameLeft.UpdateView;
-      frmMain.FrameRight.UpdateView;
-      Handled:=True;
+      dgPanel.Perform(LM_VSCROLL, SB_PAGEUP, 0);
       Exit;
     end;
 
@@ -398,12 +395,9 @@ begin
   if not IsLoadingFileList then
   begin
 
-    if (Shift=[ssCtrl])and(gFonts[dcfMain].Size>MIN_FONT_SIZE_MAIN) then
+    if Shift=[ssCtrl] then
     begin
-      gFonts[dcfMain].Size:=gFonts[dcfMain].Size-1;
-      frmMain.FrameLeft.UpdateView;
-      frmMain.FrameRight.UpdateView;
-      Handled:=True;
+      dgPanel.Perform(LM_VSCROLL, SB_PAGEDOWN, 0);
       Exit;
     end;
 
@@ -842,8 +836,8 @@ begin
 
   // ---
   dgPanel.OnHeaderClick:=@dgPanelHeaderClick;
-  // dgPanel.OnMouseWheelUp := @dgPanelMouseWheelUp;
-  // dgPanel.OnMouseWheelDown := @dgPanelMouseWheelDown;
+  dgPanel.OnMouseWheelUp := @dgPanelMouseWheelUp;
+  dgPanel.OnMouseWheelDown := @dgPanelMouseWheelDown;
   dgPanel.OnSelection:= @dgPanelSelection;
 {$IF lcl_fullversion >= 093100}
   dgPanel.OnBeforeSelection:= @dgPanelBeforeSelection;

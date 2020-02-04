@@ -36,17 +36,16 @@ if "%1"=="r" (
 )
 if "%1"=="p" (
   call :package
-  goto:eof
 )
 if "%1"=="b" (
   call :build
-  goto:eof
 )
 if "%1"=="" (
   call :build
   call :run
-  goto:eof
 )
+
+goto:eof
 
 rem ----------------------------------
 
