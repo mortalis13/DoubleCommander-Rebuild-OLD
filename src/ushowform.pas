@@ -98,7 +98,8 @@ procedure RunExtDiffer(CompareList: TStringList);
 
 procedure ShowEditorByGlob(const sFileName: String);
 procedure ShowEditorByGlob(WaitData: TEditorWaitData); overload;
-
+procedure ShowEditorByGlob(const sFileName: String; useInternalEditor: boolean);
+  
 procedure ShowDifferByGlob(const LeftName, RightName: String);
 procedure ShowDifferByGlobList(const CompareList: TStringList; WaitData: TWaitData; Modal: Boolean = False);
 
@@ -201,9 +202,9 @@ begin
   end;
 end;
 
-procedure ShowEditorByGlob(const sFileName: String);
+procedure ShowEditorByGlob(const sFileName: String; useInternalEditor: boolean);
 begin
-  if gExternalTools[etEditor].Enabled then
+  if gExternalTools[etEditor].Enabled and not useInternalEditor then
   begin
     try
       RunExtTool(gExternalTools[etEditor], sFileName);
@@ -216,6 +217,11 @@ begin
   end
   else
     ShowEditor(sFileName);
+end;
+
+procedure ShowEditorByGlob(const sFileName: String);
+begin
+  ShowEditorByGlob(sFileName, False);
 end;
 
 procedure ShowEditorByGlob(WaitData: TEditorWaitData);

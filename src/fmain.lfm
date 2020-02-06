@@ -1019,6 +1019,12 @@ object frmMain: TfrmMain
     top = 8
     object mnuFiles: TMenuItem
       Caption = '&Files'
+      object mnuNewInstance: TMenuItem
+        Action = actNewInstance
+      end
+      object miLineA1: TMenuItem
+        Caption = '-'
+      end
       object mnuFilesSymLink: TMenuItem
         Action = actSymLink
       end
@@ -1084,6 +1090,9 @@ object frmMain: TfrmMain
       end
       object miLine50: TMenuItem
         Caption = '-'
+      end
+      object miRestart: TMenuItem
+        Action = actRestart
       end
       object miExit: TMenuItem
         Action = actExit
@@ -1296,6 +1305,15 @@ object frmMain: TfrmMain
       object mnuLoadFavoriteTabs: TMenuItem
         Action = actLoadFavoriteTabs
       end
+      object mnuRestoreTabs: TMenuItem
+        Action = actRestoreTabs
+      end
+      object miLineA2: TMenuItem
+        Caption = '-'
+      end
+      object mnuToggleMultilineTabs: TMenuItem
+        Action = actToggleMultilineTabs
+      end
       object miLine39: TMenuItem
         Caption = '-'
       end
@@ -1374,6 +1392,9 @@ object frmMain: TfrmMain
       object mnuFilesShwSysFiles: TMenuItem
         Action = actShowSysFiles
       end
+      object mnuFilesToggleFreeSorting: TMenuItem
+        Action = actToggleFreeSorting
+      end
       object miLine20: TMenuItem
         Caption = '-'
       end
@@ -1406,6 +1427,12 @@ object frmMain: TfrmMain
       end
       object mnuConfigFolderTabs: TMenuItem
         Action = actConfigFolderTabs
+      end
+      object miLineA3: TMenuItem
+        Caption = '-'
+      end
+      object mnuToggleAliasMode: TMenuItem
+        Action = actToggleAliasMode
       end
       object miConfigArchivers: TMenuItem
         Action = actConfigArchivers
@@ -2645,12 +2672,6 @@ object frmMain: TfrmMain
       Caption = 'Load the Next Favorite Tabs in the list'
       OnExecute = actExecute
     end
-    object actActivateTabByIndex: TAction
-      Tag = 21
-      Category = 'Tabs'
-      Caption = 'Activate Tab By Index'
-      OnExecute = actExecute
-    end
     object actConfigTreeViewMenus: TAction
       Tag = 5
       Category = 'Configuration'
@@ -2700,6 +2721,104 @@ object frmMain: TfrmMain
       Category = 'Navigation'
       Caption = 'Swap focus'
       Hint = 'Switch between left and right file list'
+      OnExecute = actExecute
+    end
+    object actNewInstance: TAction
+      Tag = 16
+      Category = 'Window'
+      Caption = 'New Instance'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actRestart: TAction
+      Tag = 16
+      Category = 'Window'
+      Caption = 'Restart'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actGoToPastTab: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = 'Go To Past Tab'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actTest: TAction
+      Tag = 7
+      Category = 'Miscellaneous'
+      Caption = 'Test'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actToggleFreeSorting: TAction
+      Tag = 19
+      Category = 'View'
+      Caption = 'Toggle Free Sorting'
+      HelpType = htKeyword
+      OnExecute = actExecute
+    end
+    object actMaximizePanel: TAction
+      Tag = 16
+      Category = 'Window'
+      Caption = 'Maximize Current Panel'
+      OnExecute = actExecute
+    end
+    object actActivateTabByIndex: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = 'Activate Tab By Index'
+      OnExecute = actExecute
+    end
+    object actChangeColumnWidth: TAction
+      Tag = 19
+      Category = 'View'
+      Caption = 'Change Column Width'
+      OnExecute = actExecute
+    end
+    object actShellExecuteParent: TAction
+      Tag = 4
+      Category = 'File Operations'
+      Caption = 'Open Parent'
+      Hint = 'Open Parent using system associations'
+      OnExecute = actExecute
+    end
+    object actChangeDirToNextParentSibling: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Change Dir to Next Sibling'
+      Hint = 'Change Dir to Next Sibling'
+      OnExecute = actExecute
+    end
+    object actChangeDirToPrevParentSibling: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Change Dir to Previous Sibling'
+      Hint = 'Change Dir to Previous Sibling'
+      OnExecute = actExecute
+    end
+    object actRestoreTabs: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = '&Restore tabs'
+      OnExecute = actExecute
+    end
+    object actToggleMultilineTabs: TAction
+      Tag = 21
+      Category = 'Tabs'
+      Caption = 'Toggle Multiline Tabs'
+      OnExecute = actExecute
+    end
+    object actToggleAliasMode: TAction
+      Tag = 14
+      Category = 'Navigation'
+      Caption = 'Toggle Alias Mode'
+      OnExecute = actExecute
+    end
+    object actEditFileNames: TAction
+      Tag = 4
+      Category = 'File Operations'
+      Caption = 'Edit File Names'
       OnExecute = actExecute
     end
     object actConfigArchivers: TAction

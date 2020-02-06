@@ -217,8 +217,16 @@ const
 
 
 var
+  gTempColWidth: Integer;
+  gTempSplitterPos: Double;
+  gPrevPageIndex: Integer;
+  gActiveVisibleTopRow: Integer;
   gCopyFoldersTree: Boolean = False;
   gCopyFolderOnly: Boolean = False;
+  gFreeSorting: Boolean = False;
+  gLoadTabsFromFile: Boolean = False;
+  gTabsFilePath: String;
+  gUseAliasCommands: Boolean = False;
   
   { For localization }
   gPOFileName,
@@ -1008,29 +1016,6 @@ begin
       AddIfNotExists(['Alt+Right'],[],'cm_ViewHistoryNext');
       AddIfNotExists(['Alt+Shift+Enter'],[],'cm_CountDirContent');
       AddIfNotExists(['Alt+Shift+F9'],[],'cm_TestArchive');
-      AddIfNotExists([
-         'Alt+1','','index=1','',
-         'Alt+2','','index=2','',
-         'Alt+3','','index=3','',
-         'Alt+4','','index=4','',
-         'Alt+5','','index=5','',
-         'Alt+6','','index=6','',
-         'Alt+7','','index=7','',
-         'Alt+8','','index=8','',
-         'Alt+9','','index=9','',
-         'Alt+`','','index=-1',''],
-       'cm_ActivateTabByIndex');
-      AddIfNotExists([
-        'Ctrl+1','','index=1','',
-        'Ctrl+2','','index=2','',
-        'Ctrl+3','','index=3','',
-        'Ctrl+4','','index=4','',
-        'Ctrl+5','','index=5','',
-        'Ctrl+6','','index=6','',
-        'Ctrl+7','','index=7','',
-        'Ctrl+8','','index=8','',
-        'Ctrl+9','','index=9',''],
-      'cm_OpenDriveByIndex');
 
       if HotMan.Version < 38 then
       begin
@@ -1038,6 +1023,34 @@ begin
         if Assigned(HMHotKey) and HMHotKey.SameShortcuts(['Ctrl+Z']) then
           Remove(HMHotKey);
       end;
+      
+      AddIfNotExists([
+        'Ctrl+1','','1','',
+        'Ctrl+2','','2','',
+        'Ctrl+3','','3','',
+        'Ctrl+4','','4','',
+        'Ctrl+5','','5','',
+        'Ctrl+6','','6','',
+        'Ctrl+7','','7','',
+        'Ctrl+8','','8','',
+        'Ctrl+9','','9','',
+        'Ctrl+`','','-1',''],
+      'cm_ActivateTabByIndex');
+      
+      AddIfNotExists([
+        'Alt+1','','1','',
+        'Alt+2','','2','',
+        'Alt+3','','3','',
+        'Alt+4','','4','',
+        'Alt+5','','5','',
+        'Alt+6','','6','',
+        'Alt+7','','7','',
+        'Alt+8','','8','',
+        'Alt+9','','9',''],
+      'cm_OpenDriveByIndex');
+      
+      AddIfNotExists(['F11','','colwidth=2,200',''],'cm_MaximizePanel');
+      AddIfNotExists(['Ctrl+Shift+B'],[],'cm_ShellExecuteParent');
     end;
 
   HMControl := HMForm.Controls.FindOrCreate('Files Panel');
@@ -2760,7 +2773,15 @@ begin
 
     { Directories HotList }
     gDirectoryHotlist.LoadFromXML(gConfig, Root);
-
+    
+    { Extended page }
+    Node := Root.FindNode('Extended');
+    if Assigned(Node) then
+    begin
+      gFreeSorting:= GetValue(Node, 'FreeSorting', gFreeSorting);
+      gUseAliasCommands:= GetValue(Node, 'UseAliasCommands', gUseAliasCommands);
+    end;
+    
     { Viewer }
     Node := Root.FindNode('Viewer');
     if Assigned(Node) then
@@ -3297,6 +3318,12 @@ begin
 
     { Directories HotList }
     gDirectoryHotlist.SaveToXml(gConfig, Root, TRUE);
+    
+    { Extended page }
+    Node := FindNode(Root, 'Extended', True);
+    ClearNode(Node);
+    SetValue(Node, 'FreeSorting', gFreeSorting);
+    SetValue(Node, 'UseAliasCommands', gUseAliasCommands);
 
     { Viewer }
     Node := FindNode(Root, 'Viewer',True);

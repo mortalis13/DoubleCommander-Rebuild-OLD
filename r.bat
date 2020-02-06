@@ -33,6 +33,7 @@ if "%1"=="a" (
 )
 if "%1"=="r" (
   call :rebuild
+  call :run
 )
 if "%1"=="p" (
   call :package

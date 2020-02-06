@@ -1,26 +1,26 @@
 object frmMkDir: TfrmMkDir
-  Left = 464
-  Height = 232
-  Top = 261
-  Width = 422
+  Left = 404
+  Height = 197
+  Top = 259
+  Width = 370
   ActiveControl = cbMkDir
-
+  AutoSize = True
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Create new directory'
-  ClientHeight = 232
-  ClientWidth = 422
+  ClientHeight = 197
+  ClientWidth = 370
   Constraints.MinHeight = 50
   Constraints.MinWidth = 350
   KeyPreview = True
   OnKeyPress = FormKeyPress
   Position = poScreenCenter
-  LCLVersion = '1.1'
+  LCLVersion = '1.8.4.0'
   object lblMakeDir: TLabel
     Left = 6
     Height = 15
     Top = 3
-    Width = 410
+    Width = 358
     Align = alTop
     BorderSpacing.Left = 6
     BorderSpacing.Top = 3
@@ -33,10 +33,9 @@ object frmMkDir: TfrmMkDir
     Left = 6
     Height = 23
     Top = 18
-    Width = 410
+    Width = 358
     Align = alTop
     AutoCompleteText = []
-
     BorderSpacing.Left = 6
     BorderSpacing.Right = 6
     BorderSpacing.Bottom = 3
@@ -46,12 +45,12 @@ object frmMkDir: TfrmMkDir
     TabOrder = 0
   end
   object pnlBottom: TPanel
-    Left = 6
+    Left = -48
     Height = 30
-    Top = 196
+    Top = 162
     Width = 410
     Alignment = taRightJustify
-    Anchors = []
+    Anchors = [akRight, akBottom]
     BorderSpacing.Left = 6
     BorderSpacing.Top = 6
     BorderSpacing.Right = 6
@@ -93,6 +92,7 @@ object frmMkDir: TfrmMkDir
         Top = 0
         Width = 86
         Align = alRight
+        Anchors = [akTop, akLeft, akRight, akBottom]
         AutoSize = True
         BorderSpacing.InnerBorder = 2
         Cancel = True
@@ -106,9 +106,10 @@ object frmMkDir: TfrmMkDir
   end
   object mDirList: TMemo
     Left = 6
-    Height = 144
+    Height = 108
     Top = 48
-    Width = 410
+    Width = 358
+    Anchors = [akTop, akLeft, akRight, akBottom]
     OnKeyDown = mDirListKeyDown
     TabOrder = 1
   end

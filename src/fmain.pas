@@ -47,6 +47,7 @@ uses
   uOperationsManager, uFileSourceOperation, uDrivesList, uTerminal, DCClassesUtf8,
   DCXmlConfig, uDrive, uDriveWatcher, uDCVersion, uMainCommands, uFormCommands,
   uOperationsPanel, KASToolItems, uKASToolItemsExtended, uCmdLineParams, uOSForms
+  , Process
   {$IF DEFINED(LCLQT)}
   , Qt4, QtWidgets
   {$ELSEIF DEFINED(LCLQT5)}
@@ -542,6 +543,32 @@ type
     miSetAllTabsOptionDirsInNewTab: TMenuItem;
     miOpenDirInNewTab: TMenuItem;
     actResaveFavoriteTabs: TAction;
+    
+    actNewInstance: TAction;
+    actRestart: TAction;
+    actToggleFreeSorting: TAction;
+    actRestoreTabs: TAction;
+    actChangeColumnWidth: TAction;
+    actMaximizePanel: TAction;
+    actShellExecuteParent: TAction;
+    actGoToPastTab: TAction;
+    actChangeDirToNextParentSibling: TAction;
+    actChangeDirToPrevParentSibling: TAction;
+    actToggleMultilineTabs: TAction;
+    actToggleAliasMode: TAction;
+    actEditFileNames: TAction;
+    actTest: TAction;
+    
+    mnuToggleMultilineTabs: TMenuItem;
+    mnuToggleAliasMode: TMenuItem;
+    mnuRestoreTabs: TMenuItem;
+    mnuRestart: TMenuItem;
+    mnuNewInstance: TMenuItem;
+    mnuFilesToggleFreeSorting: TMenuItem;
+    miLineA1: TMenuItem;
+    miLineA2: TMenuItem;
+    miLineA3: TMenuItem;
+    
     procedure actExecute(Sender: TObject);
     procedure btnF3MouseWheelDown(Sender: TObject; Shift: TShiftState;
       {%H-}MousePos: TPoint; var {%H-}Handled: Boolean);
@@ -624,6 +651,7 @@ type
     procedure nbPageMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure nbPageChanged(Sender: TObject);
+    procedure nbPageChanging(Sender: TObject; var AllowChange: Boolean);
     procedure nbPageMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure NotebookCloseTabClicked(Sender: TObject);
@@ -857,7 +885,11 @@ type
     }
     procedure DoDragDropOperation(Operation: TDragDropOperation;
                                   var DropParams: TDropParams);
-
+    
+    procedure driveButtonPaint(Sender: TObject);
+    procedure NewAppInstance;
+    procedure Restart;
+    procedure UpdateTitle;
 
     property Drives: TDrivesList read DrivesList;
     property Commands: TMainCommands read FCommands implements IFormCommands;
@@ -954,6 +986,7 @@ procedure TfrmMain.FormCreate(Sender: TObject);
     Result.OnMouseDown := @nbPageMouseDown;
     Result.OnMouseUp := @nbPageMouseUp;
     Result.OnChange := @nbPageChanged;
+    Result.OnChanging := @nbPageChanging;
     Result.OnDblClick := @pnlLeftRightDblClick;
   end;
   function GenerateTitle():String;
@@ -1000,7 +1033,7 @@ begin
   CreateDefaultToolbar;
 
   //Caption of main window
-  Self.Caption := GenerateTitle();
+  Self.Caption := 'Double Commander';
   // Remove the initial caption of the button, which is just a text of the associated action.
   // The text would otherwise be briefly shown before the drive button was updated.
   btnLeftDrive.Caption := '';
@@ -1051,6 +1084,8 @@ begin
   // Initialize actions.
   actShowSysFiles.Checked := uGlobs.gShowSystemFiles;
   actHorizontalFilePanels.Checked := gHorizontalFilePanels;
+  actToggleFreeSorting.Checked := uGlobs.gFreeSorting;
+  actToggleAliasMode.Checked := uGlobs.gUseAliasCommands;
 
   AllowDropFiles := not uDragDropEx.IsExternalDraggingSupported;
 
@@ -1099,6 +1134,12 @@ begin
   UpdateSelectedDrives;
   UpdateFreeSpace(fpLeft);
   UpdateFreeSpace(fpRight);
+  
+  if gLoadTabsFromFile and (gTabsFilePath <> '') then
+  begin
+    gLoadTabsFromFile := False;
+    Commands.cm_LoadTabs('filename=' + gTabsFilePath);
+  end;
 end;
 
 procedure TfrmMain.btnLeftClick(Sender: TObject);
@@ -2354,6 +2395,7 @@ procedure TfrmMain.nbPageChanged(Sender: TObject);
 var
   Notebook: TFileViewNotebook;
   Page: TFileViewPage;
+  ServernameString: String;
 begin
   Notebook := Sender as TFileViewNotebook;
   Page := Notebook.ActivePage;
@@ -2377,6 +2419,14 @@ begin
 
   UpdatePrompt;
   UpdateTreeViewPath;
+end;
+
+procedure TfrmMain.nbPageChanging(Sender: TObject; var AllowChange: Boolean);
+var
+  Notebook: TFileViewNotebook;
+begin
+  Notebook := Sender as TFileViewNotebook;
+  gPrevPageIndex := Notebook.PageIndex;
 end;
 
 procedure TfrmMain.nbPageMouseUp(Sender: TObject; Button: TMouseButton;
@@ -4105,6 +4155,8 @@ begin
             Cons.Terminal.SetCurrentDir(FileView.CurrentPath);
         end;}
     end;
+
+  UpdateTitle;
 end;
 
 procedure TfrmMain.FileViewActivate(FileView: TFileView);
@@ -4118,6 +4170,7 @@ begin
       UpdateSelectedDrive(Page.Notebook);
       UpdateFreeSpace(Page.Notebook.Side);
     end;
+  UpdateTitle;
 end;
 
 procedure TfrmMain.FileViewFilesChanged(FileView: TFileView);
@@ -4179,6 +4232,8 @@ begin
       OnKeyDown := @ShellTreeViewKeyDown;
       OnMouseUp := @ShellTreeViewMouseUp;
       OnAdvancedCustomDrawItem := @ShellTreeViewAdvancedCustomDrawItem;
+      // OnClick := @ShellTreeViewDblClick;
+      // OnSelectionChanged := @ShellTreeViewDblClick;
 
       ExpandSignType := tvestPlusMinus;
       Options := Options - [tvoThemedDraw];
@@ -4342,6 +4397,8 @@ begin
       Button.Transparent := True;
       {/Set Buttons Transparent}
       Button.Layout := blGlyphLeft;
+      
+      Button.OnPaint := @driveButtonPaint;
     end; // for
 
     // Add virtual drive button
@@ -4353,6 +4410,14 @@ begin
 
   finally
     dskPanel.EndUpdate;
+  end;
+  
+  if Count > 8 then Count := 8;
+  for i := 0 to Count do
+  begin
+    Button := dskPanel.Buttons[i];
+    Button.Width := 50;
+    Button.Margin := 15;
   end;
 end;
 
@@ -5009,6 +5074,10 @@ end;
 
 procedure TfrmMain.edtCommandKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+var commandText, sFileName, aliasItem: String;
+aliasKey, aliasValue: String;
+aliasList: TStringListEx;
+i, separatorPos: Integer;
 begin
   if not edtCommand.DroppedDown and ((Key=VK_UP) or (Key=VK_DOWN)) then
     begin
@@ -5035,6 +5104,35 @@ begin
         begin
           if (Shift * [ssCtrl, ssAlt, ssMeta, ssAltGr] = []) then
           begin
+            if gUseAliasCommands then
+            begin
+              commandText := edtCommand.Text;
+              aliasList:= TStringListEx.Create;
+              try
+                sFileName := gpCfgDir + 'aliases.txt';
+                dcdebug(sFileName);
+                aliasList.LoadFromFile(sFileName);
+                
+                for I:= 0 to aliasList.Count - 1 do
+                begin
+                  aliasItem := aliasList.Strings[I];
+                  separatorPos := Pos(' ', aliasItem);
+                  aliasKey := copy(aliasItem, 1, separatorPos-1);
+                  aliasValue := copy(aliasItem, separatorPos+1, length(aliasItem)-separatorPos);
+                  
+                  if(commandText = aliasKey) then
+                  begin
+                    commandText := aliasValue;
+                    break;
+                  end;
+                end;
+              except
+                dcdebug('Error reading file');
+              end;
+              aliasList.Free;
+              edtCommand.Text := commandText;
+            end;
+            
             ExecuteCommandLine(ssShift in Shift);
             Key := 0;
           end;
@@ -5792,6 +5890,8 @@ procedure TfrmMain.ShowDrivesList(APanel: TFilePanelSelect);
 var
   p: TPoint;
   ADriveIndex: Integer;
+  CurrentPath: String;
+  CurrentDrive: String;
 begin
   if tb_activate_panel_on_click in gDirTabOptions then
     SetActiveFrame(APanel);
@@ -5810,6 +5910,10 @@ begin
         ADriveIndex := btnRightDrive.Tag;
       end;
   end;
+  
+  CurrentPath := ActiveNotebook.ActiveView.CurrentPath;
+  CurrentDrive := ExtractFileDrive(CurrentPath);
+  
   p := ScreenToClient(p);
   FDrivesListPopup.Show(p, APanel, ADriveIndex);
 end;
@@ -6249,6 +6353,63 @@ begin
   end;
 end;
 {$ENDIF}
+
+procedure TfrmMain.driveButtonPaint(Sender: TObject);
+var
+  button: TKASToolButton;
+  bCanvas: TCanvas;
+  id: PtrInt;
+begin
+  button := Sender as TKASToolButton;
+  bCanvas := button.Canvas;
+
+  id := button.Tag + 1;
+
+  if id <= 9 then
+  begin
+    bCanvas.Brush.Style := bsClear;
+    bCanvas.Font.Size := 8;
+    bCanvas.Font.Bold := True;
+    bCanvas.TextOut(4, 2, IntToStr(id));
+
+    bCanvas.Font.Size := 0;
+    bCanvas.Font.Bold := False;
+  end;
+end;
+
+procedure TfrmMain.NewAppInstance;
+begin
+  ShellExecute(Application.ExeName);
+end;
+
+procedure TfrmMain.Restart;
+var aProcess : TProcess;
+    cmd, sTabsFile: String;
+begin
+  sTabsFile := gpCfgDir + 'temp_tabs.tab';
+  Commands.cm_SaveTabs('filename=' + sTabsFile);
+  
+  cmd := Application.ExeName + ' --tabs_file=' + sTabsFile;
+  aProcess := TProcess.Create(nil);
+  aProcess.CommandLine := cmd;
+  aProcess.Execute;
+  aProcess.Free;
+
+  Application.Terminate;
+end;
+
+procedure TfrmMain.UpdateTitle;
+var ServernameString: String;
+    TitlePath: String;
+    revision: String;
+begin
+  ServernameString := '';
+  if Length(UniqueInstance.ServernameByUser) > 0 then
+    ServernameString := ' [' + UniqueInstance.ServernameByUser + ']';
+  TitlePath := ActiveFrame.CurrentLocation;
+  revision := 'r9293';
+  Self.Caption := Format('%s - %s%s %s %s %s', [TitlePath, 'Double Commander', ServernameString, dcVersion, revision, TargetOS]);
+end;
 
 initialization
   {$I DragCursors.lrs}

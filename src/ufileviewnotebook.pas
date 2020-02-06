@@ -414,6 +414,8 @@ begin
 
   OnDragOver := @DragOverEvent;
   OnDragDrop := @DragDropEvent;
+  
+  TabHeight := 30;
 end;
 
 function TFileViewNotebook.GetActivePage: TFileViewPage;

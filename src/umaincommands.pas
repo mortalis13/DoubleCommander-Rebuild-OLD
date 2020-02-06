@@ -29,7 +29,8 @@ interface
 
 uses
   Classes, SysUtils, ActnList, uFileView, uFileViewNotebook, uFileSourceOperation,
-  uGlobs, uFileFunctions, uFormCommands, uFileSorting, uShellContextMenu, Menus, ufavoritetabs,ufile;
+  uGlobs, uFileFunctions, uFormCommands, uFileSorting, uShellContextMenu, Menus, ufavoritetabs
+  , ufile, Registry, LazUTF8, DCConvertEncoding, DCClassesUtf8, fMultiRenameWait;
 
 type
 
@@ -74,7 +75,6 @@ type
    procedure DoPanelsSplitterPerPos(SplitPos: Integer);
    procedure DoUpdateFileView(AFileView: TFileView; {%H-}UserData: Pointer);
    procedure DoCloseTab(Notebook: TFileViewNotebook; PageIndex: Integer);
-   procedure DoCopySelectedFileNamesToClipboard(FileView: TFileView; TypeOfCopy: TCopyFileNamesToClipboard);
    procedure DoNewTab(Notebook: TFileViewNotebook);
    procedure DoRenameTab(Page: TFileViewPage);
    procedure DoContextMenu(Panel: TFileView; X, Y: Integer; Background: Boolean; UserWishForContextMenu:TUserWishForContextMenu = uwcmComplete);
@@ -100,6 +100,9 @@ type
    procedure DoActualMarkApplyOnAll(const maoaDispatcher: TMarkApplyOnAllDispatcher; const Params: array of string);
    procedure DoActualMarkUnMark(const Params: array of string; bSelect: boolean);
    procedure DoActualAddToCommandLine(const Params: array of string; sAddedString:string; bAddSpaceAtTheEnd:boolean);
+   
+   procedure DoCopySelectedFileNamesToClipboard(FileView: TFileView; TypeOfCopy: TCopyFileNamesToClipboard; UnixStyle: Boolean = False);
+   procedure DoReload;
 
    //---------------------
 
@@ -206,7 +209,6 @@ type
    procedure cm_CloseDuplicateTabs(const Params: array of string);
    procedure cm_NextTab(const Params: array of string);
    procedure cm_PrevTab(const Params: array of string);
-   procedure cm_ActivateTabByIndex(const Params: array of string);
    procedure cm_SaveTabs(const Params: array of string);
    procedure cm_LoadTabs(const Params: array of string);
    procedure cm_SetTabOptionNormal(const Params: array of string);
@@ -360,7 +362,23 @@ type
    procedure cm_ConfigArchivers(const {%H-}Params: array of string);
    procedure cm_ConfigTooltips(const {%H-}Params: array of string);
    procedure cm_ConfigPlugins(const {%H-}Params: array of string);
-   procedure cm_OpenDriveByIndex(const Params: array of string);
+   
+   procedure cm_ActivateTabByIndex(const Params: array of String);
+   procedure cm_OpenDriveByIndex(const Params: array of String);
+   procedure cm_MaximizePanel(const Params: array of String);
+   procedure cm_ShellExecuteParent(const Params: array of String);
+   procedure cm_ChangeDirToNextParentSibling(const Params: array of String);
+   procedure cm_ChangeDirToPrevParentSibling(const Params: array of String);
+   procedure cm_ChangeColumnWidth(const Params: array of String);
+   procedure cm_RestoreTabs(const Params: array of String);
+   procedure cm_GoToPastTab(const Params: array of String);
+   procedure cm_ToggleFreeSorting(const Params: array of String);
+   procedure cm_NewInstance(const Params: array of String);
+   procedure cm_Restart(const Params: array of String);
+   procedure cm_ToggleMultilineTabs(const Params: array of String);
+   procedure cm_ToggleAliasMode(const Params: array of String);
+   procedure cm_EditFileNames(const Params: array of String);
+   procedure cm_Test(const Params: array of String);
 
    // Internal commands
    procedure cm_ExecuteToolbarItem(const Params: array of string);
@@ -392,7 +410,7 @@ uses uFindFiles, Forms, Controls, Dialogs, Clipbrd, strutils, LCLProc, HelpIntfs
      {$ELSE}
      , uColumnsFileView
      {$ENDIF}
-     ;
+     , ExtCtrls, uColumns, uDrivesList, uDrive, uDriveWatcher, uDebug, fStatistics, uGlobsPaths;
 
 procedure ReadCopyRenameParams(
   const Params: array of string;
@@ -538,6 +556,8 @@ procedure TMainCommands.OnCalcStatisticsStateChanged(Operation: TFileSourceOpera
 var
   CalcStatisticsOperation: TFileSourceCalcStatisticsOperation;
   CalcStatisticsOperationStatistics: TFileSourceCalcStatisticsOperationStatistics;
+  StatText: String;
+  frmStatistics: TfrmStatistics;
 begin
   if (State = fsosStopped) and (Operation.Result = fsorFinished) then
   begin
@@ -545,7 +565,11 @@ begin
     CalcStatisticsOperationStatistics := CalcStatisticsOperation.RetrieveStatistics;
     with CalcStatisticsOperationStatistics do
     begin
-      msgOK(Format(rsSpaceMsg, [Files, Directories, cnvFormatFileSize(Size), Numb2USA(IntToStr(Size))]));
+      // msgOK(Format(rsSpaceMsg, [Files, Directories, cnvFormatFileSize(Size), Numb2USA(IntToStr(Size))]));
+      StatText := Format(rsSpaceMsg, [Files, Directories, cnvFormatFileSize(Size), Numb2USA(IntToStr(Size))]);
+      frmStatistics := TfrmStatistics.Create(Self);
+      frmStatistics.lblStatistics.Caption := StatText;
+      frmStatistics.ShowForm;
     end;
   end;
 end;
@@ -614,7 +638,7 @@ begin
   end;
 end;
 
-procedure TMainCommands.DoCopySelectedFileNamesToClipboard(FileView: TFileView; TypeOfCopy: TCopyFileNamesToClipboard);
+procedure TMainCommands.DoCopySelectedFileNamesToClipboard(FileView: TFileView; TypeOfCopy: TCopyFileNamesToClipboard; UnixStyle: Boolean);
 var
   I: Integer;
   sl: TStringList = nil;
@@ -647,6 +671,11 @@ begin
               end;
 
               if TypeOfCopy=cfntcPathWithoutSeparator then PathToAdd:=ExcludeTrailingPathDelimiter(PathToAdd);
+              
+              if UnixStyle then
+              begin
+                PathToAdd := ReplaceStr(PathToAdd, '\', '/');
+              end;
             end;
         end;
 
@@ -1003,8 +1032,15 @@ begin
 end;
 
 procedure TMainCommands.cm_CopyFullNamesToClip(const Params: array of string);
+var bUnixSeparator: Boolean = False;
+    Param: String;
 begin
-  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathAndFileNames);
+  for Param in Params do
+  begin
+    if Param = 'UnixSeparator' then bUnixSeparator := True;
+  end;
+  
+  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathAndFileNames, bUnixSeparator);
 end;
 
 procedure TMainCommands.cm_CopyFileDetailsToClip(const Params: array of string);
@@ -1575,36 +1611,6 @@ begin
   frmMain.ActiveNotebook.ActivatePrevTab;
 end;
 
-procedure TMainCommands.cm_ActivateTabByIndex(const Params: array of string);
-var
-  Param: String;
-  Index: Integer;
-  AValue: String;
-  ANotebook: TFileViewNotebook;
-begin
-  if Length(Params) <> 0 then
-  begin
-    ANotebook:= frmMain.ActiveNotebook;
-    for Param in Params do
-    begin
-      if GetParamValue(Param, 'index', AValue) then
-      begin
-        Index:= StrToIntDef(AValue, 1);
-      end
-      else if GetParamValue(Param, 'side', AValue) then
-      begin
-        if AValue = 'left' then ANotebook:= frmMain.LeftTabs
-        else if AValue = 'right' then ANotebook:= frmMain.RightTabs
-        else if AValue = 'inactive' then ANotebook:= frmMain.NotActiveNotebook;
-      end
-    end;
-    if Index = -1 then
-      ANotebook.ActivateTabByIndex(Index)
-    else
-      ANotebook.ActivateTabByIndex(Index - 1);
-  end;
-end;
-
 { TMainCommands.cm_SaveTabs }
 // To respect legacy, we can invoke "cm_SaveTabs" with a single parameter and it will be a "DefaultParam", which means without any equal sign, directly the filename.
 // With the following code, we may have more descriptive parameters like the following:
@@ -2057,6 +2063,10 @@ var
   sCmd: string = '';
   sParams: string = '';
   sStartPath: string = '';
+  sEditorType: String;
+  bUseInternalEditor: boolean = False;
+  ActiveFile : TFile;
+  Param: String;
 begin
   with frmMain do
   try
@@ -2064,9 +2074,20 @@ begin
 
     for I := SelectedFiles.Count - 1 downto 0 do
     begin
-      aFile := SelectedFiles[I];
+      aFile := ActiveFrame.CloneActiveFile;
       if aFile.IsDirectory or aFile.IsLinkToDirectory then
+      begin
         SelectedFiles.Delete(I);
+      end
+      else
+        begin
+          for Param in Params do
+          begin
+            if Param = 'UseInternal' then bUseInternalEditor := True;
+          end;
+          
+          ShowEditorByGlob(aFile.FullPath, bUseInternalEditor);
+        end;
     end;
 
     if SelectedFiles.Count = 0 then
@@ -2176,7 +2197,11 @@ var
   bMakeViaCopy: Boolean = False;
   Operation: TFileSourceOperation = nil;
   UI: TFileSourceOperationMessageBoxesUI = nil;
+  sPathList: TStringList;
+  i: Integer;
 begin
+  sPathList := TStringList.Create;
+  
   with frmMain do
   try
     if not (fsoCreateDirectory in ActiveFrame.FileSource.GetOperationsTypes) then
@@ -2201,8 +2226,8 @@ begin
     else
       sPath := EmptyStr;
 
-    if not frmMkDir.ShowMkDir(sPath) then Exit;   // show makedir dialog
-    if (sPath = EmptyStr) then Exit;
+    if not frmMkDir.ShowMkDir(sPath, sPathList) then Exit;   // show makedir dialog
+    if (sPath = EmptyStr) and (sPathList.Count = 0) then Exit;
 
     if bMakeViaCopy then
     begin
@@ -2223,17 +2248,22 @@ begin
       end;
       Exit;
     end;
-
-    Operation := ActiveFrame.FileSource.CreateCreateDirectoryOperation(ActiveFrame.CurrentPath, sPath);
-    if Assigned(Operation) then
+    
+    for i:=0 to sPathList.Count-1 do
     begin
-      // Call directly - not through operations manager.
-      UI := TFileSourceOperationMessageBoxesUI.Create;
-      Operation.AddUserInterface(UI);
-      Operation.Execute;
+      sPath := sPathList[i];
+      
+      Operation := ActiveFrame.FileSource.CreateCreateDirectoryOperation(ActiveFrame.CurrentPath, sPath);
+      if Assigned(Operation) then
+      begin
+        // Call directly - not through operations manager.
+        UI := TFileSourceOperationMessageBoxesUI.Create;
+        Operation.AddUserInterface(UI);
+        Operation.Execute;
 
-      sPath := ExtractFileName(ExcludeTrailingPathDelimiter(sPath));
-      ActiveFrame.SetActiveFile(sPath);
+        sPath := ExtractFileName(ExcludeTrailingPathDelimiter(sPath));
+        ActiveFrame.SetActiveFile(sPath);
+      end;
     end;
   finally
     FreeAndNil(Operation);
@@ -2270,6 +2300,7 @@ var
   Param, ParamTrashCan: String;
   BoolValue: Boolean;
   QueueId: TOperationsManagerQueueIdentifier = FreeOperationsQueueId;
+  bSkipErrors: Boolean = False;
 begin
   with frmMain.ActiveFrame do
   begin
@@ -2292,6 +2323,8 @@ begin
         bRecycle := gUseTrash
       else if Param = 'recyclesettingrev' then
         bRecycle := not gUseTrash
+      else if Param = 'SkipErrors' then
+        bSkipErrors := True
       else if GetParamValue(Param, 'trashcan', ParamTrashCan) then
       begin
         if ParamTrashCan = 'setting' then
@@ -2394,6 +2427,8 @@ begin
           if Operation is TFileSystemDeleteOperation then
             with Operation as TFileSystemDeleteOperation do
             begin
+              if bSkipErrors then
+                SkipErrors := True;
               // 30.04.2009 - передаем параметр корзины в поток.
               Recycle := bRecycle;
             end;
@@ -3528,7 +3563,14 @@ var
   sCmd: string = '';
   sParams: string = '';
   sStartPath: string = '';
+  bOpenEditor: boolean = False;
+  Param: String;
 begin
+  for Param in Params do
+  begin
+    if Param = 'OpenEditor' then bOpenEditor := True;
+  end;
+  
   frmMain.ActiveFrame.ExecuteCommand('cm_EditNew', Params);
 
   // For now only works for FileSystem.
@@ -3573,14 +3615,19 @@ begin
     end;
 
     aFile := TFileSystemFileSource.CreateFileFromFile(sNewFile);
+    ActiveFrame.SetActiveFile(aFile.FullPath);
+    
     try
       // Try to find Edit command in "extassoc.xml"
-      if not gExts.GetExtActionCmd(aFile, 'edit', sCmd, sParams, sStartPath) then
-        ShowEditorByGlob(aFile.FullPath) // If command not found then use default editor
-      else
-        begin
-          ProcessExtCommandFork(sCmd, sParams, aFile.Path, aFile);
-        end;
+      if bOpenEditor then
+      begin
+        if not gExts.GetExtActionCmd(aFile, 'edit', sCmd, sParams, sStartPath) then
+          ShowEditorByGlob(aFile.FullPath) // If command not found then use default editor
+        else
+          begin
+            ProcessExtCommandFork(sCmd, sParams, aFile.Path, aFile);
+          end;
+      end;
     finally
       FreeAndNil(aFile);
     end;
@@ -4371,14 +4418,28 @@ end;
 
 { TMainCommands.cm_CopyPathOfFilesToClip }
 procedure TMainCommands.cm_CopyPathOfFilesToClip(const Params: array of string);
+var bUnixSeparator: Boolean = False;
+    Param: String;
 begin
-  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcJustPathWithSeparator);
+  for Param in Params do
+  begin
+    if Param = 'UnixSeparator' then bUnixSeparator := True;
+  end;
+  
+  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcJustPathWithSeparator, bUnixSeparator);
 end;
 
 { TMainCommands.cm_CopyPathNoSepOfFilesToClip }
 procedure TMainCommands.cm_CopyPathNoSepOfFilesToClip(const Params: array of string);
+var bUnixSeparator: Boolean = False;
+    Param: String;
 begin
-  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathWithoutSeparator);
+  for Param in Params do
+  begin
+    if Param = 'UnixSeparator' then bUnixSeparator := True;
+  end;
+  
+  DoCopySelectedFileNamesToClipboard(frmMain.ActiveFrame, cfntcPathWithoutSeparator, bUnixSeparator);
 end;
 
 { TMainCommands.cm_DoAnyCmCommand }
@@ -4910,44 +4971,6 @@ begin
   cm_Options(['TfrmOptionsToolTips']);
 end;
 
-procedure TMainCommands.cm_OpenDriveByIndex(const Params: array of string);
-var
-  Param: String;
-  Index: Integer;
-  AValue: String;
-  SelectedPanel: TFilePanelSelect;
-begin
-  if Length(Params) > 0 then
-  begin
-    SelectedPanel:= frmMain.SelectedPanel;
-
-    for Param in Params do
-    begin
-      if GetParamValue(Param, 'index', AValue) then
-      begin
-        Index:= StrToIntDef(AValue, 1) - 1;
-      end
-      else if GetParamValue(Param, 'side', AValue) then
-      begin
-        if AValue = 'left' then SelectedPanel:= fpLeft
-        else if AValue = 'right' then SelectedPanel:= fpRight
-        else if AValue = 'inactive' then
-        begin
-          if frmMain.SelectedPanel = fpLeft then
-            SelectedPanel:= fpRight
-          else if frmMain.SelectedPanel = fpRight then
-            SelectedPanel:= fpLeft;
-        end;
-      end
-    end;
-
-    if (Index >= 0) and (Index < frmMain.Drives.Count) then
-    begin
-      frmMain.SetPanelDrive(SelectedPanel, frmMain.Drives.Items[Index], True);
-    end;
-  end;
-end;
-
 { TMainCommands.cm_ConfigPlugins }
 procedure TMainCommands.cm_ConfigPlugins(const {%H-}Params: array of string);
 begin
@@ -5039,6 +5062,411 @@ begin
     GetParamValue(Param, 'category', sCategoryName);
   TfrmOptionsHotkeys(Editor).TryToSelectThatCategory(sCategoryName);
   if Editor.CanFocus then  Editor.SetFocus;
+end;
+
+{ TMainCommands.cm_ActivateTabByIndex }
+procedure TMainCommands.cm_ActivateTabByIndex(const Params: array of String);
+var Index: Integer;
+begin
+  if Length(Params) <> 0 then
+  begin
+    Index := StrToIntDef(Params[0], 1);
+    if Index = -1 then
+      frmMain.ActiveNotebook.ActivateTabByIndex(Index)
+    else
+      frmMain.ActiveNotebook.ActivateTabByIndex(Index-1);
+  end;
+end;
+
+{ TMainCommands.cm_OpenDriveByIndex }
+procedure TMainCommands.cm_OpenDriveByIndex(const Params: array of String);
+var drivesCount: Integer;
+    Index: Integer;
+begin
+  if Length(Params) <> 0 then
+  begin
+    Index := StrToIntDef(Params[0], 1) - 1;
+    
+    drivesCount := frmMain.dskLeft.ButtonCount;
+    if Index < drivesCount then
+    begin
+      if frmMain.SelectedPanel = fpLeft then
+        frmMain.dskLeft.Buttons[Index].Click
+      else if frmMain.SelectedPanel = fpRight then
+        frmMain.dskRight.Buttons[Index].Click;
+    end;
+  end;
+end;
+
+{ TMainCommands.cm_MaximizePanel }
+procedure TMainCommands.cm_MaximizePanel(const Params: array of String);
+var activeColumnsView: TColumnsFileView;
+    ColumnsClass: TPanelColumnsClass;
+    colWidthParam: String;
+    notActivePanel: TPanel;
+    notActiveDiskPanel: TPanel;
+    commaPos, strLen: Integer;
+    splitPos, colId, colWidth: Integer;
+begin
+  activeColumnsView := frmMain.LeftTabs.ActivePage.FileView as TColumnsFileView;
+  ColumnsClass := ColSet.GetColumnSet(activeColumnsView.ActiveColm);
+
+  if frmMain.NotActiveFrame = frmMain.FrameLeft then
+  begin
+    notActivePanel := frmMain.pnlLeft;
+    notActiveDiskPanel := frmMain.pnlDskLeft;
+    splitPos := 0;
+  end
+  else
+  begin
+    notActivePanel := frmMain.pnlRight;  
+    notActiveDiskPanel := frmMain.pnlDskRight;
+    splitPos := 100;
+  end;
+  
+  
+  if Length(Params) <> 0 then
+  begin
+    GetParamValue(Params[0], 'ColWidth', colWidthParam);
+    commaPos := Pos(',', colWidthParam);
+    strLen := Length(colWidthParam);
+    colId := StrToIntDef( Copy(colWidthParam, 1, commaPos - 1), 1 ) - 1;
+    colWidth := StrToIntDef( Copy(colWidthParam, commaPos + 1, strLen - commaPos), gTempColWidth );
+    
+    if notActivePanel.IsVisible then
+    begin
+      gTempColWidth := ColumnsClass.GetColumnWidth(colId);
+      ColumnsClass.SetColumnWidth(colId, colWidth);
+    end
+    else
+    begin
+      ColumnsClass.SetColumnWidth(colId, gTempColWidth);
+    end;
+    
+    frmMain.UpdateWindowView;
+  end;
+  
+  
+  if notActivePanel.IsVisible then
+  begin
+    notActivePanel.Hide;
+    notActiveDiskPanel.Hide;
+    frmMain.MainSplitter.Hide;
+
+    gTempSplitterPos := frmMain.MainSplitterPos;
+    DoPanelsSplitterPerPos(splitPos);
+  end
+  else
+  begin
+    DoPanelsSplitterPerPos(round(gTempSplitterPos));
+    
+    notActivePanel.Show;
+    notActiveDiskPanel.Show;
+    frmMain.MainSplitter.Show;
+  end;
+end;
+
+{ TMainCommands.cm_ChangeDirToPrevParentSibling }
+procedure TMainCommands.cm_ChangeDirToPrevParentSibling(const Params: array of String);
+var PrevSiblingPath, curFileName, sUpLevel, PreviousSubDirectory: String;
+    i:Integer;
+    parentFiles, parentDirectories: TFiles;
+    aSortings: TFileSortings;
+    curFile, prevFile: TFile;
+begin
+  with frmMain.ActiveFrame do
+  begin
+    sUpLevel:= FileSource.GetParentDir(CurrentPath);
+    
+    if sUpLevel <> EmptyStr then
+    begin
+      PreviousSubDirectory := ExtractFileName(ExcludeTrailingPathDelimiter(CurrentPath));
+      
+      SetLength(aSortings, 1);
+      SetLength(aSortings[0].SortFunctions, 1);
+      aSortings[0].SortFunctions[0] := fsfName;
+      aSortings[0].SortDirection := sdAscending;
+      
+      parentFiles := FileSource.GetFiles(sUpLevel);
+      TFileSorter.Sort(parentFiles, aSortings);
+      
+      parentDirectories := TFiles.Create(parentFiles.Path);
+      
+      for i := 0 to parentFiles.Count-1 do
+      begin
+        curFile := parentFiles.Items[i];
+        if (curFile.IsDirectory) and (not curFile.IsLink) then
+        begin
+          parentDirectories.Add(curFile);
+        end;
+      end;
+      
+      for i := 0 to parentDirectories.Count-1 do
+      begin
+        curFile := parentDirectories.Items[i];
+        curFileName := curFile.Name;
+        
+        if curFileName = PreviousSubDirectory then
+        begin
+          if i <> 0 then
+          begin
+            prevFile := parentDirectories.Items[i-1];
+            PrevSiblingPath := prevFile.FullPath;
+          end;
+        end;
+      end;
+      
+      CurrentPath := PrevSiblingPath;
+    end;
+  end;
+end;
+
+{ TMainCommands.cm_ChangeDirToNextParentSibling }
+procedure TMainCommands.cm_ChangeDirToNextParentSibling(const Params: array of String);
+var NextSiblingPath, curFileName, sUpLevel, PreviousSubDirectory: String;
+    i:Integer;
+    parentFiles, parentDirectories: TFiles;
+    aSortings: TFileSortings;
+    curFile, nextFile: TFile;
+begin
+  with frmMain.ActiveFrame do
+  begin
+    sUpLevel:= FileSource.GetParentDir(CurrentPath);
+    
+    if sUpLevel <> EmptyStr then
+    begin
+      PreviousSubDirectory := ExtractFileName(ExcludeTrailingPathDelimiter(CurrentPath));
+      
+      SetLength(aSortings, 1);
+      SetLength(aSortings[0].SortFunctions, 1);
+      aSortings[0].SortFunctions[0] := fsfName;
+      aSortings[0].SortDirection := sdAscending;
+      
+      parentFiles := FileSource.GetFiles(sUpLevel);
+      TFileSorter.Sort(parentFiles, aSortings);
+      
+      parentDirectories := TFiles.Create(parentFiles.Path);
+      
+      for i := 0 to parentFiles.Count-1 do
+      begin
+        curFile := parentFiles.Items[i];
+        if (curFile.IsDirectory) and (not curFile.IsLink) then
+        begin
+          parentDirectories.Add(curFile);
+        end;
+      end;
+      
+      for i := 0 to parentDirectories.Count-1 do
+      begin
+        curFile := parentDirectories.Items[i];
+        curFileName := curFile.Name;
+        
+        if curFileName = PreviousSubDirectory then
+        begin
+          if i <> parentDirectories.Count-1 then
+          begin
+            nextFile := parentDirectories.Items[i+1];
+            NextSiblingPath := nextFile.FullPath;
+          end;
+        end;
+      end;
+      
+      CurrentPath := NextSiblingPath;
+    end;
+    
+  end;
+end;
+
+procedure TMainCommands.cm_ChangeColumnWidth(const Params: array of String);
+var
+  activeColumnsView: TColumnsFileView;
+  ColumnsClass: TPanelColumnsClass;
+  colWidthParam: String;
+  commaPos, strLen: Integer;
+  splitPos, colId, colWidth: Integer;
+begin
+  activeColumnsView := frmMain.ActiveFrame as TColumnsFileView;
+  ColumnsClass := ColSet.GetColumnSet(activeColumnsView.ActiveColm);
+  
+  if Length(Params) <> 0 then
+  begin
+    GetParamValue(Params[0], 'ColWidth', colWidthParam);
+    commaPos := Pos(',', colWidthParam);
+    strLen := Length(colWidthParam);
+    colId := StrToIntDef( Copy(colWidthParam, 1, commaPos - 1), 1 ) - 1;
+    colWidth := StrToIntDef( Copy(colWidthParam, commaPos + 1, strLen - commaPos), gTempColWidth );
+    
+    ColumnsClass.SetColumnWidth(colId, colWidth);
+    frmMain.UpdateWindowView;
+  end;
+end;
+
+procedure TMainCommands.cm_RestoreTabs(const Params: array of String);
+var
+  filename: String;
+begin
+  filename := gpCfgDir + 'doublecmd.xml';
+  cm_LoadTabs(['filename='+filename]);
+end;
+
+procedure TMainCommands.cm_GoToPastTab(const Params: array of String);
+var
+  Index: Integer;
+begin
+  if gPrevPageIndex <> -1 then
+  begin
+    Index := gPrevPageIndex;
+    frmMain.ActiveNotebook.ActivateTabByIndex(Index);
+  end;
+end;
+
+procedure TMainCommands.cm_ShellExecuteParent(const Params: array of String);
+var
+  aFile: TFile;
+begin
+  with frmMain.ActiveFrame do
+  begin
+    aFile := CloneActiveFile;
+    if Assigned(aFile) then
+    try
+      if aFile.IsNameValid then
+      begin
+        ShellExecute(aFile.Path);
+      end;
+    finally
+      FreeAndNil(aFile);
+    end;
+  end;
+end;
+
+procedure TMainCommands.cm_ToggleFreeSorting(const Params: array of String);
+begin
+  uGlobs.gFreeSorting := not uGlobs.gFreeSorting;
+  frmMain.actToggleFreeSorting.Checked := uGlobs.gFreeSorting;
+end;
+
+procedure TMainCommands.DoReload;
+begin
+  // Is used after delete operation finished to show '..' item if there are no items left
+  // Gives unexpected exception sometimes on deleting/copying files to an empty folder
+  // cm_Refresh([]);
+end;
+
+procedure TMainCommands.cm_NewInstance(const Params: array of String);
+begin
+  frmMain.NewAppInstance;
+end;
+
+procedure TMainCommands.cm_Restart(const Params: array of String);
+var sTabsFile: String;
+begin
+  frmMain.Restart;
+end;
+
+procedure TMainCommands.cm_ToggleMultilineTabs(const Params: array of String);
+begin
+  if tb_multiple_lines in gDirTabOptions then
+    gDirTabOptions := gDirTabOptions - [tb_multiple_lines]
+  else
+    gDirTabOptions := gDirTabOptions + [tb_multiple_lines];
+  
+  frmMain.UpdateWindowView;
+end;
+
+procedure TMainCommands.cm_ToggleAliasMode(const Params: array of String);
+begin
+  gUseAliasCommands := not gUseAliasCommands;
+  frmMain.actToggleAliasMode.Checked := uGlobs.gUseAliasCommands;
+end;
+
+procedure TMainCommands.cm_EditFileNames(const Params: array of String);
+var
+  I, J: Integer;
+  MarkIndex: Integer;
+  AFileName: String;
+  FileNameSource: String;
+  FileNameResult: String;
+  AFileList: TStringListEx;
+  AFileListResult: TStringListEx;
+  FFiles, AllFiles: TFiles;
+  DisplayFiles: TDisplayFiles;
+  SelectedIndices: TList;
+begin
+  SelectedIndices := TList.Create;
+  
+  AFileList:= TStringListEx.Create;
+  AFileName:= GetTempFolderDeletableAtTheEnd;
+  AFileName:= GetTempName(AFileName) + '.txt';
+  
+  FFiles := frmMain.ActiveFrame.CloneSelectedFiles;
+  AllFiles := frmMain.ActiveFrame.CloneFiles;
+  
+  for I:=0 to AllFiles.Count - 1 do
+    for J:=0 to FFiles.Count - 1 do
+    begin
+      if AllFiles[I].Name = FFiles[J].Name then
+      begin
+        SelectedIndices.Add(Pointer(I));
+        break;
+      end;
+    end;
+  
+  for I:= 0 to FFiles.Count - 1 do
+    AFileList.Add(FFiles[I].Name);
+
+  try
+    AFileList.SaveToFile(AFileName);
+
+    if ShowMultiRenameWaitForm(AFileName, frmMain) then
+    begin
+      AFileListResult:= TStringListEx.Create;
+      AFileListResult.LoadFromFile(AFileName);
+      
+      if AFileListResult.Count <> FFiles.Count then
+      begin
+        msgError(Format(rsMulRenWrongLinesNumber, [AFileListResult.Count, FFiles.Count]));
+      end
+      else
+      begin
+        for I:= 0 to AFileListResult.Count - 1 do
+        begin
+          FileNameSource := FFiles[I].FullPath;
+          FileNameResult := ExtractFilePath(FileNameSource) + AFileListResult[I];
+          mbRenameFile(FileNameSource, FileNameResult);
+        end;
+      end;
+      
+      frmMain.ActiveFrame.MarkFiles(False);
+      // for I:=0 to SelectedIndices.Count - 1 do
+      // begin
+      //   MarkIndex := Integer(SelectedIndices[I]);
+      //   frmMain.ActiveFrame.MarkFiles(MarkIndex, MarkIndex, True);
+      // end;
+
+      AFileListResult.Free;
+      mbDeleteFile(AFileName);
+    end;
+  except
+    on E: Exception do msgError(E.Message);
+  end;
+  
+  AFileList.Free;
+  SelectedIndices.Free;
+end;
+
+procedure TMainCommands.cm_Test(const Params: array of String);
+var
+  frmStatistics: TfrmStatistics;
+  cmdPath: String;
+  wsFileName: UnicodeString;
+  wsStartPath: UnicodeString;
+begin
+  frmMain.Caption := 'юд';
+  // frmStatistics := TfrmStatistics.Create(Self);
+  // frmStatistics.ShowForm;
+  
+  // cmdPath := 'MsiExec.exe /X{6E3610B2-430D-4EB0-81E3-2B57E8B9DE8D}';
+  // ShellExecute(cmdPath);
 end;
 
 end.
