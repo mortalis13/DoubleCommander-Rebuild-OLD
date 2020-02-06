@@ -247,6 +247,7 @@ var
   Value: String;
   bWeGotMainParam: boolean = False;
   bLegacyBehavior: boolean = False;
+  cpos: tpoint;
 begin
   BeginUpdate;
   try
@@ -356,7 +357,14 @@ begin
     //If search or filter was called with no parameter...
     case SearchMode of
       qsSearch: if not bWeGotMainParam then tglFilter.Checked:=False;
-      qsFilter: if not bWeGotMainParam then tglFilter.Checked:=True;
+      qsFilter: 
+      begin
+        if not bWeGotMainParam then tglFilter.Checked:=True;
+        edtSearch.Text := '*';
+        cpos.x:=1;
+        cpos.y:=0;
+        edtSearch.CaretPos := cpos;
+      end;
     end;
 
     if not bLegacyBehavior then

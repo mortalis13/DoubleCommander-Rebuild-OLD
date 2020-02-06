@@ -27,7 +27,7 @@ interface
 
 uses
   Classes, SysUtils, ExtCtrls, fViewer,
-  uFileViewNotebook, uFile, uFileSource, uFileView;
+  uFileViewNotebook, uFile, uFileSource, uFileView, uFileViewWithPanels;
 
 type
 
@@ -67,6 +67,8 @@ procedure QuickViewShow(aFileViewPage: TFileViewPage; aFileView: TFileView);
 var
   aFile: TFile = nil;
 begin
+  TFileViewWithPanels(aFileViewPage.FileView).Header.SetQuickViewMode;
+  
   QuickViewPanel:= TQuickViewPanel.Create(Application, aFileViewPage);
   QuickViewPanel.CreateViewer(aFileView);
   aFile := aFileView.CloneActiveFile;
@@ -96,6 +98,8 @@ end;
 
 destructor TQuickViewPanel.Destroy;
 begin
+  TFileViewWithPanels(FFileViewPage.FileView).Header.RemoveQuickViewMode;
+  
   FFileView.OnChangeActiveFile:= nil;
   TFileViewPage(FFileView.NotebookPage).OnChangeFileView:= nil;
   FViewer.ExitPluginMode;
@@ -151,56 +155,69 @@ var
 begin
   if not (Assigned(aFile) and (aFile.Name <> '..')) then Exit;
   try
-    // If files are links to local files
-    if (fspLinksToLocalFiles in Sender.FileSource.Properties) then
-      begin
-        if aFile.IsDirectory or aFile.IsLinkToDirectory then Exit;
-        FFileSource := Sender.FileSource;
-        ActiveFile:= aFile.Clone;
-        if not FFileSource.GetLocalName(ActiveFile) then Exit;
-      end
-    // If files not directly accessible copy them to temp file source.
-    else if not (fspDirectAccess in Sender.FileSource.Properties) then
-      begin
-        if aFile.IsDirectory or SameText(FFileName, aFile.Name) then Exit;
-        if not (fsoCopyOut in Sender.FileSource.GetOperationsTypes) then Exit;
+    if aFile.IsDirectory then
+    begin
+      FFileViewPage.FileView.Visible:= True;
+      Self.Visible:=False;
+      FFileViewPage.FileView.CurrentPath := aFile.Path + aFile.Name;
+    end
+    else
+    begin
+      FFileViewPage.FileView.Visible:= False;
+      Self.Visible:=True;
+      
+      
+      // If files are links to local files
+      if (fspLinksToLocalFiles in Sender.FileSource.Properties) then
+        begin
+          if aFile.IsDirectory or aFile.IsLinkToDirectory then Exit;
+          FFileSource := Sender.FileSource;
+          ActiveFile:= aFile.Clone;
+          if not FFileSource.GetLocalName(ActiveFile) then Exit;
+        end
+      // If files not directly accessible copy them to temp file source.
+      else if not (fspDirectAccess in Sender.FileSource.Properties) then
+        begin
+          if aFile.IsDirectory or SameText(FFileName, aFile.Name) then Exit;
+          if not (fsoCopyOut in Sender.FileSource.GetOperationsTypes) then Exit;
 
-       ActiveFile:= aFile.Clone;
-       TempFiles:= TFiles.Create(ActiveFile.Path);
-       TempFiles.Add(aFile.Clone);
+         ActiveFile:= aFile.Clone;
+         TempFiles:= TFiles.Create(ActiveFile.Path);
+         TempFiles.Add(aFile.Clone);
 
-       if FFileSource.IsClass(TTempFileSystemFileSource) then
-         TempFileSource := (FFileSource as ITempFileSystemFileSource)
-       else
-         TempFileSource := TTempFileSystemFileSource.GetFileSource;
+         if FFileSource.IsClass(TTempFileSystemFileSource) then
+           TempFileSource := (FFileSource as ITempFileSystemFileSource)
+         else
+           TempFileSource := TTempFileSystemFileSource.GetFileSource;
 
-       Operation := Sender.FileSource.CreateCopyOutOperation(
-                        TempFileSource,
-                        TempFiles,
-                        TempFileSource.FileSystemRoot);
+         Operation := Sender.FileSource.CreateCopyOutOperation(
+                          TempFileSource,
+                          TempFiles,
+                          TempFileSource.FileSystemRoot);
 
-       if not Assigned(Operation) then Exit;
+         if not Assigned(Operation) then Exit;
 
-       Sender.Enabled:= False;
-       try
-         Operation.Execute;
-       finally
-         FreeAndNil(Operation);
-         Sender.Enabled:= True;
+         Sender.Enabled:= False;
+         try
+           Operation.Execute;
+         finally
+           FreeAndNil(Operation);
+           Sender.Enabled:= True;
+         end;
+
+         FFileName:= ActiveFile.Name;
+         FFileSource := TempFileSource;
+         ActiveFile.Path:= TempFileSource.FileSystemRoot;
+       end
+     else
+       begin
+         // We can use the file source directly.
+         FFileSource := Sender.FileSource;
+         ActiveFile:= aFile.Clone;
        end;
 
-       FFileName:= ActiveFile.Name;
-       FFileSource := TempFileSource;
-       ActiveFile.Path:= TempFileSource.FileSystemRoot;
-     end
-   else
-     begin
-       // We can use the file source directly.
-       FFileSource := Sender.FileSource;
-       ActiveFile:= aFile.Clone;
-     end;
-
-  LoadFile(ActiveFile.FullPath);
+    LoadFile(ActiveFile.FullPath);
+  end;
 
   finally
     FreeAndNil(TempFiles);

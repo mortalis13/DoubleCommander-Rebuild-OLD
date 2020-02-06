@@ -49,6 +49,8 @@ type
        this stores the full path of that parent directory.
     }
     FSelectedDir: String;
+    
+    quickViewMode: Boolean;
 
     {en
        If a mouse if over some parent directory of the currently displayed path,
@@ -74,6 +76,9 @@ type
        Changes drawing colors depending active/inactive state.
     }
     procedure SetActive(Active: Boolean);
+    
+    procedure SetQuickViewMode;
+    procedure RemoveQuickViewMode;
 
     property AllowHighlight: Boolean read FAllowHighlight write FAllowHighlight;
     property LeftSpacing: Integer read FLeftSpacing write FLeftSpacing;
@@ -89,6 +94,7 @@ uses
 
 constructor TPathLabel.Create(AOwner: TComponent; bAllowHighlight: Boolean);
 begin
+  quickViewMode := False;
   FLeftSpacing := 3; // set before painting
 
   inherited Create(AOwner);
@@ -127,6 +133,8 @@ end;
 
 procedure TPathLabel.SetActive(Active: Boolean);
 begin
+  if quickViewMode then Exit;
+  
   case Active of
     False:
       begin
@@ -139,6 +147,20 @@ begin
         Font.Color := clHighlightText;
       end;
   end;
+end;
+
+procedure TPathLabel.SetQuickViewMode;
+begin
+  quickViewMode := True;
+  Color      := $0042538C;
+  Font.Color := clHighlightText;
+end;
+
+procedure TPathLabel.RemoveQuickViewMode;
+begin
+  quickViewMode := False;
+  Color      := clBtnFace;
+  Font.Color := clBtnText;
 end;
 
 procedure TPathLabel.Highlight;

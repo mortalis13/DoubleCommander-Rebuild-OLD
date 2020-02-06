@@ -270,8 +270,8 @@ begin
 
     Inc(CopyNumber);
     case gTypeOfDuplicatedRename of
-      drLikeWindows7: SuffixStr:= ' (' + IntToStr(CopyNumber) + ')';
-      drLikeTC: SuffixStr:= '(' + IntToStr(CopyNumber) + ')';
+      drLikeWindows7,
+      drLikeTC: SuffixStr:= '-' + IntToStr(CopyNumber);
     end;
 
     until not mbFileSystemEntryExists(Result);

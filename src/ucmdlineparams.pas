@@ -26,7 +26,7 @@ implementation
 
 uses
   Forms, Dialogs, SysUtils, uOSUtils, uDCUtils, uGlobsPaths, getopts, uDebug,
-  uLng, uClipboard, uAdministrator, DCStrUtils;
+  uLng, uClipboard, uAdministrator, DCStrUtils, uGlobs;
 
 function DecodePath(const Path: String): String;
 begin
@@ -73,6 +73,11 @@ begin
     Name:= 'operation';
     Has_arg:= 1;
   end;
+  with Options[7] do
+  begin
+    Name:= 'tabs_file';
+    Has_arg:= 1;
+  end;
   FillChar(CommandLineParams, SizeOf(TCommandLineParams), #0);
   repeat
     try
@@ -112,6 +117,11 @@ begin
               begin
                 ExecuteOperation(ParamStrU(TrimQuotes(OptArg)));
               end;
+            7:
+              begin
+                gLoadTabsFromFile := True;
+                gTabsFilePath := ParamStrU(TrimQuotes(OptArg));
+              end;
           end;
         end;
       'L', 'l': CommandLineParams.LeftPath:= DecodePath(ParamStrU(OptArg));
@@ -128,6 +138,8 @@ begin
       '?', ':': DCDebug ('Error with opt : ', OptOpt);
     end; { case }
   until Option = EndOfOptions;
+  
+  CommandLineParams.NoSplash:= True;
 
   if OptInd <= ParamCount then
   begin
