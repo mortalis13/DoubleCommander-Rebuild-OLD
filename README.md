@@ -1,16 +1,15 @@
 
-A custom build of the file manager [**Double Commander**](http://doublecmd.sourceforge.net) **v0.9.8**. <br>
-SVN revision: [**9293**](https://sourceforge.net/p/doublecmd/code/9293/tree). <br>
+A custom build of the file manager [**Double Commander**](http://doublecmd.sourceforge.net) **v0.9.8**. SVN revision: [**9293**](https://sourceforge.net/p/doublecmd/code/9293/tree). <br>
 
 ---
 
 ## Download
 
-### r7623
+### v0.8.0 - r7623
 - [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/r7623-v2/doublecmd-0.8.0-7623-rebuild-x32.zip) **(23.2 MB)**
 - [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/r7623-v2/doublecmd-0.8.0-7623-rebuild-x64.zip) **(24.2 MB)**
 
-### r9293
+### v0.9.8 - r9293
 - [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293/doublecmd-0.9.8-9293-rebuild-x32.zip) **(13.5 MB)**
 - [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293/doublecmd-0.9.8-9293-rebuild-x64.zip) **(14.1 MB)**
 
