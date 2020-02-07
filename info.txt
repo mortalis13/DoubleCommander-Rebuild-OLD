@@ -2,3 +2,8 @@ Revision 9293
 svn checkout https://svn.code.sf.net/p/doublecmd/code/branches/0.9 doublecmd-0.9
 
 Lazarus 1.8.4
+
+----------
+
+- default font Windows - Segoe UI [Normal]
+- sample config file for portable option - ./install/windows/doublecmd.xml

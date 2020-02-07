@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doublecmd DCVersion="0.9.8" ConfigVersion="10">
+  <MainWindow>
+    <Position Save="True">
+      <Maximized>True</Maximized>
+      <Splitter>50</Splitter>
+    </Position>
+  </MainWindow>
+  <Configuration Save="False" SortOrder="0">
+    <UseConfigInProgramDir>True</UseConfigInProgramDir>
+  </Configuration>
+</doublecmd>

@@ -2055,14 +2055,17 @@ begin
   end;
 end;
 
-procedure TMainCommands.cm_Edit(const Params: array of string);
+procedure TMainCommands.cm_Edit(const Params: array of String);
 var
   i: Integer;
   aFile: TFile;
+  TempFiles: TFiles;
   SelectedFiles: TFiles = nil;
-  sCmd: string = '';
-  sParams: string = '';
-  sStartPath: string = '';
+  Operation: TFileSourceOperation;
+  TempFileSource: ITempFileSystemFileSource = nil;
+  sCmd: String = '';
+  sParams: String = '';
+  sStartPath: String = '';
   sEditorType: String;
   bUseInternalEditor: boolean = False;
   ActiveFile : TFile;
@@ -2071,44 +2074,71 @@ begin
   with frmMain do
   try
     SelectedFiles := ActiveFrame.CloneSelectedOrActiveFiles;
-
-    for I := SelectedFiles.Count - 1 downto 0 do
-    begin
-      aFile := ActiveFrame.CloneActiveFile;
-      if aFile.IsDirectory or aFile.IsLinkToDirectory then
+    // If files are links to local files
+    if (fspLinksToLocalFiles in ActiveFrame.FileSource.Properties) then
       begin
-        SelectedFiles.Delete(I);
+        for I := 0 to SelectedFiles.Count - 1 do
+          begin
+            aFile := SelectedFiles[I];
+            ActiveFrame.FileSource.GetLocalName(aFile);
+          end;
+      end
+    // If files not directly accessible copy them to temp file source.
+    else if not (fspDirectAccess in ActiveFrame.FileSource.Properties) then
+    begin
+      if not (fsoCopyOut in ActiveFrame.FileSource.GetOperationsTypes) then
+      begin
+        msgWarning(rsMsgErrNotSupported);
+        Exit;
+      end;
+
+      TempFiles := SelectedFiles.Clone;
+
+      TempFileSource := TTempFileSystemFileSource.GetFileSource;
+
+      Operation := ActiveFrame.FileSource.CreateCopyOutOperation(
+                       TempFileSource,
+                       TempFiles,
+                       TempFileSource.FileSystemRoot);
+
+      if Assigned(Operation) then
+      begin
+        Operation.AddStateChangedListener([fsosStopped], @OnEditCopyOutStateChanged);
+        OperationsManager.AddOperation(Operation);
       end
       else
-        begin
-          for Param in Params do
-          begin
-            if Param = 'UseInternal' then bUseInternalEditor := True;
-          end;
-          
-          ShowEditorByGlob(aFile.FullPath, bUseInternalEditor);
-        end;
-    end;
-
-    if SelectedFiles.Count = 0 then
-    begin
-      msgWarning(rsMsgNoFilesSelected);
+      begin
+        msgWarning(rsMsgErrNotSupported);
+      end;
       Exit;
     end;
-
-    if PrepareData(ActiveFrame.FileSource, SelectedFiles, @OnEditCopyOutStateChanged) <> pdrSynchronous then
-      Exit;
 
     try
+      for i := 0 to SelectedFiles.Count - 1 do
+      begin
+        // aFile := SelectedFiles[i];
+        aFile := ActiveFrame.CloneActiveFile;
 
-      // For now we only process one file.
-      aFile := SelectedFiles[0];
-
-      //now test if exists "EDIT" command in "extassoc.xml" :)
-      if gExts.GetExtActionCmd(aFile, 'edit', sCmd, sParams, sStartPath) then
-        ProcessExtCommandFork(sCmd, sParams, aFile.Path)
-      else
-        ShowEditorByGlob(aFile.FullPath);
+        // For now we only process one file.
+        if not (aFile.IsDirectory or aFile.IsLinkToDirectory) then
+        begin
+          //now test if exists "EDIT" command in "extassoc.xml" :)
+          if gExts.GetExtActionCmd(aFile, 'edit', sCmd, sParams, sStartPath) then
+            begin
+              ProcessExtCommandFork(sCmd, sParams, aFile.Path);
+            end
+          else
+            begin
+              for Param in Params do
+              begin
+                if Param = 'UseInternal' then bUseInternalEditor := True;
+              end;
+              
+              ShowEditorByGlob(aFile.FullPath, bUseInternalEditor);
+            end;
+          Break;
+        end;
+      end;
 
     except
       on e: EInvalidCommandLine do
