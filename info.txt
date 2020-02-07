@@ -1,5 +1,0 @@
-
-revision 7623
-svn co https://svn.code.sf.net/p/doublecmd/code/trunk@7623 doublecmd-source
-
-build with Lazarus 1.8.0

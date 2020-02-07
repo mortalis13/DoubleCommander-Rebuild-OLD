@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="e:\tools\lazarus-1.8.0_32\fpc\3.0.2\bin\i386-win32\fpc.exe" Date="1254427005"/>
-  <Params Value=" -MObjFPC -Scgi -CX -O3 -XX -l -vewnhibq -Fie:\Documents\SVN\doublecmd-code\plugins\dsx\DSXLocate\lib -Fie:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\plugins\dsx\DSXLocate\src\ -FUe:\Documents\SVN\doublecmd-code\plugins\dsx\DSXLocate\lib\ -FEe:\Documents\SVN\doublecmd-code\plugins\dsx\DSXLocate\lib\ -odsxlocate.dsx -fPIC DSXLocate.lpr"/>
-</CONFIG>

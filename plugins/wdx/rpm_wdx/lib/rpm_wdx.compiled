@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<CONFIG>
-  <Compiler Value="e:\tools\lazarus-1.8.0_32\fpc\3.0.2\bin\i386-win32\fpc.exe" Date="1254427005"/>
-  <Params Value=" -MDelphi -Scgi -CX -O3 -XX -l -vewnhibq -Fie:\Documents\SVN\doublecmd-code\plugins\wdx\rpm_wdx\lib -Fie:\Documents\SVN\doublecmd-code\sdk -Fue:\Documents\SVN\doublecmd-code\sdk -Fue:\tools\lazarus-1.8.0_32\lcl\units\i386-win32\win32 -Fue:\tools\lazarus-1.8.0_32\lcl\units\i386-win32 -Fue:\tools\lazarus-1.8.0_32\components\lazutils\lib\i386-win32 -Fue:\tools\lazarus-1.8.0_32\packager\units\i386-win32 -Fue:\Documents\SVN\doublecmd-code\plugins\wdx\rpm_wdx\src\ -FUe:\Documents\SVN\doublecmd-code\plugins\wdx\rpm_wdx\lib\ -FEe:\Documents\SVN\doublecmd-code\plugins\wdx\rpm_wdx\lib\ -orpm_wdx.wdx -dLCL -dLCLwin32 -fPIC rpm_wdx.dpr"/>
-</CONFIG>
