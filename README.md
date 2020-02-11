@@ -10,8 +10,8 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/r7623-v2/doublecmd-0.8.0-7623-rebuild-x64.zip) **(24.2 MB)**
 
 ### v0.9.8 - r9293
-- [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293/doublecmd-0.9.8-9293-rebuild-x32.zip) **(13.5 MB)**
-- [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293/doublecmd-0.9.8-9293-rebuild-x64.zip) **(14.1 MB)**
+- [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293-v2/doublecmd-0.9.8-9293-rebuild-x32.zip) **(9.99 MB)**
+- [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293-v2/doublecmd-0.9.8-9293-rebuild-x64.zip) **(10.7 MB)**
 
 
 ## Changelog
@@ -29,7 +29,7 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - cm_Restart command to restart the app and restore current tabs
 - cm_EditFileNames command to rename selected files editing their names with a text editor, equivalent to the Edit names button of the MultiRename window
 
-<p>
+<p><pre>----------</pre>
 
 - parameter 'SkipErrors' for the cm_Delete command to delete all files without showing errors dialog
 - parameter 'UnixSeparator' for the cm_CopyFullNamesToClip, cm_CopyPathOfFilesToClip, cm_CopyPathNoSepOfFilesToClip commands to copy paths with '/' separator
@@ -38,7 +38,7 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - parameter 'OpenEditor' for the cm_EditNew command to create new file without opening it in editor
 - parameter 'UseInternal' for the cm_Edit command to open a file in the internal editor
 
-<p>
+<p><pre>----------</pre>
 
 - added drive index near its label
 - added aliases feature (borrowed from MultiCommander manager), short commands are saved in the text file aliases.txt and can be executed from the internal command line
@@ -59,6 +59,7 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - initialized the filter with the * symbol by default
 - redesigned Calculate space dialog with larger font, non-modal type and Copy button
 - select files with current extension is extended to select all folders when used on a folder
+- when copying folders that already exist always 'Merge All'
 
 ## Build
 
