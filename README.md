@@ -29,7 +29,8 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - cm_Restart command to restart the app and restore current tabs
 - cm_EditFileNames command to rename selected files editing their names with a text editor, equivalent to the Edit names button of the MultiRename window
 
-<p><pre>----------</pre>
+<p></p>
+<p></p>
 
 - parameter 'SkipErrors' for the cm_Delete command to delete all files without showing errors dialog
 - parameter 'UnixSeparator' for the cm_CopyFullNamesToClip, cm_CopyPathOfFilesToClip, cm_CopyPathNoSepOfFilesToClip commands to copy paths with '/' separator
@@ -38,7 +39,8 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - parameter 'OpenEditor' for the cm_EditNew command to create new file without opening it in editor
 - parameter 'UseInternal' for the cm_Edit command to open a file in the internal editor
 
-<p><pre>----------</pre>
+<p></p>
+<p></p>
 
 - added drive index near its label
 - added aliases feature (borrowed from MultiCommander manager), short commands are saved in the text file aliases.txt and can be executed from the internal command line
