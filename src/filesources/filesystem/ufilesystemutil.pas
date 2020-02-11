@@ -1357,37 +1357,40 @@ begin
         DefaultOkResponse := fsourSkip;
 
       if AllowCopyInto or AllowDelete then
-        Message:= Format(rsMsgFolderExistsRwrt, [AbsoluteTargetFileName])
+      begin
+        // Always 'fsourCopyIntoAll'
+        FDirExistsOption := fsoodeCopyInto;
+        Result := fsoodeCopyInto;
+        // Message:= Format(rsMsgFolderExistsRwrt, [AbsoluteTargetFileName])
+      end
       else begin
         Message:= Format(rsMsgCannotOverwriteDirectory, [AbsoluteTargetFileName, aFile.FullPath]);
-      end;
-
-      case AskQuestion(Message, '',
-                       PossibleResponses, DefaultOkResponse, fsourSkip) of
-        fsourOverwrite:
-          Result := fsoodeDelete;
-        fsourCopyInto:
-          Result := fsoodeCopyInto;
-        fsourCopyIntoAll:
-          begin
-            FDirExistsOption := fsoodeCopyInto;
-            Result := fsoodeCopyInto;
-          end;
-        fsourSkip:
-          Result := fsoodeSkip;
-        fsourOverwriteAll:
-          begin
-            FDirExistsOption := fsoodeDelete;
+        case AskQuestion(Message, '', PossibleResponses, DefaultOkResponse, fsourSkip) of
+          fsourOverwrite:
             Result := fsoodeDelete;
-          end;
-        fsourSkipAll:
-          begin
-            FDirExistsOption := fsoodeSkip;
+          fsourCopyInto:
+            Result := fsoodeCopyInto;
+          fsourCopyIntoAll:
+            begin
+              FDirExistsOption := fsoodeCopyInto;
+              Result := fsoodeCopyInto;
+            end;
+          fsourSkip:
             Result := fsoodeSkip;
-          end;
-        fsourNone,
-        fsourCancel:
-          AbortOperation;
+          fsourOverwriteAll:
+            begin
+              FDirExistsOption := fsoodeDelete;
+              Result := fsoodeDelete;
+            end;
+          fsourSkipAll:
+            begin
+              FDirExistsOption := fsoodeSkip;
+              Result := fsoodeSkip;
+            end;
+          fsourNone,
+          fsourCancel:
+            AbortOperation;
+        end;
       end;
     end
 
