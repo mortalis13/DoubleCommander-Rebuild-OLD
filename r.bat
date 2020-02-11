@@ -33,7 +33,7 @@ if "%1"=="r" (
   call :run
 )
 if "%1"=="p" (
-  call :package
+  call :pack
 )
 if "%1"=="b" (
   call :build
@@ -67,7 +67,7 @@ goto:eof
   lazbuild -q --bm=silent --os=%OS_TARGET% --cpu=%CPU_TARGET% src\doublecmd.lpi
 goto:eof
 
-:package
+:pack
   echo package method
   call clean
   mkdir dist\win32

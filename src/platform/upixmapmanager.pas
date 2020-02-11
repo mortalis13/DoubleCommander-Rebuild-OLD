@@ -1493,12 +1493,6 @@ begin
   FiLinkIconID:=CheckAddThemePixmap('link');
   FiLinkBrokenIconID:=CheckAddThemePixmap('link-broken');
   FiUpDirIconID:=CheckAddThemePixmap('go-up');
-  {$IFDEF MSWINDOWS}
-  FiArcIconID := -1;
-  if (gShowIcons > sim_standart) and (not (cimArchive in gCustomIcons)) then
-    FiArcIconID := GetSystemArchiveIcon;
-  if FiArcIconID = -1 then
-  {$ENDIF}
   FiArcIconID := CheckAddThemePixmap('package-x-generic');
   {$IFDEF MSWINDOWS}
   FiExeIconID := -1;

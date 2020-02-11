@@ -1993,16 +1993,16 @@ begin
   FMouseDownY := Y;
   ColumnsView.FMainControlMouseDown := True;
 
-  AllowOutboundEvents := False;
+  // AllowOutboundEvents := False;
   inherited MouseDown(Button, Shift, X, Y);
-  AllowOutboundEvents := True;
+  // AllowOutboundEvents := True;
 end;
 
 procedure TDrawGridEx.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
-  AllowOutboundEvents := False;
+  // AllowOutboundEvents := False;
   inherited MouseMove(Shift, X, Y);
-  AllowOutboundEvents := True;
+  // AllowOutboundEvents := True;
   if ColumnsView.IsMouseSelecting then DoMouseMoveScroll(X, Y);
 end;
 
