@@ -68,26 +68,6 @@ type
   end;
   
   
-  TFileFilesCountProperty = class(TFileProperty)
-  private
-    FFilesCount: String;   // only FilesCount, no path
-    procedure SetFilesCount(NewFilesCount: String);
-  public
-    constructor Create; override;
-    constructor Create(FilesCount: String); virtual; overload;
-
-    function Clone: TFileFilesCountProperty; override;
-    procedure CloneTo(FileProperty: TFileProperty); override;
-
-    class function GetDescription: String; override;
-    class function GetID: TFilePropertyType; override;
-
-    function Format(Formatter: IFilePropertyFormatter): String; override;
-
-    property Value: String read FFilesCount write FFilesCount;
-  end;
-
-
   TFileVariantProperties = array of TFileProperty;
   TFileProperties = array [Low(TFilePropertyType)..fpInvalid] of TFileProperty//class(TList)
   {
@@ -121,7 +101,25 @@ type
 
     property Value: String read FName write SetName;
   end;
+  
+  TFileFilesCountProperty = class(TFileProperty)
+  private
+    FFilesCount: String;
+  public
+    constructor Create; override;
+    constructor Create(FilesCount: String); virtual; overload;
 
+    function Clone: TFileFilesCountProperty; override;
+    procedure CloneTo(FileProperty: TFileProperty); override;
+
+    class function GetDescription: String; override;
+    class function GetID: TFilePropertyType; override;
+
+    function Format(Formatter: IFilePropertyFormatter): String; override;
+
+    property Value: String read FFilesCount write FFilesCount;
+  end;
+  
   TFileSizeProperty = class(TFileProperty)
 
   private
@@ -591,12 +589,6 @@ begin
   Result := Formatter.FormatFileFilesCount(Self);
 end;
 
-procedure TFileFilesCountProperty.SetFilesCount(NewFilesCount: String);
-var
-  i: Integer;
-begin
-  FFilesCount := NewFilesCount;
-end;
 
 // ----------------------------------------------------------------------------
 

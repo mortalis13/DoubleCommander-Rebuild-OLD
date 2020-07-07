@@ -303,7 +303,7 @@ begin
 
   // Name property always present.
   NameProperty := TFileNameProperty.Create;
-  FilesCountProperty := TFileFilesCountProperty.Create;
+  // FilesCountProperty := TFileFilesCountProperty.Create;
 
   Path := APath;
 end;
