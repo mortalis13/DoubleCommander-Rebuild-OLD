@@ -10,8 +10,8 @@ A custom build of the file manager [**Double Commander**](http://doublecmd.sourc
 - [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/r7623-v2/doublecmd-0.8.0-7623-rebuild-x64.zip) **(24.2 MB)**
 
 ### v0.9.8 - r9293
-- [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293-v2/doublecmd-0.9.8-9293-rebuild-x32.zip) **(9.99 MB)**
-- [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293-v2/doublecmd-0.9.8-9293-rebuild-x64.zip) **(10.7 MB)**
+- [Windows 32 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293-v3/doublecmd-0.9.8-9293-rebuild-x32.zip) **(9.99 MB)**
+- [Windows 64 bit](https://github.com/mortalis13/DoubleCommander-Rebuild/releases/download/0.9.8-r9293-v3/doublecmd-0.9.8-9293-rebuild-x64.zip) **(10.7 MB)**
 
 
 ## Changelog
